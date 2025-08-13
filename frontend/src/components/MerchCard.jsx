@@ -1,23 +1,16 @@
 // MerchCard.jsx
+import { Link } from "react-router-dom";
 import { formatPrice } from "../utils/formatPrice.js";
 
-export default function MerchCard({ item }) {
+const MerchCard = ({ item }) => {
   const name = item.name;
   const imageUrl = item.previewImage?.url;
   const priceAmount = item.price?.amount;
   const currencyId = item.price?.currencyId;
-
-  const shopUrl = "https://morbid-gene.myspreadshop.se";
-  const productUrl = `${shopUrl}/${name.replaceAll(" ", "-")}-${
-    item.sellableId.split("-")[0]
-  }?productType=${item.productTypeId}`;
+  const productId = item.sellableId;
 
   return (
-    <a
-      href={productUrl}
-      target="_blank"
-      rel="noreferrer"
-      style={{
+    <Link to={`/product/${productId}`} style={{
         border: "1px solid #e2e8f0",
         borderRadius: "0.5rem",
         padding: "1rem",
@@ -47,6 +40,8 @@ export default function MerchCard({ item }) {
           {formatPrice(priceAmount, currencyId)}
         </div>
       )}
-    </a>
+      </Link>
   );
-}
+};
+
+export default MerchCard;

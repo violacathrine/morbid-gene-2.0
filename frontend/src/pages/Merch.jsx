@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMerch } from "../hooks/useMerch";
 import MerchCard from "../components/MerchCard";
 
-export default function Merch() {
+export const Merch = () => {
   const [q, setQ] = useState("");
   const { items, total, loading, error } = useMerch({ q, limit: 24 });
 
@@ -23,7 +23,7 @@ export default function Merch() {
             width: "100%",
             maxWidth: "28rem",
           }}
-          placeholder="Sök merch…"
+          placeholder="Search merch…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
@@ -45,7 +45,7 @@ export default function Merch() {
               marginBottom: "0.5rem",
             }}
           >
-            {total} produkter
+            {total} products
           </p>
           <div
             style={{
