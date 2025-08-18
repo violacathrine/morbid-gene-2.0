@@ -1,0 +1,140 @@
+import axios from "axios";
+
+const apiDomain = "https://api.spreadshirt.net";
+
+// Read environment variables with fallback
+const getShopConfig = () => {
+  const shopId = process.env.SPREADSHOP_ID;
+  const apiKey = process.env.SPREADSHOP_API_KEY;
+  const userAgent = process.env.SPREAD_USER_AGENT;
+
+  // If variables are missing, throw an error with helpful info
+  if (!shopId || !apiKey || !userAgent) {
+    console.error("Environment variables are missing! Check the .env file");
+    throw new Error(
+      "Environment variables missing for API call (SPREADSHOP_ID, SPREADSHOP_API_KEY, SPREAD_USER_AGENT)"
+    );
+  }
+
+  return { shopId, apiKey, userAgent };
+};
+
+// Smart "lazy-loaded" config - only get on first access
+let config = null;
+const getConfig = () => {
+  if (!config) {
+    config = getShopConfig();
+  }
+  return config;
+};
+
+// Common headers-configuration
+const getHeaders = () => {
+  const { apiKey, userAgent } = getConfig();
+  return {
+    Authorization: `SprdAuth apiKey="${apiKey}"`,
+    "User-Agent": userAgent,
+  };
+};
+
+// Get all products
+export const getAllProducts = async (limit = 24, offset = 0) => {
+  const { shopId } = getConfig();
+  const url = `${apiDomain}/api/v1/shops/${shopId}/sellables?limit=${limit}&offset=${offset}&fullData=true`;
+
+  try {
+    const response = await axios.get(url, {
+      headers: getHeaders(),
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Could not fetch merch:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+// Get product by ID
+export const getProductById = async (productId) => {
+  const { shopId } = getConfig();
+  const url = `${apiDomain}/api/v1/shops/${shopId}/sellables?limit=100&fullData=true`;
+
+  try {
+    const response = await axios.get(url, {
+      headers: getHeaders(),
+    });
+
+    const product = response.data.sellables?.find(
+      (item) => item.sellableId === productId
+    );
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+    return product;
+  } catch (error) {
+    console.error(
+      "Could not fetch product:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+// Get product type information
+export const getProductTypeInfo = async (productTypeId) => {
+  const { shopId } = getConfig();
+  const url = `${apiDomain}/api/v1/shops/${shopId}/productTypes/${productTypeId}`;
+
+  try {
+    const response = await axios.get(url, {
+      headers: getHeaders(),
+    });
+
+    // Extract only the fields we need
+    const { appearances, sizes, defaultValues, stockStates } = response.data;
+
+    return {
+      appearances,
+      sizes,
+      defaultValues,
+      stockStates,
+    };
+  } catch (error) {
+    console.error(
+      "Could not fetch ProductType:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const getSellableImages = async (sellableId, appearanceId, ideaId) => {
+  const { shopId } = getConfig();
+  const url = `${apiDomain}/api/v1/shops/${shopId}/sellables/${sellableId}?appearanceId=${appearanceId}&ideaId=${ideaId}`;
+
+  console.log("🔗 Making API call to:", url);
+
+  try {
+    const response = await axios.get(url, {
+      headers: getHeaders(),
+    });
+
+    console.log("📦 Full API response:", response.data);
+    console.log("🖼️ Images from API:", response.data.images);
+
+    const { images, sizeIds, name } = response.data;
+
+    return {
+      images,
+      sizeIds,
+      name,
+    };
+  } catch (error) {
+    console.error("❌ API Error:", error.response?.data || error.message);
+    throw error;
+  }
+};

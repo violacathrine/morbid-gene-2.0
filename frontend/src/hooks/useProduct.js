@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 
 export const useProduct = (productId) => {
   const [product, setProduct] = useState(null);
+  const [productType, setProductType] = useState(null); // Ny
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  console.log("useProduct called with:", productId); // ⬅️ LÄGG TILL DETTA
 
   useEffect(() => {
     console.log("useEffect triggered with productId:", productId);
@@ -15,25 +14,31 @@ export const useProduct = (productId) => {
       return;
     }
 
-    console.log("Fetching product with ID:", productId);
-
     const fetchProduct = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const response = await fetch(`/api/merch/${productId}`);
-        console.log("Response status:", response.status); // ⬅️ LÄGG TILL
+        // Hämta produkt
+        console.log("Fetching product with ID:", productId);
+        const productResponse = await fetch(`/api/merch/${productId}`);
+        if (!productResponse.ok) throw new Error("Failed to fetch product");
+        const productData = await productResponse.json();
+        setProduct(productData);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch product");
+        // Hämta ProductType (sizes/colors)
+        if (productData.productTypeId) {
+          console.log("Fetching productType:", productData.productTypeId);
+          const typeResponse = await fetch(
+            `/api/merch/productType/${productData.productTypeId}`
+          );
+          if (typeResponse.ok) {
+            const typeData = await typeResponse.json();
+            setProductType(typeData);
+            console.log("ProductType loaded:", typeData);
+          }
         }
-
-        const data = await response.json();
-        console.log("Received data:", data); // ⬅️ LÄGG TILL
-        setProduct(data);
       } catch (err) {
-        console.error("Fetch error:", err); // ⬅️ LÄGG TILL
         setError(err.message);
       } finally {
         setLoading(false);
@@ -43,5 +48,5 @@ export const useProduct = (productId) => {
     fetchProduct();
   }, [productId]);
 
-  return { product, loading, error };
+  return { product, productType, loading, error };
 };

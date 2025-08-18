@@ -1,19 +1,25 @@
-export function formatPrice(amount, currencyId) {
-  // Mappa currencyId till valutasymboler
-  let currencySymbol;
+export const formatPrice = (amount, currencyId) => {
+  // Säkerhetskontroll
+  if (!amount || amount === 0) return "0,00 €";
+
+  // Bestäm valuta baserat på currencyId
+  let currency, locale;
+
   if (currencyId === "2") {
-    currencySymbol = "€"; // ID "2" motsvarar EUR
+    currency = "EUR";
+    locale = "sv-SE"; // Svensk formatering för EUR
   } else {
-    // Standardhantering om ID:et inte är känt
-    currencySymbol = "SEK";
+    // Fallback till SEK
+    currency = "SEK";
+    locale = "sv-SE";
   }
 
-  // Använd NumberFormat för att formatera priset
-  const formattedAmount = new Intl.NumberFormat("sv-SE", {
+  // Formatera med rätt valuta
+  const formattedAmount = new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: "EUR", // Använder EUR för att matcha symbolen
+    currency: currency,
     minimumFractionDigits: 2,
   }).format(amount);
 
   return formattedAmount;
-}
+};

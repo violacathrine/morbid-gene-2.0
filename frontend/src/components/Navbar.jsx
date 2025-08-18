@@ -1,7 +1,8 @@
 // src/components/Navbar.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { CartContext } from "../contexts/CartContext";
 
 const NavbarWrapper = styled.nav`
   position: fixed;
@@ -36,6 +37,32 @@ const NavLinks = styled.ul`
       font-weight: bold;
       text-transform: uppercase;
     }
+  }
+`;
+const TopRow = styled.div`
+  background-color: black;
+  position: absolute;
+  top: -1rem;
+  margin-bottom: 2rem;
+  right: 0rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  @media (max-width: 767px) {
+    display: none; // Göms på mobil
+  }
+
+  a {
+    color: ccc;
+    text-decoration: none;
+    font-size: 16px;
+  }
+`;
+
+const CartIcon = styled(Link)`
+  &::before {
+    content: "🛒";
   }
 `;
 
@@ -109,7 +136,10 @@ const MobileMenu = styled.ul`
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { getTotalItems } = useContext(CartContext); // Lägg till denna rad
   const location = useLocation();
+
+  const totalItems = getTotalItems(); // Hämta antal
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -119,6 +149,10 @@ export const Navbar = () => {
 
   return (
     <NavbarWrapper>
+      <TopRow>
+        <CartIcon to="/cart">{totalItems > 0 && `(${totalItems})`}</CartIcon>
+        <Link to="/login">Login</Link>
+      </TopRow>
       <NavLinks>
         <li>
           <Link to="/">Home</Link>

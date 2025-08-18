@@ -12,8 +12,18 @@ export const Cart = () => {
     clearCart,
   } = useCart();
 
-  console.log("Cart component - cartItems:", cartItems); // ⬅️ LÄGG TILL
-  console.log("Cart items length:", cartItems.length); // ⬅️ LÄGG TILL
+  // ⬅️ LÄGG TILL DESSA DEBUG-RADER:
+  console.log("💰 Cart items for total:", cartItems);
+  console.log("💰 Total price calculation:", getTotalPrice());
+  console.log(
+    "💰 Each item price:",
+    cartItems.map((item) => ({
+      name: item.name,
+      price: item.price?.amount,
+      quantity: item.quantity,
+      total: (item.price?.amount || 0) * item.quantity,
+    }))
+  );
 
   if (cartItems.length === 0) {
     return (
@@ -26,10 +36,11 @@ export const Cart = () => {
         }}
       >
         <h1 style={{ color: "white", marginBottom: "1rem" }}>
-          Din kundkorg är tom
+          Your cart is empty
         </h1>
         <p style={{ color: "#ccc", marginBottom: "2rem" }}>
-          Lägg till några coola produkter från vår merch-shop!
+          It looks like you haven't added any items to your cart yet. Start
+          shopping now!
         </p>
         <Link
           to="/merch"
@@ -43,7 +54,7 @@ export const Cart = () => {
             fontWeight: "bold",
           }}
         >
-          Fortsätt shoppa 🤘
+          Continue shopping
         </Link>
       </div>
     );
@@ -66,7 +77,7 @@ export const Cart = () => {
         }}
       >
         <h1 style={{ color: "white", margin: 0 }}>
-          Kundkorg ({getTotalItems()} produkter)
+          Shopping Cart ({getTotalItems()} items)
         </h1>
         <button
           onClick={clearCart}
@@ -80,14 +91,14 @@ export const Cart = () => {
             fontSize: "0.875rem",
           }}
         >
-          Töm kundkorg
+          Clear Cart
         </button>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {cartItems.map((item) => (
+        {cartItems.map((item, index) => (
           <div
-            key={item.sellableId}
+            key={`${item.sellableId}-${index}`}
             style={{
               display: "flex",
               gap: "1rem",
@@ -275,7 +286,7 @@ export const Cart = () => {
               fontWeight: "bold",
             }}
           >
-            Fortsätt shoppa
+            Continue shopping
           </Link>
 
           <button
@@ -291,7 +302,7 @@ export const Cart = () => {
               fontSize: "1.1rem",
             }}
           >
-            Gå till kassan 🤘
+            Go to Checkout 🤘
           </button>
         </div>
       </div>
