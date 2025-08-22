@@ -5,7 +5,7 @@ import { useProduct } from "../hooks/useProduct";
 
 const BreadcrumbContainer = styled.nav`
   background-color: #000;
-  padding: 1.5rem 2rem;
+  padding: 1.5rem;
   border-bottom: 1px solid #333;
   position: relative;
   z-index: 100;

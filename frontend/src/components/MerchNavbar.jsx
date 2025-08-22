@@ -2,50 +2,88 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { CartContext } from "../contexts/CartContext";
+import { GiShoppingCart } from "react-icons/gi";
+import logoUrl from "../assets/logo.svg";
 
+// NAVBAR med grid
 const MerchNavWrapper = styled.nav`
-  background-color: #000;
+  background: #000;
   padding: 1.5rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: sticky;
   top: 0;
   z-index: 200;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center; /* default: mitten för alla */
 `;
 
+// Vänster: logga
 const LeftSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 3rem;
+  justify-self: start;
+  align-self: start; /* <-- viktigt (Grid) */
 `;
 
-const Logo = styled(Link)`
+const LogoLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+`;
+
+const LogoImg = styled.img`
+  height: 100px; /* anpassa storlek */
+  width: auto;
+  display: block;
+`;
+
+// Mitten: Shop-titel
+const CenterSection = styled.div`
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  color: #fff;
+`;
+
+const ShopTitle = styled(Link)`
   color: white;
   font-size: 22px;
-  font-weight: bold;
+  font-weight: 800;
   text-decoration: none;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 
   &:hover {
     color: #ccc;
   }
 `;
 
-const NavLinks = styled.div`
-  display: flex;
-  gap: 2rem;
+const ShopSubtitle = styled.div`
+  font-size: 16px;
+  opacity: 0.8;
+  margin-top: 2px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
     display: none;
   }
 `;
 
-const NavLink = styled(Link)`
+// Höger: login + cart
+const RightSection = styled.div`
+  justify-self: end;
+  align-self: start; /* uppe i cellen */
+  display: flex;
+  align-items: center; /* samma höjdlinje inom sektionen */
+  gap: 1.25rem;
+`;
+
+const LoginButton = styled(Link)`
+  display: flex; /* så texten beter sig som en rad */
+  align-items: center;
+  line-height: 1;
   color: white;
   text-decoration: none;
   font-weight: bold;
-  font-size: 22px;
+  font-size: 18px;
   text-transform: uppercase;
 
   &:hover {
@@ -53,42 +91,27 @@ const NavLink = styled(Link)`
   }
 `;
 
-const RightSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 2rem;
+const CartIcon = styled(GiShoppingCart)`
+  display: block; /* <-- viktiga fixen */
+  font-size: 28px;
+  flex-shrink: 0;
 `;
 
 const CartButton = styled(Link)`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: white;
+  gap: 0.4rem;
+  line-height: 1;
   text-decoration: none;
-  font-weight: bold;
-  font-size: 22px;
-  text-transform: uppercase;
+  color: white;
 
   &:hover {
     color: #ccc;
   }
 `;
-
 const CartCount = styled.span`
-  color: white;
-  font-size: 18px;
-`;
-
-const LoginButton = styled(Link)`
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 22px;
-  text-transform: uppercase;
-
-  &:hover {
-    color: #ccc;
-  }
+  line-height: 1; /* samma som texten */
+  font-size: 16px;
 `;
 
 const MobileMenuButton = styled.button`
@@ -110,22 +133,27 @@ export const MerchNavbar = () => {
 
   return (
     <MerchNavWrapper>
+      {/* Vänster: klickbar logga */}
       <LeftSection>
-        <Logo to="/">Morbid Gene</Logo>
-
-        <NavLinks>
-          <NavLink to="/merch">Shop</NavLink>
-        </NavLinks>
+        <LogoLink to="/" aria-label="Gå till startsidan">
+          <LogoImg src={logoUrl} alt="Morbid Gene logga" />
+        </LogoLink>
       </LeftSection>
 
+      {/* Mitten: Shop-titel */}
+      <CenterSection>
+        <ShopTitle to="/merch">MERCH</ShopTitle>
+        <ShopSubtitle>The official Morbid Gene Shop</ShopSubtitle>
+      </CenterSection>
+
+      {/* Höger: login + varukorg */}
       <RightSection>
-        <CartButton to="/cart">
-          Cart {totalItems > 0 && <CartCount>({totalItems})</CartCount>}
-        </CartButton>
-
         <LoginButton to="/login">Login</LoginButton>
-
-        <MobileMenuButton>☰</MobileMenuButton>
+        <CartButton to="/cart" aria-label="Go to cart">
+          <CartIcon aria-hidden="true" />
+          {totalItems > 0 && <CartCount>({totalItems})</CartCount>}
+        </CartButton>
+        <MobileMenuButton aria-label="Open menu">☰</MobileMenuButton>
       </RightSection>
     </MerchNavWrapper>
   );
