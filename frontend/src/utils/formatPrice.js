@@ -1,25 +1,20 @@
-export const formatPrice = (amount, currencyId) => {
-  // Säkerhetskontroll
-  if (!amount || amount === 0) return "0,00 €";
+export const formatPrice = (priceData) => {
+  // Hantera olika prisformat från Spreadshirt API
+  let amount;
 
-  // Bestäm valuta baserat på currencyId
-  let currency, locale;
-
-  if (currencyId === "2") {
-    currency = "EUR";
-    locale = "sv-SE"; // Svensk formatering för EUR
+  if (typeof priceData === "object" && priceData !== null) {
+    // Spreadshirt prisobjekt - använd display-värdet
+    amount = priceData.display || priceData.vatIncluded || priceData.amount;
   } else {
-    // Fallback till SEK
-    currency = "SEK";
-    locale = "sv-SE";
+    // Enkelt nummer
+    amount = priceData;
   }
 
-  // Formatera med rätt valuta
-  const formattedAmount = new Intl.NumberFormat(locale, {
+  if (!amount || amount === 0) return "0,00 €";
+
+  return new Intl.NumberFormat("sv-SE", {
     style: "currency",
-    currency: currency,
+    currency: "EUR",
     minimumFractionDigits: 2,
   }).format(amount);
-
-  return formattedAmount;
 };

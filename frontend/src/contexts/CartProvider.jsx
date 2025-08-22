@@ -1,114 +1,262 @@
 import { useState, useEffect } from "react";
 import { CartContext } from "./CartContext";
+import * as basketApi from "../api/basketApi";
+import { convertSpreadshirtItem } from "../utils/basketUtils";
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [basketId, setBasketId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Spara till localestorage
+  // Ladda befintlig basket vid start
   useEffect(() => {
-    if (cartItems.length > 0) {
-      localStorage.setItem("morbid-gene-cart", JSON.stringify(cartItems));
-      console.log("Saved to localStorage:", cartItems.length, "items");
-    }
-  }, [cartItems]);
+    const loadBasket = async () => {
+      const savedBasketId = localStorage.getItem("spreadshirt-basket-id");
+      if (!savedBasketId) return;
 
-  //Ladda från localstorage när provider startar
-  useEffect(() => {
-    const saved = localStorage.getItem("morbid-gene-cart");
-    if (saved) {
-      const savedItems = JSON.parse(saved);
-      setCartItems(savedItems);
-      console.log("Loaded from localStorage:", savedItems.length, "items");
-    }
+      setLoading(true);
+      try {
+        const basket = await basketApi.getBasket(savedBasketId);
+        if (basket?.basketItems) {
+          setBasketId(savedBasketId);
+          const items = basket.basketItems.map((item) =>
+            convertSpreadshirtItem(item, null)
+          );
+
+          setCartItems(items);
+        } else {
+          localStorage.removeItem("spreadshirt-basket-id");
+        }
+      } catch (err) {
+        console.error("Error loading basket:", err);
+        localStorage.removeItem("spreadshirt-basket-id");
+        setError("Could not load cart");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBasket();
   }, []);
 
-  const addToCart = (product) => {
-    console.log("🛒 FULL PRODUCT FROM API:", product);
-    console.log("🛒 PRODUCT PRICE OBJECT:", product.price);
-    console.log("🛒 PRICE AMOUNT:", product.price?.amount);
-    console.log("🛒 PRODUCT KEYS:", Object.keys(product));
-    console.log("🔑 adding product with price data:", {
-      name: product.name,
-      fullPrice: product.price,
-      priceAmount: product.price?.amount,
-      priceType: typeof product.price?.amount,
-    });
+  // Hjälpfunktion: Uppdatera basket och local state
+  const updateBasketState = async (newBasketItems) => {
+    if (newBasketItems.length === 0) {
+      await basketApi.deleteBasket(basketId);
+      setBasketId(null);
+      setCartItems([]);
+      localStorage.removeItem("spreadshirt-basket-id");
+    } else {
+      const updatedBasket = await basketApi.updateBasket(
+        basketId,
+        newBasketItems
+      );
+      // Preserve existing cart item images when updating basket
+      const items = updatedBasket.basketItems.map((item) => {
+        const convertedItem = convertSpreadshirtItem(item, null);
+        
+        // If no image was found in localStorage, try to preserve from current cartItems
+        if (!convertedItem.selectedImage || convertedItem.selectedImage.includes('base64')) {
+          const existingItem = cartItems.find(cartItem => 
+            cartItem.sellableId === convertedItem.sellableId && 
+            cartItem.size === convertedItem.size
+          );
+          if (existingItem?.selectedImage && existingItem.selectedImage.startsWith('http')) {
+            convertedItem.selectedImage = existingItem.selectedImage;
+          }
+        }
+        
+        return convertedItem;
+      });
 
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find(
-        (item) => item.sellableId === product.sellableId
+      setCartItems(items);
+    }
+  };
+
+  // Lägg till vara i kundvagn
+  const addToCart = async (
+    product,
+    selectedSize,
+    selectedImage,
+    selectedColor
+  ) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const basketItem = await basketApi.convertToBasketItem(
+        product.sellableId,
+        selectedSize,
+        selectedColor,
+        1
       );
 
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.sellableId === product.sellableId
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+      if (!basketId) {
+        // Skapa ny basket
+        const newBasket = await basketApi.createBasket([basketItem]);
+        setBasketId(newBasket.id);
+        localStorage.setItem("spreadshirt-basket-id", newBasket.id);
+
+        const fullBasket = await basketApi.getBasket(newBasket.id);
+        const items = fullBasket.basketItems.map((item, index) => {
+          // Ge den sista tillagda item:en rätt bild
+          const imageToUse =
+            index === fullBasket.basketItems.length - 1 ? selectedImage : null;
+          return convertSpreadshirtItem(item, imageToUse);
+        });
+        setCartItems(items);
       } else {
-        const newItems = [...prevItems, { ...product, quantity: 1 }];
-        console.log("🛒 New cart items:", newItems.length, "products");
-        return newItems;
+        // Uppdatera befintlig basket
+        const currentBasket = await basketApi.getBasket(basketId);
+
+        const existingItemIndex = currentBasket.basketItems.findIndex(
+          (item) => {
+            const props = item.element.properties;
+            const sellableId = props.find((p) => p.key === "sellable")?.value;
+            const sizeLabel = props.find((p) => p.key === "sizeLabel")?.value;
+            return (
+              sellableId === product.sellableId && sizeLabel === selectedSize
+            );
+          }
+        );
+
+        let newBasketItems;
+        if (existingItemIndex >= 0) {
+          // Öka quantity
+          newBasketItems = [...currentBasket.basketItems];
+          newBasketItems[existingItemIndex].quantity += 1;
+        } else {
+          // Lägg till ny vara
+          newBasketItems = [...currentBasket.basketItems, basketItem];
+        }
+
+        // Update basket and preserve images for new items
+        const updatedBasket = await basketApi.updateBasket(basketId, newBasketItems);
+        const items = updatedBasket.basketItems.map((item, index) => {
+          // For newly added items, use the selected image
+          const isNewlyAdded = index === updatedBasket.basketItems.length - 1 && existingItemIndex < 0;
+          const imageToUse = isNewlyAdded ? selectedImage : null;
+          return convertSpreadshirtItem(item, imageToUse);
+        });
+        setCartItems(items);
       }
-    });
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      setError("Could not add item to cart");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeFromCart = (productId) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.sellableId !== productId)
-    );
+  // Ta bort vara från kundvagn
+  const removeFromCart = async (sellableId, size) => {
+    if (!basketId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const currentBasket = await basketApi.getBasket(basketId);
+      const newBasketItems = currentBasket.basketItems.filter((item) => {
+        const props = item.element.properties;
+        const itemSellableId = props.find((p) => p.key === "sellable")?.value;
+        const itemSizeLabel = props.find((p) => p.key === "sizeLabel")?.value;
+        return !(itemSellableId === sellableId && itemSizeLabel === size);
+      });
+
+      await updateBasketState(newBasketItems);
+    } catch (err) {
+      console.error("Error removing from cart:", err);
+      setError("Could not remove item from cart");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const updateQuantity = (productId, newQuantity) => {
-    console.log("🔢 Updating quantity:", productId, "to", newQuantity);
-
+  // Uppdatera antal av vara
+  const updateQuantity = async (sellableId, size, newQuantity) => {
     if (newQuantity <= 0) {
-      removeFromCart(productId);
-      return;
+      return removeFromCart(sellableId, size);
     }
 
-    setCartItems((prevItems) => {
-      const updatedItems = prevItems.map((item) =>
-        item.sellableId === productId
-          ? { ...item, quantity: newQuantity }
-          : item
-      );
-      console.log("🔢 Updated items:", updatedItems);
-      return updatedItems;
-    });
+    if (!basketId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const currentBasket = await basketApi.getBasket(basketId);
+      const newBasketItems = currentBasket.basketItems.map((item) => {
+        const props = item.element.properties;
+        const itemSellableId = props.find((p) => p.key === "sellable")?.value;
+        const itemSizeLabel = props.find((p) => p.key === "sizeLabel")?.value;
+
+        if (itemSellableId === sellableId && itemSizeLabel === size) {
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+
+      await updateBasketState(newBasketItems);
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+      setError("Could not update quantity");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Töm hela kundvagnen
+  const clearCart = async () => {
+    if (!basketId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      await basketApi.deleteBasket(basketId);
+      setBasketId(null);
+      setCartItems([]);
+      localStorage.removeItem("spreadshirt-basket-id");
+    } catch (err) {
+      console.error("Error clearing cart:", err);
+      setError("Could not clear cart");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Beräkna totalt antal varor
   const getTotalItems = () => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
+  // Beräkna totalt pris
   const getTotalPrice = () => {
-    console.log("💸 Debugging total calculation...");
-
-    const total = cartItems.reduce((total, item) => {
-      const numericPrice = parseFloat(item.price?.amount);
-
-      return total + numericPrice * item.quantity;
+    return cartItems.reduce((total, item) => {
+      const price = parseFloat(item.price?.display || item.price?.amount || 0);
+      return total + price * item.quantity;
     }, 0);
-
-    console.log("💸 FINAL CALCULATED TOTAL:", total);
-    return total;
   };
 
-  const clearCart = () => {
-    setCartItems([]);
-  };
+  // Rensa felmeddelanden
+  const clearError = () => setError(null);
 
   return (
     <CartContext.Provider
       value={{
         cartItems,
+        basketId,
+        loading,
+        error,
         addToCart,
         removeFromCart,
         updateQuantity,
+        clearCart,
         getTotalItems,
         getTotalPrice,
-        clearCart,
+        clearError,
       }}
     >
       {children}

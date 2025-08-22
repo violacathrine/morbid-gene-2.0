@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useProduct } from "../hooks/useProduct";
-import { useCart } from "../hooks/useCart";
 import { useProductImages } from "../hooks/useProductImages";
 import { formatPrice } from "../utils/formatPrice";
+import { CartContext } from "../contexts/CartContext";
 
 // Styled Components
 const Container = styled.div`
@@ -92,19 +92,19 @@ const Tag = styled.span`
 `;
 
 const AddToCartButton = styled.button`
-  background-color: ${(props) => (!props.enabled ? "#6b7280" : "#dc2626")};
+  background-color: ${(props) => (!props.$enabled ? "#6b7280" : "#dc2626")};
   color: white;
   padding: 1rem 2rem;
   border-radius: 8px;
   border: none;
   font-size: 1.1rem;
   font-weight: bold;
-  cursor: ${(props) => (!props.enabled ? "not-allowed" : "pointer")};
+  cursor: ${(props) => (!props.$enabled ? "not-allowed" : "pointer")};
   transition: background-color 0.2s;
-  opacity: ${(props) => (!props.enabled ? 0.6 : 1)};
+  opacity: ${(props) => (!props.$enabled ? 0.6 : 1)};
 
   &:hover {
-    background-color: ${(props) => (props.enabled ? "#b91c1c" : "#6b7280")};
+    background-color: ${(props) => (props.$enabled ? "#b91c1c" : "#6b7280")};
   }
 `;
 
@@ -119,17 +119,108 @@ const DebugInfo = styled.div`
 
 const LoadingError = styled.div`
   padding: 2rem;
-  color: ${(props) => (props.error ? "red" : "white")};
+  color: white;
+`;
+
+const ErrorDiv = styled(LoadingError)`
+  color: red;
+`;
+
+// Popup styles
+const PopupOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const PopupBox = styled.div`
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+`;
+
+const PopupMessage = styled.p`
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+`;
+
+const PopupButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+`;
+
+const PopupButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+`;
+
+const ContinueButton = styled(PopupButton)`
+  background-color: #f3f4f6;
+  color: #374151;
+
+  &:hover {
+    background-color: #e5e7eb;
+  }
+`;
+
+const CartButton = styled(PopupButton)`
+  background-color: #dc2626;
+  color: white;
+
+  &:hover {
+    background-color: #b91c1c;
+  }
+`;
+
+const QuantityContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const QuantityLabel = styled.label`
+  color: white;
+  font-weight: bold;
+`;
+
+const QuantityInput = styled.input`
+  width: 60px;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #374151;
+  background-color: #1f2937;
+  color: white;
+  text-align: center;
 `;
 
 export const ProductPage = () => {
   const { productId } = useParams();
   const { product, productType, loading, error } = useProduct(productId);
-  const { addToCart } = useCart();
+  const { addToCart } = useContext(CartContext);
+  const navigate = useNavigate();
 
-  // State för vald färg och storlek
+  // States
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   // Hämta bilder för vald färg (bara om produkten är laddad)
   const { images } = useProductImages(
@@ -160,7 +251,7 @@ export const ProductPage = () => {
 
   // Funktion för att få rätt bild baserat på vald färg
   const getCurrentImage = () => {
-    console.log("🖼️ getCurrentImage called:", {
+    console.log("getCurrentImage called:", {
       imagesLength: images?.length,
       firstImageUrl: images?.[0]?.url,
       fallbackUrl: product?.previewImage?.url,
@@ -175,31 +266,16 @@ export const ProductPage = () => {
     return product?.previewImage?.url;
   };
 
+  // Add to cart button and logic
   const handleAddToCart = () => {
-    // Validation först
+    // Validering
     if (!selectedColor || !selectedSize) {
-      alert("Please select both color and size!");
-      return;
-    }
-
-    // Kolla om kombinationen är tillgänglig
-    if (!isAvailable(selectedSize, selectedColor)) {
-      alert("Sorry, this combination is out of stock!");
+      alert("Please select both color and size");
       return;
     }
 
     if (product) {
-      // Skapa produkt med vald size/appearance för Spreadshirt basket API
-      const productWithSelection = {
-        ...product,
-        selectedAppearance: selectedColor,
-        selectedSize: selectedSize,
-      };
-
-      console.log("🎯 SENDING PRODUCT WITH SELECTION:", productWithSelection);
-      addToCart(productWithSelection);
-
-      // Hitta namn för user-friendly meddelande
+      // Hitta färg- och storleksnamn
       const colorName = productType.appearances.find(
         (a) => a.id === selectedColor
       )?.name;
@@ -207,12 +283,21 @@ export const ProductPage = () => {
         (s) => s.id === selectedSize
       )?.name;
 
-      alert(`${product.name} (${colorName}, ${sizeName}) added to cart!`);
+      // Hämta rätt bild för vald färg
+      const selectedImage =
+        images && images.length > 0 ? images[0].url : product.previewImage?.url;
+
+      // Lägg till varor baserat på quantity - BARA EN GÅNG!
+      for (let i = 0; i < quantity; i++) {
+        addToCart(product, sizeName, selectedImage, colorName);
+      }
+
+      setIsPopupOpen(true);
     }
   };
 
   if (loading) return <LoadingError>Loading product..</LoadingError>;
-  if (error) return <LoadingError error>Error: {error}</LoadingError>;
+  if (error) return <ErrorDiv>Error: {error}</ErrorDiv>;
   if (!product) return <LoadingError>Product not found.</LoadingError>;
 
   const isButtonEnabled = selectedColor && selectedSize;
@@ -245,7 +330,7 @@ export const ProductPage = () => {
             <Select
               value={selectedColor || ""}
               onChange={(e) => {
-                console.log("🔄 Color changed to:", e.target.value);
+                console.log("Color changed to:", e.target.value);
                 setSelectedColor(e.target.value);
               }}
             >
@@ -289,11 +374,22 @@ export const ProductPage = () => {
             </TagsContainer>
           </TagsSection>
         )}
-
+        {/* Quantity selector */}
+        <QuantityContainer>
+          <QuantityLabel htmlFor="quantity">Quantity:</QuantityLabel>
+          <QuantityInput
+            id="quantity"
+            type="number"
+            min="1"
+            max="10"
+            value={quantity}
+            onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+          />
+        </QuantityContainer>
         {/* Add to Cart Button */}
         <AddToCartButton
           onClick={handleAddToCart}
-          enabled={isButtonEnabled}
+          $enabled={isButtonEnabled}
           disabled={!isButtonEnabled}
         >
           Add to Cart
@@ -316,6 +412,35 @@ export const ProductPage = () => {
           Selected Size: {selectedSize || "None"}
         </DebugInfo>
       </DetailsSection>
+      {/* Popup som visas när vara läggs till */}
+      {isPopupOpen && (
+        <PopupOverlay>
+          <PopupBox>
+            <PopupMessage>
+              You've added <strong>{quantity} </strong> of this article to the
+              cart
+            </PopupMessage>
+            <PopupButtons>
+              <ContinueButton
+                onClick={() => {
+                  setIsPopupOpen(false);
+                  navigate("/merch");
+                }}
+              >
+                Continue shopping
+              </ContinueButton>
+              <CartButton
+                onClick={() => {
+                  setIsPopupOpen(false);
+                  navigate("/cart");
+                }}
+              >
+                Go to cart
+              </CartButton>
+            </PopupButtons>
+          </PopupBox>
+        </PopupOverlay>
+      )}
     </Container>
   );
 };

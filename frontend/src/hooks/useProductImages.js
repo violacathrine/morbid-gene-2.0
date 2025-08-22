@@ -21,9 +21,9 @@ export const useProductImages = (sellableId, appearanceId, ideaId) => {
         console.log(
           `Fetching images for sellable: ${sellableId}, appearance: ${appearanceId}, ideaId: ${ideaId}`
         );
-const response = await fetch(
-  `/api/merch/sellable/${sellableId}/${appearanceId}/${ideaId}`
-);
+        const response = await fetch(
+          `/api/merch/sellable/${sellableId}/${appearanceId}/${ideaId}`
+        );
         if (!response.ok) throw new Error("Failed to fetch images");
 
         const data = await response.json();

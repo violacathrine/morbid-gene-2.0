@@ -138,3 +138,120 @@ export const getSellableImages = async (sellableId, appearanceId, ideaId) => {
     throw error;
   }
 };
+
+// Basket-functions
+
+export const createBasket = async (basketItems) => {
+  const { shopId } = getConfig();
+  const url = `${apiDomain}/api/v1/baskets?mediaType=json`;
+
+  try {
+    const response = await axios.post(url, {
+      basketItems: basketItems
+    }, {
+      headers: {
+        ...getHeaders(),
+        'Content-Type': 'application/json',
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Could not create basket:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getBasket = async (basketId) => {
+  const url = `${apiDomain}/api/v1/baskets/${basketId}?mediaType=json&locale=sv_SE`;
+
+  try {
+    const response = await axios.get(url, {
+      headers: getHeaders(),
+    });
+
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 404) {
+      return null;
+    }
+    console.error("Could not fetch basket:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const updateBasket = async (basketId, basketItems) => {
+  const url = `${apiDomain}/api/v1/baskets/${basketId}?mediaType=json`;
+
+  try {
+    const response = await axios.put(url, {
+      basketItems: basketItems
+    }, {
+      headers: {
+        ...getHeaders(),
+        'Content-Type': 'application/json',
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Could not update basket:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const deleteBasket = async (basketId) => {
+  const url = `${apiDomain}/api/v1/baskets/${basketId}`;
+  
+  try {
+    await axios.delete(url, {
+      headers: getHeaders(),
+    });
+    return true;
+  } catch (error) {
+    console.error("Could not delete basket:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const convertToBasketItem = (product, sizeName, colorName, quantity = 1) => {
+  const { shopId } = getConfig();
+  
+  const sizeId = product.productType?.sizes?.find(s => s.name === sizeName)?.id;
+  const appearanceId = product.productType?.appearances?.find(a => 
+    a.name.toLowerCase() === colorName.toLowerCase()
+  )?.id;
+
+  if (!sizeId || !appearanceId) {
+    throw new Error(`Could not find size ID for "${sizeName}" or appearance ID for "${colorName}"`);
+  }
+
+  return {
+    quantity: quantity,
+    element: {
+      id: product.sellableId,
+      type: "sprd:sellable",
+      properties: [
+        {
+          key: "sellable",
+          value: product.sellableId
+        },
+        {
+          key: "size",
+          value: sizeId.toString()
+        },
+        {
+          key: "appearance",
+          value: appearanceId.toString()
+        },
+        {
+          key: "sizeLabel",
+          value: sizeName
+        }
+      ],
+      shop: {
+        id: shopId
+      }
+    }
+  };
+};

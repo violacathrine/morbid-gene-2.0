@@ -1,6 +1,195 @@
-import { useCart } from "../hooks/useCart";
-import { formatPrice } from "../utils/formatPrice";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { CartItem } from "../components/CartItem";
+import { formatPrice } from "../utils/formatPrice";
+import { CartContext } from "../contexts/CartContext";
+import { createCheckout } from "../api/basketApi"; // Importera checkout-funktionen
+
+const Container = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+`;
+
+const Header = styled.div`
+  margin-bottom: 2rem;
+`;
+
+const Title = styled.h1`
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const CartList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+`;
+
+// Ordersammanfattning sektion
+const OrderSummarySection = styled.div`
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+`;
+
+const SummaryTitle = styled.h2`
+  color: white;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 0.5rem;
+`;
+
+const SummaryItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  color: #e5e7eb;
+  border-bottom: 1px solid #374151;
+
+  &:last-child {
+    border-bottom: none;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: white;
+  }
+`;
+
+const SummaryLabel = styled.span.withConfig({
+  shouldForwardProp: (prop) => !["bold"].includes(prop),
+})`
+  font-weight: ${(props) => (props.bold ? "bold" : "normal")};
+`;
+
+
+const SummaryValue = styled.span`
+  font-weight: ${(props) => (props.bold ? "bold" : "normal")};
+`;
+
+// Checkout info sektion
+const CheckoutInfoSection = styled.div`
+  background: #065f46;
+  border: 1px solid #10b981;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+`;
+
+const InfoTitle = styled.h3`
+  color: #d1fae5;
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+`;
+
+const InfoText = styled.p`
+  color: #a7f3d0;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+`;
+
+const InfoList = styled.ul`
+  color: #a7f3d0;
+  margin: 0.5rem 0 0 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+`;
+
+// Footer med knappar
+const Footer = styled.div`
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => !["variant"].includes(prop),
+})`
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+
+  ${(props) =>
+    props.variant === "primary" &&
+    `
+    background-color: #10b981;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+
+    &:hover {
+      background-color: #059669;
+    }
+
+    &:disabled {
+      background-color: #6b7280;
+      cursor: not-allowed;
+    }
+  `}
+
+  ${(props) =>
+    props.variant === "secondary" &&
+    `
+    background-color: #dc2626;
+    color: white;
+
+    &:hover {
+      background-color: #b91c1c;
+    }
+  `}
+`;
+const LoadingSpinner = styled.div`
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+// Tom kundvagn
+const EmptyCart = styled.div`
+  text-align: center;
+  padding: 3rem;
+`;
+
+const EmptyTitle = styled.h1`
+  color: white;
+  margin-bottom: 1rem;
+`;
+
+const EmptyLink = styled(Link)`
+  color: #10b981;
+  text-decoration: none;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 export const Cart = () => {
   const {
@@ -10,302 +199,126 @@ export const Cart = () => {
     getTotalPrice,
     getTotalItems,
     clearCart,
-  } = useCart();
+    basketId,
+  } = useContext(CartContext);
 
-  // ⬅️ LÄGG TILL DESSA DEBUG-RADER:
-  console.log("💰 Cart items for total:", cartItems);
-  console.log("💰 Total price calculation:", getTotalPrice());
-  console.log(
-    "💰 Each item price:",
-    cartItems.map((item) => ({
-      name: item.name,
-      price: item.price?.amount,
-      quantity: item.quantity,
-      total: (item.price?.amount || 0) * item.quantity,
-    }))
-  );
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+const handleCheckout = async () => {
+  if (!basketId) {
+    alert("No basket found. Please try refreshing the page.");
+    return;
+  }
+
+  setCheckoutLoading(true);
+
+  try {
+    const data = await createCheckout(basketId);
+
+    if (!data.checkoutUrl) {
+      throw new Error("No checkout URL received from server");
+    }
+
+    window.location.href = data.checkoutUrl;
+  } catch (error) {
+    console.error("Checkout-fel:", error);
+    alert(`An error occurred during checkout: ${error.message}`);
+    setCheckoutLoading(false);
+  }
+  };
+  
+  // Beräkna fraktkostnad (mockad)
+  const getShippingCost = () => {
+    const total = getTotalPrice();
+    return total >= 500 ? 0 : 49; // Free shipping over 500 SEK
+  };
+
+  const shippingCost = getShippingCost();
+  const totalWithShipping = getTotalPrice() + shippingCost;
 
   if (cartItems.length === 0) {
     return (
-      <div
-        style={{
-          padding: "2rem",
-          maxWidth: "800px",
-          margin: "0 auto",
-          textAlign: "center",
-        }}
-      >
-        <h1 style={{ color: "white", marginBottom: "1rem" }}>
-          Your cart is empty
-        </h1>
-        <p style={{ color: "#ccc", marginBottom: "2rem" }}>
-          It looks like you haven't added any items to your cart yet. Start
-          shopping now!
-        </p>
-        <Link
-          to="/merch"
-          style={{
-            display: "inline-block",
-            backgroundColor: "#dc2626",
-            color: "white",
-            padding: "1rem 2rem",
-            borderRadius: "8px",
-            textDecoration: "none",
-            fontWeight: "bold",
-          }}
-        >
-          Continue shopping
-        </Link>
-      </div>
+      <EmptyCart>
+        <EmptyTitle>Your cart is empty</EmptyTitle>
+        <EmptyLink to="/merch">Continue shopping</EmptyLink>
+      </EmptyCart>
     );
   }
 
   return (
-    <div
-      style={{
-        padding: "2rem",
-        maxWidth: "800px",
-        margin: "0 auto",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "2rem",
-        }}
-      >
-        <h1 style={{ color: "white", margin: 0 }}>
-          Shopping Cart ({getTotalItems()} items)
-        </h1>
-        <button
-          onClick={clearCart}
-          style={{
-            backgroundColor: "transparent",
-            color: "#ef4444",
-            border: "1px solid #ef4444",
-            padding: "0.5rem 1rem",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "0.875rem",
-          }}
-        >
-          Clear Cart
-        </button>
-      </div>
+    <Container>
+      <Header>
+        <Title>Shopping Cart ({getTotalItems()} items)</Title>
+      </Header>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {cartItems.map((item, index) => (
-          <div
-            key={`${item.sellableId}-${index}`}
-            style={{
-              display: "flex",
-              gap: "1rem",
-              padding: "1rem",
-              backgroundColor: "#1f2937",
-              borderRadius: "8px",
-              alignItems: "center",
-            }}
-          >
-            {/* Produktbild */}
-            <img
-              src={item.previewImage?.url}
-              alt={item.name}
-              style={{
-                width: "80px",
-                height: "80px",
-                objectFit: "cover",
-                borderRadius: "4px",
-              }}
-            />
-
-            {/* Produktinfo */}
-            <div style={{ flex: 1 }}>
-              <h3
-                style={{
-                  color: "white",
-                  margin: "0 0 0.5rem 0",
-                  fontSize: "1.1rem",
-                }}
-              >
-                {item.name}
-              </h3>
-              <p
-                style={{
-                  color: "#9ca3af",
-                  margin: 0,
-                  fontSize: "0.875rem",
-                }}
-              >
-                {formatPrice(item.price?.amount, item.price?.currencyId)} per st
-              </p>
-            </div>
-
-            {/* Quantity controls */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
-              <button
-                onClick={() =>
-                  updateQuantity(item.sellableId, item.quantity - 1)
-                }
-                style={{
-                  backgroundColor: "#374151",
-                  color: "white",
-                  border: "none",
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                -
-              </button>
-
-              <span
-                style={{
-                  color: "white",
-                  minWidth: "40px",
-                  textAlign: "center",
-                  fontSize: "1.1rem",
-                  fontWeight: "bold",
-                }}
-              >
-                {item.quantity}
-              </span>
-
-              <button
-                onClick={() =>
-                  updateQuantity(item.sellableId, item.quantity + 1)
-                }
-                style={{
-                  backgroundColor: "#374151",
-                  color: "white",
-                  border: "none",
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                +
-              </button>
-            </div>
-
-            {/* Totalpris för denna rad */}
-            <div
-              style={{
-                color: "white",
-                fontWeight: "bold",
-                minWidth: "100px",
-                textAlign: "right",
-              }}
-            >
-              {formatPrice(
-                (item.price?.amount || 0) * item.quantity,
-                item.price?.currencyId
-              )}
-            </div>
-
-            {/* Ta bort knapp */}
-            <button
-              onClick={() => removeFromCart(item.sellableId)}
-              style={{
-                backgroundColor: "#ef4444",
-                color: "white",
-                border: "none",
-                width: "32px",
-                height: "32px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              ×
-            </button>
-          </div>
+      {/* Kundvagn med produkter */}
+      <CartList>
+        {cartItems.map((item) => (
+          <CartItem
+            key={`${item.sellableId}-${item.size}`}
+            item={item}
+            onUpdateQuantity={(qty) =>
+              updateQuantity(item.sellableId, item.size, qty)
+            }
+            onRemove={() => removeFromCart(item.sellableId, item.size)}
+          />
         ))}
-      </div>
+      </CartList>
 
-      {/* Totalsumma och checkout */}
-      <div
-        style={{
-          marginTop: "2rem",
-          padding: "1.5rem",
-          backgroundColor: "#1f2937",
-          borderRadius: "8px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
+      {/* Ordersammanfattning */}
+      <OrderSummarySection>
+        <SummaryTitle>Order Summary</SummaryTitle>
+
+        <SummaryItem>
+          <SummaryLabel>Subtotal ({getTotalItems()} items):</SummaryLabel>
+          <SummaryValue>{formatPrice(getTotalPrice())}</SummaryValue>
+        </SummaryItem>
+
+        <SummaryItem>
+          <SummaryLabel>
+            Shipping: {shippingCost === 0 ? "(Free over 500 SEK)" : ""}
+          </SummaryLabel>
+          <SummaryValue>
+            {shippingCost === 0 ? "Free" : formatPrice(shippingCost)}
+          </SummaryValue>
+        </SummaryItem>
+
+        <SummaryItem>
+          <SummaryLabel bold>Total:</SummaryLabel>
+          <SummaryValue bold>{formatPrice(totalWithShipping)}</SummaryValue>
+        </SummaryItem>
+      </OrderSummarySection>
+
+      {/* Checkout information */}
+      <CheckoutInfoSection>
+        <InfoTitle>Secure Payment via Spreadshirt</InfoTitle>
+        <InfoText>
+          When you click "Proceed to Checkout" you will be redirected to
+          Spreadshirt's secure payment page where you can:
+        </InfoText>
+        <InfoList>
+          <li>Enter delivery address</li>
+          <li>Choose payment method (card, PayPal, Klarna etc.)</li>
+          <li>Review and complete your order</li>
+          <li>Receive order confirmation via email</li>
+        </InfoList>
+      </CheckoutInfoSection>
+
+      {/* Footer med knappar */}
+      <Footer>
+        <Button variant="secondary" onClick={clearCart}>
+          Clear Cart
+        </Button>
+
+        <Button
+          variant="primary"
+          onClick={handleCheckout}
+          disabled={checkoutLoading}
         >
-          <span style={{ color: "white", fontSize: "1.2rem" }}>Totalt:</span>
-          <span
-            style={{
-              color: "#4ade80",
-              fontSize: "1.5rem",
-              fontWeight: "bold",
-            }}
-          >
-            {formatPrice(getTotalPrice(), "2")} {/* Assuming SEK/EUR */}
-          </span>
-        </div>
-
-        <div style={{ display: "flex", gap: "1rem" }}>
-          <Link
-            to="/merch"
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "transparent",
-              color: "white",
-              border: "1px solid #6b7280",
-              padding: "1rem",
-              borderRadius: "8px",
-              textDecoration: "none",
-              fontWeight: "bold",
-            }}
-          >
-            Continue shopping
-          </Link>
-
-          <button
-            style={{
-              flex: 1,
-              backgroundColor: "#dc2626",
-              color: "white",
-              border: "none",
-              padding: "1rem",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              fontSize: "1.1rem",
-            }}
-          >
-            Go to Checkout 🤘
-          </button>
-        </div>
-      </div>
-    </div>
+          {checkoutLoading && <LoadingSpinner />}
+          {checkoutLoading ? "Preparing checkout..." : "Proceed to Checkout"}
+        </Button>
+      </Footer>
+    </Container>
   );
 };
