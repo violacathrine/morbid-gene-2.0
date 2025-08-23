@@ -142,8 +142,8 @@ export const MerchNavbar = () => {
 
       {/* Mitten: Shop-titel */}
       <CenterSection>
-        <ShopTitle to="/merch">MERCH</ShopTitle>
-        <ShopSubtitle>The official Morbid Gene Shop</ShopSubtitle>
+        <ShopTitle to="/merch">THE OFFICIAL MORBID GENE SHOP</ShopTitle>
+        <ShopSubtitle>Powered by Spreadshirt</ShopSubtitle>
       </CenterSection>
 
       {/* Höger: login + varukorg */}

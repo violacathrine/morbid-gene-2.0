@@ -54,7 +54,7 @@ export const getProductTypeInfo = async (req, res) => {
 
 export const getSellableImages = async (req, res) => {
   try {
-    const { sellableId, appearanceId, ideaId } = req.params; // Alla från params nu
+    const { sellableId, appearanceId, ideaId } = req.params;
 
     console.log("🎯 Controller got:", { sellableId, appearanceId, ideaId });
 
@@ -169,53 +169,60 @@ export const convertToBasketItem = async (req, res) => {
   }
 };
 
-export const createCheckout = async (req, res) => {
+// HELT NY OCH KORRIGERAD CHECKOUT FUNKTION
+export const getCheckoutUrl = async (req, res) => {
   try {
     const { basketId } = req.params;
 
-    // LÄGG TILL DESSA RADER:
     console.log("=== CHECKOUT DEBUG ===");
     console.log("Basket ID:", basketId);
-    console.log("Shop ID:", process.env.SPREADSHOP_ID);
-    console.log(
-      "API Key:",
-      process.env.SPREADSHOP_API_KEY ? "SET" : "NOT SET"
-    );
 
-    // Anropa Spreadshirt API för att skapa checkout-session
-    const formData = new URLSearchParams();
-    formData.append('locale', 'sv_SE');
-    formData.append('returnUrls[success]', `${process.env.FRONTEND_URL}/order-success`);
-    formData.append('returnUrls[cancel]', `${process.env.FRONTEND_URL}/cart`);
-    formData.append('returnUrls[failure]', `${process.env.FRONTEND_URL}/cart?error=payment-failed`);
-
-    const response = await fetch(
-      `https://api.spreadshirt.net/api/v1/baskets/${basketId}/checkout`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `SprdAuth apiKey="${process.env.SPREADSHOP_API_KEY}"`,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error("Spreadshirt checkout error:", errorData);
-      return res.status(response.status).json({
-        error: "Failed to create checkout session",
-      });
-    }
-
-    const checkoutData = await response.json();
+    // Använd vår nya getCheckoutUrl funktion från service
+    const checkoutUrl = await spreadshirtService.getCheckoutUrl(basketId);
 
     res.json({
-      checkoutUrl: checkoutData.href || checkoutData.url,
+      checkoutUrl: checkoutUrl,
+      basketId: basketId,
     });
   } catch (error) {
-    console.error("Checkout creation error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error getting checkout URL:", error);
+    res.status(error.response?.status || 500).json({
+      error: error.message || "Failed to get checkout URL",
+    });
+  }
+};
+
+// NY FUNKTION: Komplett add-to-basket och checkout i en operation
+export const addToBasketAndCheckout = async (req, res) => {
+  try {
+    const { productId, sizeName, colorName, quantity = 1 } = req.body;
+
+    console.log("=== ADD TO BASKET AND CHECKOUT ===");
+    console.log("Product ID:", productId);
+    console.log("Size:", sizeName);
+    console.log("Color:", colorName);
+    console.log("Quantity:", quantity);
+
+    // Hämta produktdata med productType
+    const product = await spreadshirtService.getProductById(productId);
+    const productType = await spreadshirtService.getProductTypeInfo(
+      product.productTypeId
+    );
+    const enrichedProduct = { ...product, productType };
+
+    // Använd den nya funktionen från service
+    const result = await spreadshirtService.addToBasketAndCheckout(
+      enrichedProduct,
+      sizeName,
+      colorName,
+      quantity
+    );
+
+    res.status(201).json(result);
+  } catch (error) {
+    console.error("Error in addToBasketAndCheckout:", error);
+    res.status(error.response?.status || 500).json({
+      error: error.message || "Server error",
+    });
   }
 };

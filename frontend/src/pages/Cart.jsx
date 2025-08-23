@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { CartItem } from "../components/CartItem";
 import { formatPrice } from "../utils/formatPrice";
 import { CartContext } from "../contexts/CartContext";
-import { createCheckout } from "../api/basketApi"; // Importera checkout-funktionen
+import { getCheckoutUrl } from "../api/basketApi"; // ÄNDRAT: Importera den nya funktionen
 
 const Container = styled.div`
   max-width: 800px;
@@ -69,7 +69,6 @@ const SummaryLabel = styled.span.withConfig({
 })`
   font-weight: ${(props) => (props.bold ? "bold" : "normal")};
 `;
-
 
 const SummaryValue = styled.span`
   font-weight: ${(props) => (props.bold ? "bold" : "normal")};
@@ -153,6 +152,7 @@ const Button = styled.button.withConfig({
     }
   `}
 `;
+
 const LoadingSpinner = styled.div`
   display: inline-block;
   width: 16px;
@@ -204,29 +204,32 @@ export const Cart = () => {
 
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-const handleCheckout = async () => {
-  if (!basketId) {
-    alert("No basket found. Please try refreshing the page.");
-    return;
-  }
-
-  setCheckoutLoading(true);
-
-  try {
-    const data = await createCheckout(basketId);
-
-    if (!data.checkoutUrl) {
-      throw new Error("No checkout URL received from server");
+  // KORRIGERAD handleCheckout funktion
+  const handleCheckout = async () => {
+    if (!basketId) {
+      alert("No basket found. Please try refreshing the page.");
+      return;
     }
 
-    window.location.href = data.checkoutUrl;
-  } catch (error) {
-    console.error("Checkout-fel:", error);
-    alert(`An error occurred during checkout: ${error.message}`);
-    setCheckoutLoading(false);
-  }
+    setCheckoutLoading(true);
+
+    try {
+      // ÄNDRAT: Använd getCheckoutUrl istället för createCheckout
+      const data = await getCheckoutUrl(basketId);
+
+      if (!data.checkoutUrl) {
+        throw new Error("No checkout URL received from server");
+      }
+
+      console.log("Redirecting to checkout:", data.checkoutUrl);
+      window.location.href = data.checkoutUrl;
+    } catch (error) {
+      console.error("Checkout-fel:", error);
+      alert(`An error occurred during checkout: ${error.message}`);
+      setCheckoutLoading(false);
+    }
   };
-  
+
   // Beräkna fraktkostnad (mockad)
   const getShippingCost = () => {
     const total = getTotalPrice();

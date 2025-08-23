@@ -88,25 +88,80 @@ export const convertToBasketItem = async (
   return response.json();
 };
 
-export const createCheckout = async (basketId) => {
-  console.log(`Creating checkout for basket: ${basketId}`);
+// KORRIGERAD: Hämta checkout URL från basket links
+export const getCheckoutUrl = async (basketId) => {
+  console.log(`Getting checkout URL for basket: ${basketId}`);
 
   if (!basketId || basketId.trim() === "") {
     throw new Error("BasketId is required for checkout");
   }
 
-  const response = await fetch(`${API_BASE}/baskets/${basketId}/checkout`, {
+  try {
+    // Först hämta basket-data som innehåller links
+    const basket = await getBasket(basketId);
+
+    if (!basket || !basket.links) {
+      throw new Error("No checkout links found in basket");
+    }
+
+    // Hitta shopCheckout länk för din shop, annars använd defaultCheckout
+    const shopCheckoutLink = basket.links.find(
+      (link) => link.type === "shopCheckout"
+    );
+    const defaultCheckoutLink = basket.links.find(
+      (link) => link.type === "defaultCheckout"
+    );
+
+    const checkoutUrl = shopCheckoutLink?.href || defaultCheckoutLink?.href;
+
+    if (!checkoutUrl) {
+      throw new Error("No checkout URL found in basket links");
+    }
+
+    return {
+      checkoutUrl: checkoutUrl,
+      basketId: basketId,
+    };
+  } catch (error) {
+    console.error("Could not get checkout URL:", error.message);
+    throw error;
+  }
+};
+
+// NY FUNKTION: Streamlinad add-to-basket + checkout i en operation
+export const addToBasketAndCheckout = async (
+  productId,
+  sizeName,
+  colorName,
+  quantity = 1
+) => {
+  console.log(`Direct checkout for product: ${productId}`);
+
+  const response = await fetch(`${API_BASE}/checkout`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify({
+      productId,
+      sizeName,
+      colorName,
+      quantity,
+    }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error(`Checkout error: ${response.status} - ${errorText}`);
+    console.error(`Direct checkout error: ${response.status} - ${errorText}`);
     throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
   }
 
   return response.json();
+};
+
+// LEGACY: Behåll den gamla funktionen för bakåtkompatibilitet
+// men uppdatera den att använda den nya funktionen
+export const createCheckout = async (basketId) => {
+  console.warn("createCheckout is deprecated, use getCheckoutUrl instead");
+  return getCheckoutUrl(basketId);
 };
