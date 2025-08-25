@@ -1,0 +1,407 @@
+import React, { useState } from "react";
+import styled from "styled-components";
+
+const FormWrapper = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  @media (min-width: 480px) {
+    padding: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 3rem;
+  }
+`;
+
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: 480px) {
+    gap: 1.2rem;
+  }
+
+  @media (min-width: 768px) {
+    gap: 1.5rem;
+  }
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  @media (min-width: 480px) {
+    gap: 0.5rem;
+  }
+`;
+
+const FormRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 1.5rem;
+
+    > div {
+      flex: 1;
+    }
+  }
+`;
+
+const Label = styled.label`
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  @media (min-width: 480px) {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 1.1rem;
+  }
+`;
+
+const Input = styled.input`
+  padding: 0.6rem;
+  background: #222222;
+  border: 2px solid #444444;
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (min-width: 480px) {
+    padding: 0.7rem;
+    font-size: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 0.75rem;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+  }
+
+  &::placeholder {
+    color: #666666;
+  }
+`;
+
+const Select = styled.select`
+  padding: 0.6rem;
+  background: #222222;
+  border: 2px solid #444444;
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (min-width: 480px) {
+    padding: 0.7rem;
+    font-size: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 0.75rem;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+  }
+
+  option {
+    background: #222222;
+    color: #ffffff;
+  }
+`;
+
+const TextArea = styled.textarea`
+  padding: 0.6rem;
+  background: #222222;
+  border: 2px solid #444444;
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (min-width: 480px) {
+    padding: 0.7rem;
+    font-size: 1rem;
+    min-height: 130px;
+  }
+
+  @media (min-width: 768px) {
+    padding: 0.75rem;
+    min-height: 140px;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+  }
+
+  &::placeholder {
+    color: #666666;
+  }
+`;
+
+const SubmitButton = styled.button`
+  background: linear-gradient(45deg, #dc2626, #991b1b);
+  color: #ffffff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+  width: 100%;
+
+  @media (min-width: 480px) {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 1.2rem;
+    width: auto;
+    align-self: center;
+  }
+
+  &:hover {
+    background: linear-gradient(45deg, #991b1b, #dc2626);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #666666;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+`;
+
+const RequiredStar = styled.span`
+  color: #dc2626;
+  margin-left: 4px;
+`;
+
+const SuccessMessage = styled.div`
+  background: #065f46;
+  border: 1px solid #10b981;
+  color: #d1fae5;
+  padding: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 1rem;
+
+  h2 {
+    font-size: 1.3rem;
+    margin: 0 0 1rem 0;
+
+    @media (min-width: 480px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  p {
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+
+    @media (min-width: 480px) {
+      font-size: 1rem;
+    }
+  }
+`;
+
+const ContactForm = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.email || !formData.message) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Simulera API-anrop (ersätt med din kontakt-endpoint)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Här skulle du skicka till din kontakt-endpoint
+      console.log("Contact form data:", formData);
+      
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      alert("Failed to send message. Please try again.");
+    }
+
+    setIsSubmitting(false);
+  };
+
+  const resetForm = () => {
+    setIsSubmitted(false);
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      subject: "",
+      message: "",
+    });
+  };
+
+  if (isSubmitted) {
+    return (
+      <FormWrapper>
+        <SuccessMessage>
+          <h2>MESSAGE SENT</h2>
+          <p>
+            Thank you for your message! We'll get back to you as soon as possible.
+          </p>
+          <SubmitButton onClick={resetForm}>SEND ANOTHER MESSAGE</SubmitButton>
+        </SuccessMessage>
+      </FormWrapper>
+    );
+  }
+
+  return (
+    <FormWrapper>
+      <FormContainer>
+        <FormRow>
+          <FormGroup>
+            <Label htmlFor="contact-name">
+              Your Name <RequiredStar>*</RequiredStar>
+            </Label>
+            <Input
+              type="text"
+              id="contact-name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label htmlFor="contact-email">
+              Email Address <RequiredStar>*</RequiredStar>
+            </Label>
+            <Input
+              type="email"
+              id="contact-email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="your.email@example.com"
+            />
+          </FormGroup>
+        </FormRow>
+
+        <FormRow>
+          <FormGroup>
+            <Label htmlFor="contact-phone">Phone Number</Label>
+            <Input
+              type="tel"
+              id="contact-phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="+46 70 123 45 67"
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label htmlFor="contact-subject">Subject</Label>
+            <Select
+              id="contact-subject"
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
+            >
+              <option value="">Select a subject</option>
+              <option value="general">General Inquiry</option>
+              <option value="collaboration">Collaboration</option>
+              <option value="press">Press & Media</option>
+              <option value="technical">Technical Support</option>
+              <option value="other">Other</option>
+            </Select>
+          </FormGroup>
+        </FormRow>
+
+        <FormGroup>
+          <Label htmlFor="contact-message">
+            Message <RequiredStar>*</RequiredStar>
+          </Label>
+          <TextArea
+            id="contact-message"
+            name="message"
+            value={formData.message}
+            onChange={handleChange}
+            placeholder="Write your message here..."
+          />
+        </FormGroup>
+
+        <SubmitButton onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? "SENDING MESSAGE..." : "SEND MESSAGE"}
+        </SubmitButton>
+      </FormContainer>
+    </FormWrapper>
+  );
+};
+
+export default ContactForm;

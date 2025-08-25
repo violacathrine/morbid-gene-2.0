@@ -15,6 +15,7 @@ import { Merch } from "./pages/Merch";
 import { ProductPage } from "./pages/ProductPage";
 import { Cart } from "./pages/Cart";
 import { GalleryPage } from "./pages/GalleryPage";
+import { Contact } from "./pages/Contact";
 
 // Skapa en komponent som väljer rätt navbar
 const AppContent = () => {
@@ -41,6 +42,7 @@ const AppContent = () => {
         <Route path="/product/:productId" element={<ProductPage />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/media/:slug" element={<GalleryPage />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </>
   );

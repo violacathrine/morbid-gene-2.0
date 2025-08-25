@@ -2,7 +2,6 @@
 import { useState, useEffect} from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { CartContext } from "../contexts/CartContext";
 
 const NavbarWrapper = styled.nav`
   position: fixed;
@@ -15,6 +14,11 @@ const NavbarWrapper = styled.nav`
   align-items: center;
   z-index: 999;
   background: transparent;
+  
+  /* Animation för homepage */
+  transform: ${({ $isHomepage, $hasAnimated }) => 
+    $isHomepage && !$hasAnimated ? 'translateX(100%)' : 'translateX(0)'};
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   @media (min-width: 768px) {
     justify-content: flex-end;
@@ -136,7 +140,10 @@ const MobileMenu = styled.ul`
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const location = useLocation();
+
+  const isHomepage = location.pathname === '/';
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -144,8 +151,26 @@ export const Navbar = () => {
     setIsOpen(false);
   }, [location.pathname]);
 
+  // Animation logic för homepage
+  useEffect(() => {
+    if (isHomepage) {
+      // Reset animation state när vi kommer till homepage
+      setHasAnimated(false);
+      
+      // Starta animation efter en kort delay
+      const timer = setTimeout(() => {
+        setHasAnimated(true);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    } else {
+      // På andra sidor, inget animation
+      setHasAnimated(true);
+    }
+  }, [isHomepage]);
+
   return (
-    <NavbarWrapper>
+    <NavbarWrapper $isHomepage={isHomepage} $hasAnimated={hasAnimated}>
       <NavLinks>
         <li>
           <Link to="/">Home</Link>

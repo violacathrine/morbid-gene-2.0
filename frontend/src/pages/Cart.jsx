@@ -230,14 +230,7 @@ export const Cart = () => {
     }
   };
 
-  // Beräkna fraktkostnad (mockad)
-  const getShippingCost = () => {
-    const total = getTotalPrice();
-    return total >= 500 ? 0 : 49; // Free shipping over 500 SEK
-  };
-
-  const shippingCost = getShippingCost();
-  const totalWithShipping = getTotalPrice() + shippingCost;
+  const totalWithShipping = getTotalPrice();
 
   if (cartItems.length === 0) {
     return (
@@ -279,11 +272,9 @@ export const Cart = () => {
 
         <SummaryItem>
           <SummaryLabel>
-            Shipping: {shippingCost === 0 ? "(Free over 500 SEK)" : ""}
+            Shipping: Final shipping calculated at checkout
           </SummaryLabel>
-          <SummaryValue>
-            {shippingCost === 0 ? "Free" : formatPrice(shippingCost)}
-          </SummaryValue>
+          <SummaryValue></SummaryValue>
         </SummaryItem>
 
         <SummaryItem>
