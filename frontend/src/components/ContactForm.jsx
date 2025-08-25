@@ -2,16 +2,24 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 const FormWrapper = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 1.5rem;
-
-  @media (min-width: 480px) {
-    padding: 2rem;
-  }
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
 
   @media (min-width: 768px) {
-    padding: 3rem;
+    max-width: 600px;
+  }
+  
+  @media (min-width: 1024px) {
+    max-width: 700px;
+  }
+  
+  @media (min-width: 1200px) {
+    max-width: 750px;
+  }
+  
+  @media (min-width: 1400px) {
+    max-width: 800px;
   }
 `;
 
@@ -186,6 +194,7 @@ const SubmitButton = styled.button`
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
   width: 100%;
+  align-self: flex-start;
 
   @media (min-width: 480px) {
     padding: 1rem 2rem;
@@ -196,7 +205,7 @@ const SubmitButton = styled.button`
   @media (min-width: 768px) {
     font-size: 1.2rem;
     width: auto;
-    align-self: center;
+    align-self: flex-start;
   }
 
   &:hover {
