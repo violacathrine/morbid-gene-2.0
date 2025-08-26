@@ -2,6 +2,7 @@
 import { useState, useEffect} from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { useAuth } from "../contexts/AuthContext";
 
 const NavbarWrapper = styled.nav`
   position: ${({ $isHomepage }) => $isHomepage ? 'fixed' : 'relative'};
@@ -133,6 +134,44 @@ const Bar = styled.div`
   }
 `;
 
+const AuthLinks = styled.div`
+  display: none;
+  
+  @media (min-width: 768px) {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    
+    a, button {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(220, 38, 38, 0.1);
+        color: #dc2626;
+      }
+    }
+  }
+`;
+
+const FavoritesLink = styled(Link)`
+  position: relative;
+  
+  &::before {
+    content: "♥";
+    margin-right: 0.5rem;
+  }
+`;
+
 const MobileMenu = styled.ul`
   position: fixed;
   top: ${({ $isOpen }) => ($isOpen ? "0" : "-100vh")};
@@ -154,12 +193,15 @@ const MobileMenu = styled.ul`
   li {
     margin-bottom: 1.5rem;
 
-    a {
+    a, button {
       color: white;
       text-decoration: none;
       font-size: 1.2rem;
       text-transform: uppercase;
       font-weight: bold;
+      background: none;
+      border: none;
+      cursor: pointer;
       
       &:hover {
         color: #dc2626;
@@ -171,6 +213,33 @@ const MobileMenu = styled.ul`
     display: none !important;
   }
 `;
+
+// Auth section component
+const AuthSection = () => {
+  const { isAuthenticated, user, logout, favorites } = useAuth();
+
+  if (isAuthenticated) {
+    return (
+      <AuthLinks>
+        <FavoritesLink to="/favorites">
+          Favorites ({favorites.length})
+        </FavoritesLink>
+        <span style={{ fontSize: '12px', opacity: 0.7 }}>
+          Hello, {user?.name}
+        </span>
+        <button onClick={logout}>
+          Logout
+        </button>
+      </AuthLinks>
+    );
+  }
+
+  return (
+    <AuthLinks>
+      <Link to="/login">Login</Link>
+    </AuthLinks>
+  );
+};
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -278,6 +347,7 @@ export const Navbar = () => {
           <Link to="/contact">Contact</Link>
         </li>
       </NavLinks>
+
 
       {/* Mobile hamburger button */}
       <BurgerToggle onClick={toggleMenu} $isOpen={isOpen}>

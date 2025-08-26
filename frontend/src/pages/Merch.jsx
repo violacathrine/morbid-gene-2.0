@@ -40,11 +40,23 @@ const FilterButton = styled.button`
 
 const PaginationContainer = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   margin-top: 2rem;
   padding: 1rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+`;
+
+const PaginationButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 const PageButton = styled.button`
@@ -71,7 +83,11 @@ const PageButton = styled.button`
 const PageInfo = styled.span`
   font-size: 0.875rem;
   color: #666;
-  margin: 0 1rem;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    margin: 0 1rem;
+  }
 `;
 
 export const Merch = () => {
@@ -81,7 +97,7 @@ export const Merch = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  const { items, total, loading, error } = useMerch({ 
+  const { items, loading, error } = useMerch({ 
     q, 
     limit: 100, // Get more items to paginate client-side
     offset: 0 
@@ -259,33 +275,37 @@ export const Merch = () => {
           {/* Pagination */}
           {totalPages > 1 && (
             <PaginationContainer>
-              <PageButton 
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </PageButton>
-              
-              {getPageNumbers().map((page, index) => (
-                page === '...' ? (
-                  <span key={`ellipsis-${index}`} style={{ margin: '0 0.5rem' }}>...</span>
-                ) : (
-                  <PageButton
-                    key={page}
-                    $active={page === currentPage}
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </PageButton>
-                )
-              ))}
-              
-              <PageButton
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </PageButton>
+              <PaginationButtons>
+                <PageButton 
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  aria-label="Previous page"
+                >
+                  ←
+                </PageButton>
+                
+                {getPageNumbers().map((page, index) => (
+                  page === '...' ? (
+                    <span key={`ellipsis-${index}`} style={{ margin: '0 0.5rem' }}>...</span>
+                  ) : (
+                    <PageButton
+                      key={page}
+                      $active={page === currentPage}
+                      onClick={() => handlePageChange(page)}
+                    >
+                      {page}
+                    </PageButton>
+                  )
+                ))}
+                
+                <PageButton
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  aria-label="Next page"
+                >
+                  →
+                </PageButton>
+              </PaginationButtons>
               
               <PageInfo>
                 Page {currentPage} of {totalPages}

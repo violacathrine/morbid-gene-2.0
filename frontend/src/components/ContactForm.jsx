@@ -232,9 +232,9 @@ const RequiredStar = styled.span`
 `;
 
 const SuccessMessage = styled.div`
-  background: #065f46;
-  border: 1px solid #10b981;
-  color: #d1fae5;
+  background: #1a1a1a;
+  border: 1px solid #dc2626;
+  color: #ffffff;
   padding: 1rem;
   border-radius: 4px;
   text-align: center;

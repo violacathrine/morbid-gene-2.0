@@ -178,24 +178,25 @@ export const PopupButtons = styled.div`
 
 export const PopupButton = styled.button`
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
   border: none;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s;
 `;
 
 export const ContinueButton = styled(PopupButton)`
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: #ffffff;
+  color: #000000;
 
   &:hover {
-    background-color: #e5e7eb;
+    background-color: #dc2626;
+    color: #ffffff;
   }
 `;
 
 export const CartButton = styled(PopupButton)`
   background-color: #dc2626;
-  color: white;
+  color: #ffffff;
 
   &:hover {
     background-color: #b91c1c;

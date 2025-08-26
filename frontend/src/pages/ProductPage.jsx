@@ -7,6 +7,8 @@ import { formatPrice } from "../utils/formatPrice";
 import { CartContext } from "../contexts/CartContext";
 import { ProductImageGallery } from "../components/ProductImageGallery";
 import ScrollToTop from "../components/ScrollToTop";
+import FavoriteButton from "../components/FavoriteButton";
+import { translateSize, translateColor, translateProductType } from "../utils/translations";
 
 // Styled Components
 const Container = styled.div`
@@ -328,7 +330,12 @@ export const ProductPage = () => {
 
       {/* Product details */}
       <DetailsSection>
-        <Title>{productType?.name || product.productTypeName || product.name}</Title>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+          <Title style={{ margin: 0, flex: 1 }}>
+            {translateProductType(productType?.name || product.productTypeName || product.name)}
+          </Title>
+          <FavoriteButton product={product} size={24} showTooltip={true} />
+        </div>
 
         {product.description && product.description !== (product.description || product.name) && (
           <Description>{product.description}</Description>
@@ -354,7 +361,7 @@ export const ProductPage = () => {
                 ?.filter((color) => product.appearanceIds?.includes(color.id))
                 ?.map((color) => (
                   <option key={color.id} value={color.id}>
-                    {color.name.charAt(0).toUpperCase() + color.name.slice(1)}
+                    {translateColor(color.name)}
                   </option>
                 ))}
             </Select>
@@ -371,7 +378,7 @@ export const ProductPage = () => {
                   value={size.id}
                   disabled={!size.available}
                 >
-                  {size.name} {!size.available && "(Out of stock)"}
+                  {translateSize(size.name)} {!size.available && "(Out of stock)"}
                 </option>
               ))}
             </Select>

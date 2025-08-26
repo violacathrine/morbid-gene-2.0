@@ -33,7 +33,7 @@ const CartList = styled.div`
 const OrderSummarySection = styled.div`
   background: #1f2937;
   border: 1px solid #374151;
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 2rem;
   margin-bottom: 2rem;
 `;
@@ -76,31 +76,60 @@ const SummaryValue = styled.span`
 
 // Checkout info sektion
 const CheckoutInfoSection = styled.div`
-  background: #065f46;
-  border: 1px solid #10b981;
-  border-radius: 8px;
+  background: #1a1a1a;
+  border: 1px solid #dc2626;
+  border-radius: 4px;
   padding: 1.5rem;
   margin-bottom: 2rem;
 `;
 
 const InfoTitle = styled.h3`
-  color: #d1fae5;
+  color: #ffffff;
   margin: 0 0 0.75rem 0;
   font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 `;
 
 const InfoText = styled.p`
-  color: #a7f3d0;
+  color: #cccccc;
   margin: 0;
   font-size: 0.9rem;
   line-height: 1.5;
 `;
 
 const InfoList = styled.ul`
-  color: #a7f3d0;
+  color: #cccccc;
   margin: 0.5rem 0 0 1rem;
   font-size: 0.9rem;
   line-height: 1.4;
+`;
+
+const LegalLinksSection = styled.div`
+  text-align: center;
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+  border-top: 1px solid #374151;
+  border-bottom: 1px solid #374151;
+`;
+
+const LegalText = styled.p`
+  color: #9ca3af;
+  font-size: 0.85rem;
+  margin: 0;
+`;
+
+const LegalLink = styled(Link)`
+  color: #ffffff;
+  text-decoration: none;
+  margin: 0 0.5rem;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #dc2626;
+    text-decoration: underline;
+  }
 `;
 
 // Footer med knappar
@@ -116,7 +145,6 @@ const Button = styled.button.withConfig({
   shouldForwardProp: (prop) => !["variant"].includes(prop),
 })`
   padding: 0.75rem 1.5rem;
-  border-radius: 6px;
   border: none;
   font-weight: bold;
   cursor: pointer;
@@ -126,13 +154,15 @@ const Button = styled.button.withConfig({
   ${(props) =>
     props.variant === "primary" &&
     `
-    background-color: #10b981;
-    color: white;
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
+    background-color: #dc2626;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.2s;
 
     &:hover {
-      background-color: #059669;
+      background-color: #b91c1c;
     }
 
     &:disabled {
@@ -182,12 +212,21 @@ const EmptyTitle = styled.h1`
 `;
 
 const EmptyLink = styled(Link)`
-  color: #10b981;
   text-decoration: none;
   font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background-color 0.2s;
 
   &:hover {
-    text-decoration: underline;
+    background-color: #dc2626;
+    color: #ffffff;
+    text-decoration: none;
   }
 `;
 
@@ -292,11 +331,25 @@ export const Cart = () => {
         </InfoText>
         <InfoList>
           <li>Enter delivery address</li>
-          <li>Choose payment method (card, PayPal, Klarna etc.)</li>
+          <li>Choose payment method (card, PayPal etc.)</li>
+          <li>See exact delivery time estimates (typically ~7 days)</li>
           <li>Review and complete your order</li>
           <li>Receive order confirmation via email</li>
         </InfoList>
+        <InfoText style={{ marginTop: '1rem', fontSize: '0.85rem', fontStyle: 'italic' }}>
+          <strong>Delivery:</strong> Spreadshirt typically delivers within 7 days. The exact estimated delivery date will be shown during checkout based on your location and chosen shipping method.
+        </InfoText>
       </CheckoutInfoSection>
+
+      {/* Legal links */}
+      <LegalLinksSection>
+        <LegalText>
+          By proceeding to checkout, you agree to our
+          <LegalLink to="/terms">Terms of Use</LegalLink>
+          and
+          <LegalLink to="/privacy">Privacy Policy</LegalLink>
+        </LegalText>
+      </LegalLinksSection>
 
       {/* Footer med knappar */}
       <Footer>

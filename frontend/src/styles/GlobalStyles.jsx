@@ -18,7 +18,7 @@ export const GlobalStyles = createGlobalStyle`
     color: #f5f5f5;
     line-height: 1.5;
     overflow-x: hidden;
-    background-color: #0d0d0d;
+    background-color: #1a1a1a;
   }
 
   a {

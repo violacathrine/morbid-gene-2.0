@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { formatPrice } from "../utils/formatPrice";
+import { translateSize, translateColor, translateProductType } from "../utils/translations";
 
 const CartItemContainer = styled.div`
   display: flex;
@@ -198,16 +199,12 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
 
       <ProductDetails>
         <ProductInfo>
-          <ProductName>{item.name}</ProductName>
+          <ProductName>{translateProductType(item.name)}</ProductName>
           <ProductInfoDetails>
-            <InfoSpan>Size: {item.size}</InfoSpan>
+            <InfoSpan>Size: {translateSize(item.size)}</InfoSpan>
             {item.color && (
               <InfoSpan>
-                Color:{" "}
-                {item.color
-                  .split(" ")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}
+                Color: {translateColor(item.color)}
               </InfoSpan>
             )}
             <InfoSpan className="price">

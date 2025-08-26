@@ -17,7 +17,7 @@ export function useMerch({ q, limit, offset }) {
 
     fetch(`/api/merch?${params.toString()}`)
       .then((res) => {
-        if (!res.ok) throw new Error("Något gick fel vid hämtning");
+        if (!res.ok) throw new Error("Something went wrong while fetching products");
         return res.json();
       })
       .then((data) => {
