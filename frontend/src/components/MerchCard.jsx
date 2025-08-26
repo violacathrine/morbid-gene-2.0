@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import { formatPrice } from "../utils/formatPrice.js";
 
 const MerchCard = ({ item }) => {
-  const name = item.name;
+  console.log("MerchCard item FULL:", JSON.stringify(item, null, 2)); // More detailed debug log
+  
+  // Use the enriched productTypeName from backend
+  const name = item.productTypeName || item.productType?.name || item.name || "Unknown Product";
   const imageUrl = item.previewImage?.url;
   const priceAmount = item.price?.amount;
   const currencyId = item.price?.currencyId;

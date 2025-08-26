@@ -2,6 +2,7 @@
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import ScrollToTop from "../components/ScrollToTop";
 
 // Glob-import
 const galleries = {
@@ -116,6 +117,7 @@ export const GalleryPage = () => {
           <img key={i} src={img.src} alt={`${gallery.title} image ${i + 1}`} />
         ))}
       </ImageGrid>
+      <ScrollToTop />
     </Wrapper>
   );
 };

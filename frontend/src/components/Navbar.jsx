@@ -13,7 +13,7 @@ const NavbarWrapper = styled.nav`
   justify-content: ${({ $hasPageTitle }) => $hasPageTitle ? 'space-between' : 'flex-end'};
   align-items: center;
   z-index: 999;
-  background: transparent;
+  background: ${({ $isHomepage }) => $isHomepage ? 'transparent' : 'black'};
   box-sizing: border-box;
   min-height: 72px;
   
@@ -36,7 +36,6 @@ const PageTitle = styled.h1`
   text-transform: uppercase;
   letter-spacing: 1px;
   margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   
   @media (min-width: 480px) {
     font-size: 1.4rem;

@@ -1,6 +1,7 @@
 // src/pages/Media.jsx
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import ScrollToTop from "../components/ScrollToTop";
 
 // Import glob-bilder
 const fryshusetImages = import.meta.glob(
@@ -108,6 +109,7 @@ export const Media = () => {
           </Card>
         ))}
       </Grid>
+      <ScrollToTop />
     </Wrapper>
   );
 };

@@ -37,7 +37,7 @@ const getHeaders = () => {
   };
 };
 
-// Get all products
+// Get all products with enriched productType names
 export const getAllProducts = async (limit = 24, offset = 0) => {
   const { shopId } = getConfig();
   const url = `${apiDomain}/api/v1/shops/${shopId}/sellables?limit=${limit}&offset=${offset}&fullData=true`;
@@ -47,7 +47,29 @@ export const getAllProducts = async (limit = 24, offset = 0) => {
       headers: getHeaders(),
     });
 
-    return response.data;
+    const sellablesData = response.data;
+    
+    // Enrich each sellable with productType name
+    if (sellablesData.sellables && sellablesData.sellables.length > 0) {
+      const enrichedSellables = await Promise.all(
+        sellablesData.sellables.map(async (sellable) => {
+          try {
+            if (sellable.productTypeId) {
+              const productTypeInfo = await getProductTypeInfo(sellable.productTypeId);
+              sellable.productTypeName = productTypeInfo.name;
+            }
+            return sellable;
+          } catch (error) {
+            console.error(`Failed to get productType for ${sellable.sellableId}:`, error.message);
+            return sellable; // Return original if productType fetch fails
+          }
+        })
+      );
+      
+      sellablesData.sellables = enrichedSellables;
+    }
+
+    return sellablesData;
   } catch (error) {
     console.error(
       "Could not fetch merch:",
@@ -94,10 +116,11 @@ export const getProductTypeInfo = async (productTypeId) => {
       headers: getHeaders(),
     });
 
-    // Extract only the fields we need
-    const { appearances, sizes, defaultValues, stockStates } = response.data;
+    // Extract only the fields we need, including name for product type
+    const { name, appearances, sizes, defaultValues, stockStates } = response.data;
 
     return {
+      name,
       appearances,
       sizes,
       defaultValues,

@@ -5,15 +5,28 @@ import { useProduct } from "../hooks/useProduct";
 import { useProductImages } from "../hooks/useProductImages";
 import { formatPrice } from "../utils/formatPrice";
 import { CartContext } from "../contexts/CartContext";
+import { ProductImageGallery } from "../components/ProductImageGallery";
+import ScrollToTop from "../components/ScrollToTop";
 
 // Styled Components
 const Container = styled.div`
-  padding: 5rem;
-  max-width: 1200px;
+  padding: 1rem;
+  max-width: 700px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 2rem;
+    max-width: 800px;
+    gap: 1.5rem;
+  }
+  
+  @media (min-width: 1024px) {
+    max-width: 850px;
+    padding: 2rem;
+  }
 `;
 
 const ImageSection = styled.div``;
@@ -304,18 +317,20 @@ export const ProductPage = () => {
 
   return (
     <Container>
-      {/* Product image */}
+      {/* Product image gallery */}
       <ImageSection>
-        {product.previewImage?.url && (
-          <ProductImage src={getCurrentImage()} alt={product.name} />
-        )}
+        <ProductImageGallery
+          images={images}
+          productName={product.name}
+          fallbackImage={product.previewImage?.url}
+        />
       </ImageSection>
 
       {/* Product details */}
       <DetailsSection>
-        <Title>{product.name}</Title>
+        <Title>{productType?.name || product.productTypeName || product.name}</Title>
 
-        {product.description && (
+        {product.description && product.description !== (product.description || product.name) && (
           <Description>{product.description}</Description>
         )}
 
@@ -441,6 +456,7 @@ export const ProductPage = () => {
           </PopupBox>
         </PopupOverlay>
       )}
+      <ScrollToTop />
     </Container>
   );
 };

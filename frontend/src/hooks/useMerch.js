@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function useMerch({ q, limit }) {
+export function useMerch({ q, limit, offset }) {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -12,6 +12,7 @@ export function useMerch({ q, limit }) {
 
     const params = new URLSearchParams();
     if (limit) params.append("limit", limit);
+    if (offset) params.append("offset", offset);
     if (q) params.append("q", q);
 
     fetch(`/api/merch?${params.toString()}`)
@@ -25,7 +26,7 @@ export function useMerch({ q, limit }) {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [q, limit]);
+  }, [q, limit, offset]);
 
   return { items, total, loading, error };
 }

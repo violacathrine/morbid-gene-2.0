@@ -7,9 +7,31 @@ export const getAllProducts = async (req, res) => {
   try {
     const limit = req.query.limit || 24;
     const offset = 0;
+    const searchQuery = req.query.q || '';
 
     const products = await spreadshirtService.getAllProducts(limit, offset);
-    res.json(products);
+    
+    // Filter products based on search query
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      const filteredSellables = products.sellables.filter(item => {
+        const name = (item.name || '').toLowerCase();
+        const productTypeName = (item.productTypeName || '').toLowerCase();
+        const tags = (item.tags || []).join(' ').toLowerCase();
+        
+        return name.includes(searchLower) || 
+               productTypeName.includes(searchLower) ||
+               tags.includes(searchLower);
+      });
+      
+      res.json({
+        ...products,
+        sellables: filteredSellables,
+        count: filteredSellables.length
+      });
+    } else {
+      res.json(products);
+    }
   } catch (error) {
     console.error("Error in getAllProducts:", error);
     res.status(error.response?.status || 500).json({
