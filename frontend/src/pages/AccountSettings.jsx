@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
   padding: 1rem;
   max-width: 1600px;
   margin: 0 auto;
@@ -68,9 +67,8 @@ const Header = styled.div`
 
 const SettingsSection = styled.div`
   background: #1a1a1a;
-  border: 2px solid #333;
-  border-radius: 8px;
-  padding: 2rem;
+  border: 1px solid #333;
+  padding: 1.5rem;
   margin-bottom: 2rem;
   
   h2 {
@@ -93,6 +91,41 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+`;
+
+const InfoGrid = styled.div`
+  display: grid;
+  gap: 1rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+`;
+
+const InfoItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const InfoLabel = styled.span`
+  color: #999999;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+`;
+
+const InfoValue = styled.span`
+  color: #ffffff;
+  font-size: 1rem;
+  word-break: break-all;
+  
+  &.password {
+    font-family: monospace;
+    letter-spacing: 2px;
+  }
 `;
 
 const FormGroup = styled.div`
@@ -130,6 +163,11 @@ const Input = styled.input`
   
   &::placeholder {
     color: #666666;
+    font-size: 0.875rem;
+    
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
   }
   
   @media (min-width: 480px) {
@@ -152,11 +190,11 @@ const SaveButton = styled.button`
   background-color: #dc2626;
   color: #ffffff;
   border: none;
-  padding: 1rem 2rem;
-  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   cursor: pointer;
   transition: background-color 0.2s;
   
@@ -170,16 +208,15 @@ const SaveButton = styled.button`
   }
   
   @media (min-width: 480px) {
-    padding: 1.1rem 2.2rem;
-    font-size: 1.1rem;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
   }
 `;
 
 const DangerZone = styled.div`
-  border: 2px solid #dc2626;
-  border-radius: 8px;
-  padding: 2rem;
-  background: rgba(220, 38, 38, 0.05);
+  border: 1px solid #dc2626;
+  padding: 1.5rem;
+  background: rgba(220, 38, 38, 0.03);
   
   h2 {
     color: #dc2626;
@@ -202,11 +239,11 @@ const DangerButton = styled.button`
   background-color: #dc2626;
   color: #ffffff;
   border: none;
-  padding: 1rem 2rem;
-  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   cursor: pointer;
   transition: background-color 0.2s;
   
@@ -215,8 +252,8 @@ const DangerButton = styled.button`
   }
   
   @media (min-width: 480px) {
-    padding: 1.1rem 2.2rem;
-    font-size: 1.1rem;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
   }
 `;
 
@@ -255,9 +292,8 @@ const ConfirmationOverlay = styled.div`
 
 const ConfirmationDialog = styled.div`
   background: #1a1a1a;
-  border: 2px solid #333;
-  border-radius: 8px;
-  padding: 2rem;
+  border: 1px solid #333;
+  padding: 1.5rem;
   max-width: 400px;
   text-align: center;
   
@@ -284,9 +320,10 @@ const ConfirmButton = styled.button`
   background-color: #dc2626;
   color: #ffffff;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1rem;
   cursor: pointer;
   font-weight: bold;
+  font-size: 0.9rem;
   transition: background-color 0.2s;
   
   &:hover {
@@ -298,9 +335,10 @@ const CancelButton = styled.button`
   background-color: #333333;
   color: #ffffff;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1rem;
   cursor: pointer;
   font-weight: bold;
+  font-size: 0.9rem;
   transition: background-color 0.2s;
   
   &:hover {
@@ -415,6 +453,30 @@ export const AccountSettings = () => {
           <h1>Account Settings</h1>
           <p>Manage your account preferences and security</p>
         </Header>
+
+        <SettingsSection>
+          <h2>Account Information</h2>
+          <InfoGrid>
+            <InfoItem>
+              <InfoLabel>Name</InfoLabel>
+              <InfoValue>{user?.name || 'Not set'}</InfoValue>
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>Email</InfoLabel>
+              <InfoValue>{user?.email || 'Not set'}</InfoValue>
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>Password</InfoLabel>
+              <InfoValue className="password">Protected</InfoValue>
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>Account Created</InfoLabel>
+              <InfoValue>
+                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+              </InfoValue>
+            </InfoItem>
+          </InfoGrid>
+        </SettingsSection>
 
         <SettingsSection>
           <h2>Change Password</h2>

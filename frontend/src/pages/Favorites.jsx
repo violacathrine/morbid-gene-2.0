@@ -10,7 +10,6 @@ const Container = styled.div`
   max-width: 1280px;
   margin: 0 auto;
   min-height: 100vh;
-  background: #1a1a1a;
 `;
 
 const Header = styled.div`

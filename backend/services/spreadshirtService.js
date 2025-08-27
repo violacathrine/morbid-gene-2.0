@@ -116,8 +116,22 @@ export const getProductTypeInfo = async (productTypeId) => {
       headers: getHeaders(),
     });
 
-    // Extract only the fields we need, including name for product type
-    const { name, appearances, sizes, defaultValues, stockStates } = response.data;
+    // Extract comprehensive product information
+    const { 
+      name, 
+      appearances, 
+      sizes, 
+      defaultValues, 
+      stockStates,
+      description,
+      shortDescription,
+      category,
+      brand,
+      weight,
+      material,
+      careInstructions,
+      features
+    } = response.data;
 
     return {
       name,
@@ -125,6 +139,14 @@ export const getProductTypeInfo = async (productTypeId) => {
       sizes,
       defaultValues,
       stockStates,
+      description,
+      shortDescription,
+      category,
+      brand,
+      weight,
+      material,
+      careInstructions,
+      features
     };
   } catch (error) {
     console.error(

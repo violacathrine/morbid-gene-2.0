@@ -5,7 +5,6 @@ import { useAuth } from '../contexts/AuthContext';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
   padding: 1rem;
   max-width: 1600px;
   margin: 0 auto;

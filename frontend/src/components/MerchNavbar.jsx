@@ -10,20 +10,32 @@ import logoUrl from "../assets/logo.svg";
 // NAVBAR med grid
 const MerchNavWrapper = styled.nav`
   background: #000;
-  padding: 1.5rem 2rem;
-  position: sticky;
-  top: 0;
+  padding: 1.5rem 1rem;
+  position: static; /* Changed from sticky to prevent overlap */
   z-index: 200;
 
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center; /* default: mitten för alla */
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 1.5rem 2rem;
+    grid-template-columns: auto 1fr auto;
+    gap: 2rem;
+  }
 `;
 
-// Vänster: logga
+// Logo section
 const LeftSection = styled.div`
-  justify-self: start;
-  align-self: start; /* <-- viktigt (Grid) */
+  display: flex;
+  justify-content: center;
+  grid-column: 1 / -1; /* Take full width on mobile */
+  
+  @media (min-width: 768px) {
+    justify-content: flex-start;
+    grid-column: 1;
+  }
 `;
 
 const LogoLink = styled(Link)`
@@ -36,14 +48,27 @@ const LogoImg = styled.img`
   height: 100px; /* anpassa storlek */
   width: auto;
   display: block;
+  margin-top: 1rem;
+  
+  @media (min-width: 768px) {
+    margin-top: 0;
+  }
 `;
 
-// Mitten: Shop-titel
+// Shop-titel section  
 const CenterSection = styled.div`
-  justify-self: center;
-  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   color: #fff;
+  grid-column: 1 / -1; /* Take full width on mobile */
+  
+  @media (min-width: 768px) {
+    grid-column: 2;
+    align-items: center;
+  }
 `;
 
 const ShopTitle = styled(Link)`
@@ -60,12 +85,12 @@ const ShopTitle = styled(Link)`
 `;
 
 const ShopSubtitle = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   opacity: 0.8;
-  margin-top: 2px;
+  margin-top: 4px;
 
-  @media (max-width: 640px) {
-    display: none;
+  @media (min-width: 480px) {
+    font-size: 16px;
   }
 `;
 
@@ -372,33 +397,14 @@ export const MerchNavbar = () => {
         </LogoLink>
       </LeftSection>
 
-      {/* Mitten: Shop-titel */}
+      {/* Mitten: Shop-titel (nu perfekt centrerad) */}
       <CenterSection>
         <ShopTitle to="/merch">THE OFFICIAL MORBID GENE SHOP</ShopTitle>
         <ShopSubtitle>Powered by Spreadshirt</ShopSubtitle>
       </CenterSection>
 
-      {/* Höger: auth + varukorg */}
-      <RightSection>
-        {isAuthenticated ? (
-          <AuthenticatedSection>
-            <UserSection>
-              <UserInfo>Hello, {user?.name}</UserInfo>
-              <span style={{ color: 'white', fontSize: '12px' }}>|</span>
-              <SettingsLink to="/settings" aria-label="Account settings">
-                <SettingsIcon />
-              </SettingsLink>
-              <span style={{ color: 'white', fontSize: '12px' }}>|</span>
-              <AuthButton onClick={handleLogoutClick} style={{ fontSize: '12px', padding: '2px 8px', height: 'auto', textTransform: 'none', fontWeight: 'normal' }}>
-                Logout
-              </AuthButton>
-            </UserSection>
-          </AuthenticatedSection>
-        ) : (
-          <div></div>
-        )}
-        <MobileMenuButton aria-label="Open menu">☰</MobileMenuButton>
-      </RightSection>
+      {/* Höger: tom för att hålla grid-layout */}
+      <div></div>
 
       {/* Logout Confirmation Dialog */}
       {showLogoutConfirm && (

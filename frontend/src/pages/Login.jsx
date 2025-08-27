@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Container = styled.div`
   min-height: auto;
-  background: #1a1a1a;
   padding: 1rem;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
@@ -29,54 +29,68 @@ const Container = styled.div`
 `;
 
 const LoginBox = styled.div`
-  max-width: 450px;
+  max-width: 600px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 2rem;
   
   @media (min-width: 480px) {
-    padding: 1.75rem;
+    padding: 2.5rem;
   }
   
   @media (min-width: 768px) {
+    padding: 3rem;
+  }
+`;
+
+const Header = styled.div`
+  text-align: center;
+  margin-bottom: 3rem;
+  
+  h1 {
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+    
+    @media (min-width: 480px) {
+      font-size: 2.5rem;
+    }
+  }
+  
+  p {
+    color: #cccccc;
+    font-style: italic;
+    font-size: 1rem;
+    font-weight: 300;
+    
+    @media (min-width: 480px) {
+      font-size: 1.1rem;
+    }
+  }
+`;
+
+const FormSection = styled.div`
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  
+  @media (min-width: 480px) {
     padding: 2rem;
   }
 `;
 
-const Title = styled.h1`
-  color: #ffffff;
-  font-size: 1.6rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-bottom: 0.5rem;
-  text-align: center;
-  
-  @media (min-width: 480px) {
-    font-size: 1.8rem;
-  }
-`;
-
-const Subtitle = styled.p`
-  color: #cccccc;
-  font-style: italic;
-  text-align: center;
-  margin-bottom: 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 300;
-  
-  @media (min-width: 480px) {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-  }
-`;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  align-items: center;
+  gap: 1rem;
   
   @media (min-width: 480px) {
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 `;
 
@@ -85,12 +99,14 @@ const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
 `;
 
 const InputRow = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  width: 100%;
   
   @media (min-width: 768px) {
     flex-direction: row;
@@ -105,13 +121,12 @@ const InputRow = styled.div`
 const Label = styled.label`
   color: #ffffff;
   font-weight: bold;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   
   @media (min-width: 480px) {
-    font-size: 1rem;
-    letter-spacing: 1px;
+    font-size: 0.9rem;
   }
 `;
 
@@ -133,6 +148,11 @@ const Input = styled.input`
 
   &::placeholder {
     color: #666666;
+    font-size: 0.875rem;
+    
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
   }
 
   &:focus {
@@ -155,15 +175,12 @@ const PasswordToggleButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  color: #cccccc;
-  font-size: 1.2rem;
+  color: ${props => props.$isShowing ? '#dc2626' : '#666666'};
+  font-size: 1.1rem;
   padding: 0;
   display: flex;
   align-items: center;
-  
-  &:hover {
-    color: #ffffff;
-  }
+  transition: color 0.2s;
   
   @media (min-width: 480px) {
     right: 0.85rem;
@@ -174,15 +191,15 @@ const Button = styled.button`
   background-color: #dc2626;
   color: #ffffff;
   border: none;
-  padding: 0.875rem 1.75rem;
-  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   cursor: pointer;
   transition: background-color 0.2s;
-  width: 100%;
-  margin-top: 0.25rem;
+  width: auto;
+  margin: 0;
 
   &:hover:not(:disabled) {
     background-color: #b91c1c;
@@ -194,15 +211,8 @@ const Button = styled.button`
   }
   
   @media (min-width: 480px) {
-    padding: 1rem 2rem;
-    font-size: 1.05rem;
-    margin-top: 0.5rem;
-  }
-  
-  @media (min-width: 768px) {
-    width: auto;
-    align-self: flex-start;
-    font-size: 1.1rem;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
   }
 `;
 
@@ -233,7 +243,7 @@ const FieldError = styled.div`
 const LinkText = styled.p`
   text-align: center;
   color: #cccccc;
-  margin-top: 1.5rem;
+  margin: 0;
   font-size: 0.9rem;
   
   a {
@@ -280,16 +290,16 @@ const BackLink = styled(Link)`
 const ToggleSection = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin: 0;
   gap: 0;
 `;
 
 const ToggleButton = styled.button`
   background-color: ${(props) => (props.$active ? "#dc2626" : "#333333")};
   color: ${(props) => (props.$active ? "#ffffff" : "#cccccc")};
-  border: 2px solid ${(props) => (props.$active ? "#dc2626" : "#555555")};
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
+  border: 1px solid ${(props) => (props.$active ? "#dc2626" : "#555555")};
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -399,29 +409,34 @@ export const Login = () => {
       <BackLink to="/merch">Back to shop</BackLink>
       
       <LoginBox>
-        <Title>{isLogin ? 'Login' : 'Register'}</Title>
-        <Subtitle>{isLogin ? 'Welcome back to Morbid Gene' : 'Join the Morbid Gene family'}</Subtitle>
+        <Header>
+          <h1>{isLogin ? 'Login' : 'Register'}</h1>
+          <p>{isLogin ? 'Welcome back to Morbid Gene' : 'Join the Morbid Gene family'}</p>
+        </Header>
         
-        <ToggleSection>
-          <ToggleButton 
-            type="button"
-            $active={isLogin} 
-            onClick={() => !isLogin && toggleMode()}
-          >
-            Login
-          </ToggleButton>
-          <ToggleButton 
-            type="button"
-            $active={!isLogin} 
-            onClick={() => isLogin && toggleMode()}
-          >
-            Register
-          </ToggleButton>
-        </ToggleSection>
+        <FormSection>
+          <ToggleSection>
+            <ToggleButton 
+              type="button"
+              $active={isLogin} 
+              onClick={() => !isLogin && toggleMode()}
+            >
+              Login
+            </ToggleButton>
+            <ToggleButton 
+              type="button"
+              $active={!isLogin} 
+              onClick={() => isLogin && toggleMode()}
+            >
+              Register
+            </ToggleButton>
+          </ToggleSection>
+        </FormSection>
         
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        
-        <Form onSubmit={handleSubmit}>
+        <FormSection>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          
+          <Form onSubmit={handleSubmit}>
           {!isLogin ? (
             <>
               <InputRow>
@@ -479,8 +494,9 @@ export const Login = () => {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? "Hide password" : "Show password"}
+                      $isShowing={showPassword}
                     >
-                      {showPassword ? "🙈" : "👁️"}
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </PasswordToggleButton>
                   </InputField>
                   {fieldErrors.password && <FieldError>{fieldErrors.password}</FieldError>}
@@ -504,8 +520,9 @@ export const Login = () => {
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      $isShowing={showConfirmPassword}
                     >
-                      {showConfirmPassword ? "🙈" : "👁️"}
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                     </PasswordToggleButton>
                   </InputField>
                   {fieldErrors.confirmPassword && <FieldError>{fieldErrors.confirmPassword}</FieldError>}
@@ -549,8 +566,9 @@ export const Login = () => {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Hide password" : "Show password"}
+                    $isShowing={showPassword}
                   >
-                    {showPassword ? "🙈" : "👁️"}
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </PasswordToggleButton>
                 </InputField>
                 {fieldErrors.password && <FieldError>{fieldErrors.password}</FieldError>}
@@ -558,10 +576,11 @@ export const Login = () => {
             </>
           )}
           
-          <Button type="submit" disabled={loading}>
-            {loading ? (isLogin ? 'Logging in...' : 'Creating account...') : (isLogin ? 'Login' : 'Create Account')}
-          </Button>
-        </Form>
+            <Button type="submit" disabled={loading}>
+              {loading ? (isLogin ? 'Logging in...' : 'Creating account...') : (isLogin ? 'Login' : 'Create Account')}
+            </Button>
+          </Form>
+        </FormSection>
         
         <LinkText>
           <Link to="/merch">← Back to shop</Link>

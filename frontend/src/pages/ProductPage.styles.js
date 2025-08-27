@@ -185,12 +185,11 @@ export const PopupButton = styled.button`
 `;
 
 export const ContinueButton = styled(PopupButton)`
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #dc2626;
+  color: #ffffff;
 
   &:hover {
-    background-color: #dc2626;
-    color: #ffffff;
+    background-color: #b91c1c;
   }
 `;
 

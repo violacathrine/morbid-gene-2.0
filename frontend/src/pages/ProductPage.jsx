@@ -9,25 +9,26 @@ import { ProductImageGallery } from "../components/ProductImageGallery";
 import ScrollToTop from "../components/ScrollToTop";
 import FavoriteButton from "../components/FavoriteButton";
 import { translateSize, translateColor, translateProductType } from "../utils/translations";
+import { theme } from "../styles/theme";
 
 // Styled Components
 const Container = styled.div`
-  padding: 1rem;
-  max-width: 700px;
+  padding: ${theme.spacing.base};
+  max-width: 1200px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: ${theme.spacing.base};
+  background-color: ${theme.colors.pageBg};
   
-  @media (min-width: 768px) {
-    padding: 2rem;
-    max-width: 800px;
-    gap: 1.5rem;
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    padding: ${theme.spacing['2xl']};
+    gap: ${theme.spacing.xl};
   }
   
-  @media (min-width: 1024px) {
-    max-width: 850px;
-    padding: 2rem;
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    padding: ${theme.spacing['2xl']};
+    gap: ${theme.spacing['2xl']};
   }
 `;
 
@@ -37,104 +38,94 @@ const ProductImage = styled.img`
   width: 100%;
   max-width: 500px;
   height: auto;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${theme.colors.borderLight};
 `;
 
 const DetailsSection = styled.div``;
 
 const Title = styled.h1`
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: white;
+  font-size: ${theme.typography.sizes['3xl']};
+  font-weight: ${theme.typography.weights.bold};
+  margin-bottom: ${theme.spacing.base};
+  color: ${theme.colors.primaryText};
+  font-family: ${theme.typography.headingFamily};
 `;
 
 const Description = styled.p`
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
+  font-size: ${theme.typography.sizes.lg};
+  margin-bottom: ${theme.spacing.xl};
   line-height: 1.6;
-  color: #ccc;
+  color: ${theme.colors.secondaryText};
 `;
 
 const Price = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  color: #4ade80;
+  font-size: ${theme.typography.sizes['2xl']};
+  font-weight: ${theme.typography.weights.bold};
+  margin-bottom: ${theme.spacing.xl};
+  color: ${theme.colors.red};
 `;
 
 const SelectionContainer = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: ${theme.spacing.xl};
   display: flex;
-  gap: 1rem;
+  gap: ${theme.spacing.base};
 `;
 
 const Select = styled.select`
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #374151;
-  background-color: #1f2937;
-  color: white;
-  font-size: 1rem;
+  padding: ${theme.spacing.sm};
+  border: 1px solid ${theme.colors.borderLight};
+  background-color: ${theme.colors.sectionBg};
+  color: ${theme.colors.primaryText};
+  font-size: ${theme.typography.sizes.base};
 
   option:disabled {
-    color: #666;
+    color: ${theme.colors.mutedText};
   }
 `;
 
-const TagsSection = styled.div`
-  margin-bottom: 2rem;
-`;
-
-const TagsTitle = styled.h3`
-  color: white;
-  margin-bottom: 0.5rem;
-`;
-
-const TagsContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-`;
-
-const Tag = styled.span`
-  background-color: #374151;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-`;
 
 const AddToCartButton = styled.button`
-  background-color: ${(props) => (!props.$enabled ? "#6b7280" : "#dc2626")};
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
+  background-color: ${(props) => (!props.$enabled ? theme.colors.buttonDisabled : theme.colors.buttonPrimary)};
+  color: ${theme.colors.primaryText};
+  padding: ${theme.spacing.base} ${theme.spacing['2xl']};
   border: none;
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: ${theme.typography.sizes.lg};
+  font-weight: ${theme.typography.weights.bold};
+  text-transform: uppercase;
+  letter-spacing: ${theme.typography.letterSpacing.uppercase};
   cursor: ${(props) => (!props.$enabled ? "not-allowed" : "pointer")};
-  transition: background-color 0.2s;
+  transition: background-color ${theme.transitions.normal};
   opacity: ${(props) => (!props.$enabled ? 0.6 : 1)};
 
   &:hover {
-    background-color: ${(props) => (props.$enabled ? "#b91c1c" : "#6b7280")};
+    background-color: ${(props) => (props.$enabled ? theme.colors.buttonPrimaryHover : theme.colors.buttonDisabled)};
   }
 `;
 
-const DebugInfo = styled.div`
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: #1f2937;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  color: #9ca3af;
+const ProductInfo = styled.div`
+  margin-top: ${theme.spacing['2xl']};
+  padding: ${theme.spacing.xl};
+  background-color: ${theme.colors.sectionBg};
+  border: 1px solid ${theme.colors.borderLight};
+  font-size: ${theme.typography.sizes.sm};
+  color: ${theme.colors.secondaryText};
+  line-height: 1.5;
+  
+  strong {
+    color: ${theme.colors.primaryText};
+    font-weight: ${theme.typography.weights.bold};
+  }
+  
+  > strong:first-child {
+    font-size: ${theme.typography.sizes.base};
+    color: ${theme.colors.primaryText};
+  }
 `;
 
 const LoadingError = styled.div`
-  padding: 2rem;
-  color: white;
+  padding: ${theme.spacing['2xl']};
+  color: ${theme.colors.primaryText};
+  text-align: center;
 `;
 
 const ErrorDiv = styled(LoadingError)`
@@ -148,7 +139,7 @@ const PopupOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -156,72 +147,63 @@ const PopupOverlay = styled.div`
 `;
 
 const PopupBox = styled.div`
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: ${theme.colors.sectionBg};
+  padding: ${theme.spacing['2xl']};
+  border: 1px solid ${theme.colors.borderLight};
   max-width: 400px;
   width: 90%;
 `;
 
 const PopupMessage = styled.p`
-  color: #333;
-  margin-bottom: 1.5rem;
+  color: ${theme.colors.primaryText};
+  margin-bottom: ${theme.spacing.xl};
   text-align: center;
+  font-size: ${theme.typography.sizes.base};
 `;
 
 const PopupButtons = styled.div`
   display: flex;
-  gap: 1rem;
+  gap: ${theme.spacing.base};
   justify-content: center;
 `;
 
 const PopupButton = styled.button`
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  padding: ${theme.spacing.md} ${theme.spacing.xl};
   border: none;
-  font-weight: bold;
+  font-weight: ${theme.typography.weights.bold};
+  text-transform: uppercase;
+  letter-spacing: ${theme.typography.letterSpacing.uppercase};
   cursor: pointer;
+  transition: background-color ${theme.transitions.normal};
 `;
 
 const ContinueButton = styled(PopupButton)`
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: ${theme.colors.buttonSecondary};
+  color: ${theme.colors.primaryText};
 
   &:hover {
-    background-color: #e5e7eb;
+    background-color: ${theme.colors.buttonSecondaryHover};
   }
 `;
 
 const CartButton = styled(PopupButton)`
-  background-color: #dc2626;
-  color: white;
+  background-color: ${theme.colors.buttonPrimary};
+  color: ${theme.colors.primaryText};
 
   &:hover {
-    background-color: #b91c1c;
+    background-color: ${theme.colors.buttonPrimaryHover};
   }
 `;
 
-const QuantityContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const QuantityLabel = styled.label`
-  color: white;
-  font-weight: bold;
-`;
 
 const QuantityInput = styled.input`
-  width: 60px;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #374151;
-  background-color: #1f2937;
-  color: white;
+  width: 80px;
+  padding: ${theme.spacing.sm};
+  border: 1px solid ${theme.colors.borderLight};
+  background-color: ${theme.colors.inputBg};
+  color: ${theme.colors.primaryText};
   text-align: center;
+  font-size: ${theme.typography.sizes.base};
 `;
 
 export const ProductPage = () => {
@@ -345,7 +327,7 @@ export const ProductPage = () => {
           {formatPrice(product.price?.amount, product.price?.currencyId)}
         </Price>
 
-        {/* Color and Size Selection */}
+        {/* Color, Size, and Quantity Selection */}
         {productType && (
           <SelectionContainer>
             {/* Color dropdown */}
@@ -382,32 +364,19 @@ export const ProductPage = () => {
                 </option>
               ))}
             </Select>
+
+            {/* Quantity selector */}
+            <QuantityInput
+              id="quantity"
+              type="number"
+              min="1"
+              max="10"
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+              placeholder="Qty"
+            />
           </SelectionContainer>
         )}
-
-        {/* Tags */}
-        {product.tags && product.tags.length > 0 && (
-          <TagsSection>
-            <TagsTitle>Tags:</TagsTitle>
-            <TagsContainer>
-              {product.tags.map((tag, index) => (
-                <Tag key={index}>{tag}</Tag>
-              ))}
-            </TagsContainer>
-          </TagsSection>
-        )}
-        {/* Quantity selector */}
-        <QuantityContainer>
-          <QuantityLabel htmlFor="quantity">Quantity:</QuantityLabel>
-          <QuantityInput
-            id="quantity"
-            type="number"
-            min="1"
-            max="10"
-            value={quantity}
-            onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-          />
-        </QuantityContainer>
         {/* Add to Cart Button */}
         <AddToCartButton
           onClick={handleAddToCart}
@@ -417,22 +386,106 @@ export const ProductPage = () => {
           Add to Cart
         </AddToCartButton>
 
-        {/* Debug info */}
-        <DebugInfo>
-          <strong>Debug info:</strong>
-          <br />
-          Product ID: {productId}
-          <br />
-          Sellable ID: {product.sellableId}
-          <br />
-          Idea ID: {product.ideaId}
-          <br />
-          Product Type: {product.productTypeId}
-          <br />
-          Selected Color: {selectedColor || "None"}
-          <br />
-          Selected Size: {selectedSize || "None"}
-        </DebugInfo>
+        {/* Product Details */}
+        <ProductInfo>
+          <strong>Product Details</strong>
+          <br /><br />
+          
+          {productType?.description ? (
+            (() => {
+              const cleanDescription = productType.description.replace(/<[^>]*>/g, '');
+              
+              // Split description into sections to avoid duplicates
+              const sections = cleanDescription.split(/(?=Material:|Durable quality:|Fabric weight:|Consistency:|Size:|Fit:|Features?:)/i);
+              const specs = {};
+              let mainDesc = sections[0]?.trim() || '';
+              
+              // Process each section
+              sections.forEach(section => {
+                const trimmedSection = section.trim();
+                
+                if (trimmedSection.match(/^Material:/i)) {
+                  const content = trimmedSection.replace(/^Material:\s*/i, '').split(/(?=Durable quality:|Fabric weight:|Consistency:|Size:|Fit:|Features?:)/i)[0].trim();
+                  if (content && !specs.material) specs.material = content;
+                }
+                else if (trimmedSection.match(/^(?:Durable quality|Fabric weight):/i)) {
+                  const content = trimmedSection.replace(/^(?:Durable quality|Fabric weight):\s*/i, '').split(/(?=Material:|Consistency:|Size:|Fit:|Features?:)/i)[0].trim();
+                  if (content && !specs.weight) specs.weight = content;
+                }
+                else if (trimmedSection.match(/^Consistency:/i)) {
+                  const content = trimmedSection.replace(/^Consistency:\s*/i, '').split(/(?=Material:|Durable quality:|Fabric weight:|Size:|Fit:|Features?:)/i)[0].trim();
+                  if (content && !specs.consistency) specs.consistency = content;
+                }
+                else if (trimmedSection.match(/^(?:Size|Fit):/i)) {
+                  const content = trimmedSection.replace(/^(?:Size|Fit):\s*/i, '').split(/(?=Material:|Durable quality:|Fabric weight:|Consistency:|Features?:)/i)[0].trim();
+                  if (content && !specs.size) specs.size = content;
+                }
+                else if (trimmedSection.match(/^Features?:/i)) {
+                  const content = trimmedSection.replace(/^Features?:\s*/i, '').split(/(?=Material:|Durable quality:|Fabric weight:|Consistency:|Size:|Fit:)/i)[0].trim();
+                  if (content && !specs.features) specs.features = content;
+                }
+              });
+              
+              return (
+                <>
+                  {mainDesc && (
+                    <>
+                      <strong>Description:</strong>
+                      <br />
+                      {mainDesc}
+                      <br /><br />
+                    </>
+                  )}
+                  
+                  {specs.material && (
+                    <>
+                      <strong>Material:</strong> {specs.material}
+                      <br />
+                    </>
+                  )}
+                  
+                  {specs.weight && (
+                    <>
+                      <strong>Weight:</strong> {specs.weight}
+                      <br />
+                    </>
+                  )}
+                  
+                  {specs.consistency && (
+                    <>
+                      <strong>Consistency:</strong> {specs.consistency}
+                      <br />
+                    </>
+                  )}
+                  
+                  {specs.size && (
+                    <>
+                      <strong>Size/Fit:</strong> {specs.size}
+                      <br />
+                    </>
+                  )}
+                  
+                  {specs.features && (
+                    <>
+                      <strong>Features:</strong> {specs.features}
+                      <br />
+                    </>
+                  )}
+                  
+                  <strong>Care Instructions:</strong> Machine wash cold, tumble dry low, do not bleach
+                </>
+              );
+            })()
+          ) : (
+            <>
+              <strong>Material:</strong> Premium quality material
+              <br />
+              <strong>Weight:</strong> Standard weight
+              <br />
+              <strong>Care Instructions:</strong> Machine wash cold, tumble dry low, do not bleach
+            </>
+          )}
+        </ProductInfo>
       </DetailsSection>
       {/* Popup som visas när vara läggs till */}
       {isPopupOpen && (

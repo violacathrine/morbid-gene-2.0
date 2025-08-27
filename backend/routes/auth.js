@@ -36,7 +36,8 @@ router.post("/register", async (req, res) => {
       user: {
         id: newUser._id,
         email: newUser.email,
-        name: newUser.name
+        name: newUser.name,
+        createdAt: newUser.createdAt
       }
     });
   } catch (error) {
@@ -79,7 +80,8 @@ router.post("/login", async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
-        name: user.name
+        name: user.name,
+        createdAt: user.createdAt
       }
     });
   } catch (error) {
@@ -100,7 +102,8 @@ router.get("/me", authMiddleware, async (req, res) => {
       id: user._id,
       email: user.email,
       name: user.name,
-      favoritesCount: user.favorites.length
+      favoritesCount: user.favorites.length,
+      createdAt: user.createdAt
     });
   } catch (error) {
     console.error(error);

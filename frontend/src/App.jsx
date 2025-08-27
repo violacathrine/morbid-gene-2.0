@@ -11,6 +11,7 @@ import {
 import { Navbar } from "./components/Navbar";
 import { MerchNavbar } from "./components/MerchNavbar"; // Lägg till import
 import { Breadcrumbs } from "./components/Breadcrumbs";
+import { TopBar } from "./components/TopBar";
 import { Home } from "./pages/Home";
 import { Media } from "./pages/Media";
 import { Merch } from "./pages/Merch";
@@ -39,6 +40,9 @@ const AppContent = () => {
 
   return (
     <>
+      {/* TopBar för shopping-sidor */}
+      {isShoppingSite && <TopBar />}
+      
       {/* Visa rätt navbar beroende på var vi är */}
       {isShoppingSite ? <MerchNavbar /> : <Navbar />}
 

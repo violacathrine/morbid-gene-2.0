@@ -9,15 +9,15 @@ const FormWrapper = styled.div`
   @media (min-width: 768px) {
     max-width: 600px;
   }
-  
+
   @media (min-width: 1024px) {
     max-width: 700px;
   }
-  
+
   @media (min-width: 1200px) {
     max-width: 750px;
   }
-  
+
   @media (min-width: 1400px) {
     max-width: 800px;
   }

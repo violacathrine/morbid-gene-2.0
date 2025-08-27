@@ -5,62 +5,109 @@ import { CartItem } from "../components/CartItem";
 import { formatPrice } from "../utils/formatPrice";
 import { CartContext } from "../contexts/CartContext";
 import { getCheckoutUrl } from "../api/basketApi"; // ÄNDRAT: Importera den nya funktionen
+import ScrollToTop from "../components/ScrollToTop";
 
 const Container = styled.div`
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
+  
+  @media (min-width: 480px) {
+    padding: 1.5rem;
+  }
+  
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
 `;
 
 const Header = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  
+  @media (min-width: 768px) {
+    margin-bottom: 2rem;
+  }
 `;
 
 const Title = styled.h1`
   color: white;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  
+  @media (min-width: 480px) {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const CartList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  
+  @media (min-width: 768px) {
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
 `;
 
 // Ordersammanfattning sektion
 const OrderSummarySection = styled.div`
   background: #1f2937;
   border: 1px solid #374151;
-  border-radius: 4px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  
+  @media (min-width: 480px) {
+    padding: 1.5rem;
+  }
+  
+  @media (min-width: 768px) {
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
 `;
 
 const SummaryTitle = styled.h2`
   color: white;
-  font-size: 1.3rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
   border-bottom: 1px solid #374151;
   padding-bottom: 0.5rem;
+  
+  @media (min-width: 480px) {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const SummaryItem = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 0;
+  align-items: flex-start;
+  padding: 0.5rem 0;
   color: #e5e7eb;
   border-bottom: 1px solid #374151;
+  gap: 0.5rem;
+  
+  @media (min-width: 480px) {
+    align-items: center;
+    padding: 0.75rem 0;
+  }
 
   &:last-child {
     border-bottom: none;
-    padding-top: 1rem;
+    padding-top: 0.75rem;
     margin-top: 0.5rem;
     font-weight: bold;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: white;
+    
+    @media (min-width: 480px) {
+      padding-top: 1rem;
+      font-size: 1.1rem;
+    }
   }
 `;
 
@@ -68,56 +115,100 @@ const SummaryLabel = styled.span.withConfig({
   shouldForwardProp: (prop) => !["bold"].includes(prop),
 })`
   font-weight: ${(props) => (props.bold ? "bold" : "normal")};
+  font-size: 0.9rem;
+  
+  @media (min-width: 480px) {
+    font-size: 1rem;
+  }
 `;
 
 const SummaryValue = styled.span`
   font-weight: ${(props) => (props.bold ? "bold" : "normal")};
+  font-size: 0.9rem;
+  text-align: right;
+  
+  @media (min-width: 480px) {
+    font-size: 1rem;
+  }
 `;
 
 // Checkout info sektion
 const CheckoutInfoSection = styled.div`
   background: #1a1a1a;
   border: 1px solid #dc2626;
-  border-radius: 4px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  
+  @media (min-width: 480px) {
+    padding: 1.5rem;
+  }
+  
+  @media (min-width: 768px) {
+    margin-bottom: 2rem;
+  }
 `;
 
 const InfoTitle = styled.h3`
   color: #ffffff;
-  margin: 0 0 0.75rem 0;
-  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
+  
+  @media (min-width: 480px) {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+  }
 `;
 
 const InfoText = styled.p`
   color: #cccccc;
   margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  
+  @media (min-width: 480px) {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
 `;
 
 const InfoList = styled.ul`
   color: #cccccc;
-  margin: 0.5rem 0 0 1rem;
-  font-size: 0.9rem;
-  line-height: 1.4;
+  margin: 0.5rem 0 0 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.3;
+  
+  @media (min-width: 480px) {
+    margin: 0.5rem 0 0 1rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
 `;
 
 const LegalLinksSection = styled.div`
   text-align: center;
-  margin: 1.5rem 0;
-  padding: 1rem 0;
+  margin: 1rem 0;
+  padding: 0.75rem 0;
   border-top: 1px solid #374151;
   border-bottom: 1px solid #374151;
+  
+  @media (min-width: 768px) {
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+  }
 `;
 
 const LegalText = styled.p`
   color: #9ca3af;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   margin: 0;
+  line-height: 1.4;
+  
+  @media (min-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 const LegalLink = styled(Link)`
@@ -125,6 +216,12 @@ const LegalLink = styled(Link)`
   text-decoration: none;
   margin: 0 0.5rem;
   transition: color 0.2s ease;
+  font-weight: bold;
+  font-size: 0.8rem;
+  
+  @media (min-width: 480px) {
+    font-size: 0.85rem;
+  }
   
   &:hover {
     color: #dc2626;
@@ -135,21 +232,33 @@ const LegalLink = styled(Link)`
 // Footer med knappar
 const Footer = styled.div`
   display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.75rem;
+  
+  @media (min-width: 480px) {
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+  }
 `;
 
 const Button = styled.button.withConfig({
   shouldForwardProp: (prop) => !["variant"].includes(prop),
 })`
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   border: none;
   font-weight: bold;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: background-color 0.2s;
+  width: 100%;
+  
+  @media (min-width: 480px) {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    width: auto;
+  }
 
   ${(props) =>
     props.variant === "primary" &&
@@ -203,29 +312,42 @@ const LoadingSpinner = styled.div`
 // Tom kundvagn
 const EmptyCart = styled.div`
   text-align: center;
-  padding: 3rem;
+  padding: 2rem 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 3rem;
+  }
 `;
 
 const EmptyTitle = styled.h1`
   color: white;
   margin-bottom: 1rem;
+  font-size: 1.5rem;
+  
+  @media (min-width: 480px) {
+    font-size: 2rem;
+  }
 `;
 
 const EmptyLink = styled(Link)`
   text-decoration: none;
   font-weight: bold;
   padding: 0.75rem 1.5rem;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #dc2626;
+  color: #ffffff;
   border: none;
   display: inline-block;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: background-color 0.2s;
+  font-size: 0.9rem;
+  
+  @media (min-width: 480px) {
+    font-size: 1rem;
+  }
 
   &:hover {
-    background-color: #dc2626;
-    color: #ffffff;
+    background-color: #b91c1c;
     text-decoration: none;
   }
 `;
@@ -366,6 +488,7 @@ export const Cart = () => {
           {checkoutLoading ? "Preparing checkout..." : "Proceed to Checkout"}
         </Button>
       </Footer>
+      <ScrollToTop />
     </Container>
   );
 };

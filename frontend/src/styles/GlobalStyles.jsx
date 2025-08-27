@@ -1,4 +1,5 @@
 import { createGlobalStyle } from "styled-components";
+import { theme } from './theme';
 
 export const GlobalStyles = createGlobalStyle`
   *, *::before, *::after {
@@ -14,11 +15,12 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: 'Orbitron', sans-serif;
-    color: #f5f5f5;
+    font-family: ${theme.typography.fontFamily};
+    color: ${theme.colors.primaryText};
     line-height: 1.5;
     overflow-x: hidden;
-    background-color: #1a1a1a;
+    background-color: ${theme.colors.black};
+    min-height: 100vh;
   }
 
   a {
@@ -27,8 +29,8 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   h1, h2, h3 {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 1px;
+    font-family: ${theme.typography.headingFamily};
+    letter-spacing: ${theme.typography.letterSpacing.uppercase};
   }
 
   img {
@@ -38,15 +40,15 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   a {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-  color: #ccc;
-  text-shadow: 1px 1px 3px #000;
-  text-decoration: none;
-  transition: color 0.3s ease;
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: ${theme.colors.lightGray};
+    text-shadow: 1px 1px 3px ${theme.colors.black};
+    text-decoration: none;
+    transition: color ${theme.transitions.slow};
 
-  &:hover {
-    color:rgb(255, 255, 255); /* Spotify-grönt */
+    &:hover {
+      color: ${theme.colors.white};
+    }
   }
-}
 `;

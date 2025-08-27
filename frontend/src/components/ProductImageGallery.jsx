@@ -1,9 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const GalleryContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
 `;
 
@@ -17,10 +19,59 @@ const MainImage = styled.img`
 `;
 
 const ThumbnailContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
+`;
+
+const ThumbnailSlider = styled.div`
   display: flex;
   gap: 0.5rem;
-  overflow-x: auto;
-  padding: 0.5rem 0;
+  transition: transform 0.3s ease;
+  transform: translateX(${props => props.$offset}px);
+  width: max-content; /* Allow it to be as wide as needed for all thumbnails */
+`;
+
+const SliderArrow = styled.button`
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  
+  &:hover {
+    background-color: #b91c1c;
+  }
+  
+  &:disabled {
+    background-color: #666666;
+    cursor: not-allowed;
+  }
+  
+  &.left {
+    left: -20px; /* Position outside the wrapper margin */
+  }
+  
+  &.right {
+    right: -20px; /* Position outside the wrapper margin */
+  }
+`;
+
+const ThumbnailWrapper = styled.div`
+  overflow: hidden;
+  margin: 0 20px;
+  width: 480px; /* Show 5 full thumbnails + hint of the 6th */
 `;
 
 const Thumbnail = styled.img`
@@ -52,6 +103,38 @@ const LoadingPlaceholder = styled.div`
 
 export const ProductImageGallery = ({ images, productName, fallbackImage }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [sliderOffset, setSliderOffset] = useState(0);
+  
+  const VISIBLE_THUMBNAILS = 5;
+  const THUMBNAIL_WIDTH = 80; // Actual thumbnail width
+  const GAP_SIZE = 8; // 0.5rem gap
+  const TOTAL_WIDTH_PER_THUMBNAIL = THUMBNAIL_WIDTH + GAP_SIZE; // 88px total per thumbnail
+  const shouldShowSlider = images && images.length > VISIBLE_THUMBNAILS;
+  
+  console.log('Gallery Debug:', {
+    imagesLength: images?.length,
+    shouldShowSlider,
+    VISIBLE_THUMBNAILS
+  });
+  
+  // Calculate disable states for arrows
+  const maxOffset = images ? -(Math.max(0, images.length - VISIBLE_THUMBNAILS) * TOTAL_WIDTH_PER_THUMBNAIL) : 0;
+  const isFirstPage = sliderOffset === 0;
+  const isLastPage = sliderOffset <= maxOffset;
+  
+  const moveSlider = (direction) => {
+    // Simple approach: move one thumbnail at a time
+    const moveDistance = TOTAL_WIDTH_PER_THUMBNAIL;
+    const maxOffset = -(Math.max(0, images.length - VISIBLE_THUMBNAILS) * TOTAL_WIDTH_PER_THUMBNAIL);
+    
+    if (direction === 'right') {
+      const newOffset = Math.max(maxOffset, sliderOffset - moveDistance);
+      setSliderOffset(newOffset);
+    } else {
+      const newOffset = Math.min(0, sliderOffset + moveDistance);
+      setSliderOffset(newOffset);
+    }
+  };
 
   if (!images || images.length === 0) {
     if (fallbackImage) {
@@ -74,15 +157,39 @@ export const ProductImageGallery = ({ images, productName, fallbackImage }) => {
       
       {images.length > 1 && (
         <ThumbnailContainer>
-          {images.map((image, index) => (
-            <Thumbnail
-              key={index}
-              src={image.url}
-              alt={`${productName} thumbnail ${index + 1}`}
-              $isActive={index === selectedImageIndex}
-              onClick={() => setSelectedImageIndex(index)}
-            />
-          ))}
+          {(shouldShowSlider || true) && (
+            <SliderArrow 
+              className="left"
+              onClick={() => moveSlider('left')}
+              disabled={isFirstPage}
+            >
+              <FaChevronLeft />
+            </SliderArrow>
+          )}
+          
+          <ThumbnailWrapper>
+            <ThumbnailSlider $offset={sliderOffset}>
+              {images.map((image, index) => (
+                <Thumbnail
+                  key={index}
+                  src={image.url}
+                  alt={`${productName} thumbnail ${index + 1}`}
+                  $isActive={index === selectedImageIndex}
+                  onClick={() => setSelectedImageIndex(index)}
+                />
+              ))}
+            </ThumbnailSlider>
+          </ThumbnailWrapper>
+          
+          {(shouldShowSlider || true) && (
+            <SliderArrow 
+              className="right"
+              onClick={() => moveSlider('right')}
+              disabled={isLastPage}
+            >
+              <FaChevronRight />
+            </SliderArrow>
+          )}
         </ThumbnailContainer>
       )}
     </GalleryContainer>
