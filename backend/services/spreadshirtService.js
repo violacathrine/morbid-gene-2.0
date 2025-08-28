@@ -161,15 +161,12 @@ export const getSellableImages = async (sellableId, appearanceId, ideaId) => {
   const { shopId } = getConfig();
   const url = `${apiDomain}/api/v1/shops/${shopId}/sellables/${sellableId}?appearanceId=${appearanceId}&ideaId=${ideaId}`;
 
-  console.log("🔗 Making API call to:", url);
 
   try {
     const response = await axios.get(url, {
       headers: getHeaders(),
     });
 
-    console.log("📦 Full API response:", response.data);
-    console.log("🖼️ Images from API:", response.data.images);
 
     const { images, sizeIds, name } = response.data;
 

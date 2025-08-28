@@ -91,11 +91,11 @@ export const HeroSection = () => {
       <div className="hero-content">
         <h1>Morbid Gene Official</h1>
         <a
-          href="https://open.spotify.com/album/0OnT6kBQPRmHazmvOiLxQe?si=_gBnA79hSHySmec_U1cdUg"
+          href="https://open.spotify.com/album/60V2k04RRUCSt4fuD4NDWc?si=JYi5N-CrQJG84dBm34_tKg"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Our EP 'Pain Agony Misery' out now – Listen here!
+          Our EP 'Face Your Maker' out now – Listen here!
         </a>
       </div>
     </Hero>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiCall } from "../config/api.js";
 
 export function useMerch({ q, limit, offset }) {
   const [items, setItems] = useState([]);
@@ -15,7 +16,7 @@ export function useMerch({ q, limit, offset }) {
     if (offset) params.append("offset", offset);
     if (q) params.append("q", q);
 
-    fetch(`/api/merch?${params.toString()}`)
+    apiCall(`/api/merch?${params.toString()}`)
       .then((res) => {
         if (!res.ok) throw new Error("Something went wrong while fetching products");
         return res.json();

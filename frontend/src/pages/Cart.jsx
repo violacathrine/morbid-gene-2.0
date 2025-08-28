@@ -6,6 +6,7 @@ import { formatPrice } from "../utils/formatPrice";
 import { CartContext } from "../contexts/CartContext";
 import { getCheckoutUrl } from "../api/basketApi"; // ÄNDRAT: Importera den nya funktionen
 import ScrollToTop from "../components/ScrollToTop";
+import { ClearCartPopup } from "../components/ClearCartPopup";
 
 const Container = styled.div`
   max-width: 800px;
@@ -122,7 +123,9 @@ const SummaryLabel = styled.span.withConfig({
   }
 `;
 
-const SummaryValue = styled.span`
+const SummaryValue = styled.span.withConfig({
+  shouldForwardProp: (prop) => !["bold"].includes(prop),
+})`
   font-weight: ${(props) => (props.bold ? "bold" : "normal")};
   font-size: 0.9rem;
   text-align: right;
@@ -266,7 +269,6 @@ const Button = styled.button.withConfig({
     background-color: #dc2626;
     color: #ffffff;
     font-weight: bold;
-    text-transform: uppercase;
     letter-spacing: 1px;
     transition: background-color 0.2s;
 
@@ -364,6 +366,7 @@ export const Cart = () => {
   } = useContext(CartContext);
 
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [showClearCartPopup, setShowClearCartPopup] = useState(false);
 
   // KORRIGERAD handleCheckout funktion
   const handleCheckout = async () => {
@@ -382,7 +385,6 @@ export const Cart = () => {
         throw new Error("No checkout URL received from server");
       }
 
-      console.log("Redirecting to checkout:", data.checkoutUrl);
       window.location.href = data.checkoutUrl;
     } catch (error) {
       console.error("Checkout-fel:", error);
@@ -475,7 +477,7 @@ export const Cart = () => {
 
       {/* Footer med knappar */}
       <Footer>
-        <Button variant="secondary" onClick={clearCart}>
+        <Button variant="secondary" onClick={() => setShowClearCartPopup(true)}>
           Clear Cart
         </Button>
 
@@ -488,6 +490,13 @@ export const Cart = () => {
           {checkoutLoading ? "Preparing checkout..." : "Proceed to Checkout"}
         </Button>
       </Footer>
+      
+      <ClearCartPopup
+        isOpen={showClearCartPopup}
+        onClose={() => setShowClearCartPopup(false)}
+        onConfirm={clearCart}
+      />
+      
       <ScrollToTop />
     </Container>
   );

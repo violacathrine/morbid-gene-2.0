@@ -26,7 +26,6 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null) => {
     try {
       localStorage.setItem(primaryKey, selectedImage);
       localStorage.setItem(fallbackKey, selectedImage); // Backup key
-      console.log("Sparade bild till localStorage:", primaryKey);
     } catch (error) {
       console.error("Kunde inte spara bild till localStorage:", error);
     }
@@ -44,7 +43,6 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null) => {
         const savedImage = localStorage.getItem(imageKey);
         if (savedImage && savedImage.startsWith('http')) {
           imageToUse = savedImage;
-          console.log("Hämtade sparad bild från localStorage:", imageKey);
           break;
         }
       } catch (error) {
@@ -52,9 +50,6 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null) => {
       }
     }
     
-    if (!imageToUse) {
-      console.log("Ingen sparad bild hittades för nycklar:", possibleKeys);
-    }
   }
 
   return {

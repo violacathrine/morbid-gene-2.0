@@ -1,6 +1,7 @@
 import { CartProvider } from "./contexts/CartProvider";
 import { AuthProvider } from "./contexts/AuthContext";
 import { GlobalStyles } from "./styles/GlobalStyles";
+import CookieConsent from "./components/CookieConsent";
 import {
   BrowserRouter as Router,
   Routes,
@@ -12,8 +13,10 @@ import { Navbar } from "./components/Navbar";
 import { MerchNavbar } from "./components/MerchNavbar"; // Lägg till import
 import { Breadcrumbs } from "./components/Breadcrumbs";
 import { TopBar } from "./components/TopBar";
+import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
 import { Media } from "./pages/Media";
+import { Gigs } from "./pages/Gigs";
 import { Merch } from "./pages/Merch";
 import { ProductPage } from "./pages/ProductPage";
 import { Cart } from "./pages/Cart";
@@ -40,30 +43,30 @@ const AppContent = () => {
 
   return (
     <>
-      {/* TopBar för shopping-sidor */}
-      {isShoppingSite && <TopBar />}
-      
       {/* Visa rätt navbar beroende på var vi är */}
       {isShoppingSite ? <MerchNavbar /> : <Navbar />}
 
-      {/* Breadcrumbs bara på shopping-sidor */}
-      {isShoppingSite && <Breadcrumbs />}
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/media" element={<Media />} />
-        <Route path="/merch" element={<Merch />} />
-        <Route path="/product/:productId" element={<ProductPage />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/media/:slug" element={<GalleryPage />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Navigate to="/login" replace />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/settings" element={<AccountSettings />} />
-      </Routes>
+      <main style={{ flex: 1 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/media" element={<Media />} />
+          <Route path="/gigs" element={<Gigs />} />
+          <Route path="/merch" element={<Merch />} />
+          <Route path="/product/:productId" element={<ProductPage />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/media/:slug" element={<GalleryPage />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Navigate to="/login" replace />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/settings" element={<AccountSettings />} />
+        </Routes>
+      </main>
+      
+      <Footer />
+      <CookieConsent />
     </>
   );
 };

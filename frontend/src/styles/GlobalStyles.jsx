@@ -9,9 +9,15 @@ export const GlobalStyles = createGlobalStyle`
   }
   
   html, body, #root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
 
   body {
@@ -37,18 +43,5 @@ export const GlobalStyles = createGlobalStyle`
     max-width: 100%;
     height: auto;
     display: block;
-  }
-
-  a {
-    margin-top: 1rem;
-    font-size: 1.2rem;
-    color: ${theme.colors.lightGray};
-    text-shadow: 1px 1px 3px ${theme.colors.black};
-    text-decoration: none;
-    transition: color ${theme.transitions.slow};
-
-    &:hover {
-      color: ${theme.colors.white};
-    }
   }
 `;

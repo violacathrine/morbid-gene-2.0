@@ -1,4 +1,5 @@
-const API_BASE = "http://localhost:8080/api/merch"; // Ändra till din backend URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://morbid-gene-2-0.onrender.com';
+const API_BASE = `${API_BASE_URL}/api/merch`;
 
 // Skapa ny basket
 export const createBasket = async (basketItems) => {
@@ -90,7 +91,6 @@ export const convertToBasketItem = async (
 
 // KORRIGERAD: Hämta checkout URL från basket links
 export const getCheckoutUrl = async (basketId) => {
-  console.log(`Getting checkout URL for basket: ${basketId}`);
 
   if (!basketId || basketId.trim() === "") {
     throw new Error("BasketId is required for checkout");
@@ -135,7 +135,6 @@ export const addToBasketAndCheckout = async (
   colorName,
   quantity = 1
 ) => {
-  console.log(`Direct checkout for product: ${productId}`);
 
   const response = await fetch(`${API_BASE}/checkout`, {
     method: "POST",

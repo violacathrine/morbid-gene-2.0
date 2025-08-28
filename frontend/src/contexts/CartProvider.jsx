@@ -54,20 +54,26 @@ export const CartProvider = ({ children }) => {
       );
       // Preserve existing cart item images when updating basket
       const items = updatedBasket.basketItems.map((item) => {
-        const convertedItem = convertSpreadshirtItem(item, null);
+        const props = item.element.properties;
+        const sellableId = props.find((p) => p.key === "sellable")?.value;
+        const sizeLabel = props.find((p) => p.key === "sizeLabel")?.value;
         
-        // If no image was found in localStorage, try to preserve from current cartItems
-        if (!convertedItem.selectedImage || convertedItem.selectedImage.includes('base64')) {
-          const existingItem = cartItems.find(cartItem => 
-            cartItem.sellableId === convertedItem.sellableId && 
-            cartItem.size === convertedItem.size
-          );
-          if (existingItem?.selectedImage && existingItem.selectedImage.startsWith('http')) {
-            convertedItem.selectedImage = existingItem.selectedImage;
-          }
+        // Find existing item to preserve its image and data
+        const existingItem = cartItems.find(cartItem => 
+          cartItem.sellableId === sellableId && 
+          cartItem.size === sizeLabel
+        );
+        
+        if (existingItem) {
+          // Just update quantity, keep everything else the same
+          return {
+            ...existingItem,
+            quantity: item.quantity
+          };
+        } else {
+          // New item, convert normally
+          return convertSpreadshirtItem(item, null);
         }
-        
-        return convertedItem;
       });
 
       setCartItems(items);
@@ -79,7 +85,8 @@ export const CartProvider = ({ children }) => {
     product,
     selectedSize,
     selectedImage,
-    selectedColor
+    selectedColor,
+    quantity = 1
   ) => {
     setLoading(true);
     setError(null);
@@ -89,7 +96,7 @@ export const CartProvider = ({ children }) => {
         product.sellableId,
         selectedSize,
         selectedColor,
-        1
+        quantity
       );
 
       if (!basketId) {
@@ -123,9 +130,9 @@ export const CartProvider = ({ children }) => {
 
         let newBasketItems;
         if (existingItemIndex >= 0) {
-          // Öka quantity
+          // Öka quantity med den angivna mängden
           newBasketItems = [...currentBasket.basketItems];
-          newBasketItems[existingItemIndex].quantity += 1;
+          newBasketItems[existingItemIndex].quantity += quantity;
         } else {
           // Lägg till ny vara
           newBasketItems = [...currentBasket.basketItems, basketItem];
@@ -182,7 +189,16 @@ export const CartProvider = ({ children }) => {
 
     if (!basketId) return;
 
-    setLoading(true);
+    // Optimistisk uppdatering - uppdatera UI direkt
+    setCartItems(prevItems => 
+      prevItems.map(item => {
+        if (item.sellableId === sellableId && item.size === size) {
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      })
+    );
+
     setError(null);
 
     try {
@@ -198,12 +214,33 @@ export const CartProvider = ({ children }) => {
         return item;
       });
 
-      await updateBasketState(newBasketItems);
+      // Uppdatera backend utan loading state
+      const updatedBasket = await basketApi.updateBasket(basketId, newBasketItems);
+      
+      // Synka med faktisk data från backend
+      const items = updatedBasket.basketItems.map((item) => {
+        const existingItem = cartItems.find(
+          cartItem => cartItem.sellableId === item.element.properties.find(p => p.key === 'sellable')?.value &&
+                      cartItem.size === item.element.properties.find(p => p.key === 'sizeLabel')?.value
+        );
+        const imageToUse = existingItem?.selectedImage || null;
+        return convertSpreadshirtItem(item, imageToUse);
+      });
+      setCartItems(items);
     } catch (err) {
       console.error("Error updating quantity:", err);
       setError("Could not update quantity");
-    } finally {
-      setLoading(false);
+      // Återställ vid fel
+      const currentBasket = await basketApi.getBasket(basketId);
+      const items = currentBasket.basketItems.map((item) => {
+        const existingItem = cartItems.find(
+          cartItem => cartItem.sellableId === item.element.properties.find(p => p.key === 'sellable')?.value &&
+                      cartItem.size === item.element.properties.find(p => p.key === 'sizeLabel')?.value
+        );
+        const imageToUse = existingItem?.selectedImage || null;
+        return convertSpreadshirtItem(item, imageToUse);
+      });
+      setCartItems(items);
     }
   };
 

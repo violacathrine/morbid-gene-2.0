@@ -5,8 +5,6 @@ import { translateProductType } from "../utils/translations";
 import FavoriteButton from "./FavoriteButton";
 
 const MerchCard = ({ item }) => {
-  console.log("MerchCard item FULL:", JSON.stringify(item, null, 2)); // More detailed debug log
-  
   // Use the enriched productTypeName from backend
   const name = item.productTypeName || item.productType?.name || item.name || "Unknown Product";
   const imageUrl = item.previewImage?.url;

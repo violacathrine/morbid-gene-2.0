@@ -292,7 +292,6 @@ const ContactForm = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
       // Här skulle du skicka till din kontakt-endpoint
-      console.log("Contact form data:", formData);
       
       setIsSubmitted(true);
     } catch (error) {

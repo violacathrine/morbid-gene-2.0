@@ -1,8 +1,8 @@
 import express from "express";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import authMiddleware from "../middleware/auth.js";
+import { createSession, getUserFromSession, deleteSession } from "../utils/session.js";
 
 const router = express.Router();
 
@@ -26,13 +26,18 @@ router.post("/register", async (req, res) => {
     const newUser = new User({ email, password, name });
     await newUser.save();
 
-    // Create JWT token
-    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
+    // Create session
+    const sessionId = await createSession(newUser._id);
+
+    // Set httpOnly cookie
+    res.cookie('sessionId', sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // HTTPS in production
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
     res.status(201).json({ 
-      token,
       user: {
         id: newUser._id,
         email: newUser.email,
@@ -59,7 +64,7 @@ router.post("/login", async (req, res) => {
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Account not found. It may have been deleted due to inactivity. You can create a new account with this email." });
     }
 
     // Compare passwords using the schema method
@@ -68,15 +73,22 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+    // Update last login timestamp
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Create session
+    const sessionId = await createSession(user._id);
+
+    // Set httpOnly cookie
+    res.cookie('sessionId', sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // HTTPS in production
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
 
     res.json({ 
-      token,
       user: {
         id: user._id,
         email: user.email,
@@ -84,6 +96,26 @@ router.post("/login", async (req, res) => {
         createdAt: user.createdAt
       }
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Logout user
+router.post("/logout", async (req, res) => {
+  try {
+    const sessionId = req.cookies.sessionId;
+    if (sessionId) {
+      await deleteSession(sessionId);
+    }
+    
+    res.clearCookie('sessionId', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
+    });
+    res.json({ message: "Logged out successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -103,7 +135,8 @@ router.get("/me", authMiddleware, async (req, res) => {
       email: user.email,
       name: user.name,
       favoritesCount: user.favorites.length,
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
+      lastLogin: user.lastLogin
     });
   } catch (error) {
     console.error(error);

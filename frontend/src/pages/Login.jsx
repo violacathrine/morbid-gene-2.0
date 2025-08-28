@@ -6,9 +6,9 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Container = styled.div`
   min-height: auto;
-  padding: 1rem;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding: 0.75rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   max-width: 1600px;
   margin: 0 auto;
   display: flex;
@@ -23,7 +23,7 @@ const Container = styled.div`
   
   @media (min-width: 768px) {
     padding: 1.5rem;
-    padding-top: 2.5rem;
+    padding-top: 0;
     padding-bottom: 2rem;
   }
 `;
@@ -31,53 +31,74 @@ const Container = styled.div`
 const LoginBox = styled.div`
   max-width: 600px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
   
   @media (min-width: 480px) {
-    padding: 2.5rem;
+    padding: 2rem;
   }
   
   @media (min-width: 768px) {
     padding: 3rem;
+    padding-top: 1rem;
   }
 `;
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   
   h1 {
     color: #ffffff;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     margin-bottom: 0.5rem;
     
     @media (min-width: 480px) {
-      font-size: 2.5rem;
+      font-size: 1.75rem;
+      letter-spacing: 1.5px;
+    }
+    
+    @media (min-width: 768px) {
+      font-size: 2rem;
+      letter-spacing: 1.5px;
     }
   }
   
   p {
     color: #cccccc;
     font-style: italic;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 300;
     
     @media (min-width: 480px) {
+      font-size: 1rem;
+    }
+    
+    @media (min-width: 768px) {
       font-size: 1.1rem;
     }
+  }
+  
+  @media (min-width: 768px) {
+    margin-bottom: 3rem;
   }
 `;
 
 const FormSection = styled.div`
   background: #1a1a1a;
   border: 1px solid #333;
-  padding: 1.5rem;
+  padding: 1rem;
   margin-bottom: 1rem;
   
   @media (min-width: 480px) {
+    padding: 1.5rem;
+  }
+  
+  @media (min-width: 768px) {
     padding: 2rem;
   }
 `;
@@ -240,53 +261,6 @@ const FieldError = styled.div`
   margin-left: 0.25rem;
 `;
 
-const LinkText = styled.p`
-  text-align: center;
-  color: #cccccc;
-  margin: 0;
-  font-size: 0.9rem;
-  
-  a {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 500;
-    
-    &:hover {
-      color: #dc2626;
-      text-decoration: underline;
-    }
-  }
-  
-  @media (min-width: 480px) {
-    font-size: 1rem;
-    margin-top: 2rem;
-  }
-`;
-
-const BackLink = styled(Link)`
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  
-  &:hover {
-    color: #dc2626;
-  }
-  
-  &::before {
-    content: "←";
-    font-size: 1rem;
-  }
-`;
-
 const ToggleSection = styled.div`
   display: flex;
   justify-content: center;
@@ -405,9 +379,7 @@ export const Login = () => {
   };
 
   return (
-    <Container>
-      <BackLink to="/merch">Back to shop</BackLink>
-      
+    <Container>      
       <LoginBox>
         <Header>
           <h1>{isLogin ? 'Login' : 'Register'}</h1>
@@ -581,10 +553,6 @@ export const Login = () => {
             </Button>
           </Form>
         </FormSection>
-        
-        <LinkText>
-          <Link to="/merch">← Back to shop</Link>
-        </LinkText>
       </LoginBox>
     </Container>
   );

@@ -12,6 +12,10 @@ const BreadcrumbContainer = styled.nav`
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  @media (min-width: 768px) {
+    justify-content: flex-start;
+  }
   margin-top: 0; /* No extra margin needed */
   
   @media (min-width: 480px) {
@@ -83,7 +87,10 @@ export const Breadcrumbs = () => {
   const showBreadcrumbs =
     location.pathname === "/merch" ||
     location.pathname.startsWith("/product") ||
-    location.pathname === "/cart";
+    location.pathname === "/cart" ||
+    location.pathname === "/favorites" ||
+    location.pathname === "/settings" ||
+    location.pathname === "/login";
 
   if (!showBreadcrumbs) return null;
 
@@ -136,6 +143,60 @@ export const Breadcrumbs = () => {
           </BreadcrumbItem>
           <BreadcrumbItem>
             <BreadcrumbCurrent>Cart</BreadcrumbCurrent>
+          </BreadcrumbItem>
+        </>
+      );
+    }
+
+    if (path === "/settings") {
+      return (
+        <>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/">
+              Home
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/merch">Merch</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbCurrent>Settings</BreadcrumbCurrent>
+          </BreadcrumbItem>
+        </>
+      );
+    }
+
+    if (path === "/favorites") {
+      return (
+        <>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/">
+              Home
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/merch">Merch</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbCurrent>Favorites</BreadcrumbCurrent>
+          </BreadcrumbItem>
+        </>
+      );
+    }
+
+    if (path === "/login") {
+      return (
+        <>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/">
+              Home
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/merch">Merch</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbCurrent>Login / Register</BreadcrumbCurrent>
           </BreadcrumbItem>
         </>
       );

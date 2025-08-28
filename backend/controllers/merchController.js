@@ -78,7 +78,6 @@ export const getSellableImages = async (req, res) => {
   try {
     const { sellableId, appearanceId, ideaId } = req.params;
 
-    console.log("🎯 Controller got:", { sellableId, appearanceId, ideaId });
 
     const sellableData = await spreadshirtService.getSellableImages(
       sellableId,
@@ -196,8 +195,6 @@ export const getCheckoutUrl = async (req, res) => {
   try {
     const { basketId } = req.params;
 
-    console.log("=== CHECKOUT DEBUG ===");
-    console.log("Basket ID:", basketId);
 
     // Använd vår nya getCheckoutUrl funktion från service
     const checkoutUrl = await spreadshirtService.getCheckoutUrl(basketId);
@@ -219,11 +216,6 @@ export const addToBasketAndCheckout = async (req, res) => {
   try {
     const { productId, sizeName, colorName, quantity = 1 } = req.body;
 
-    console.log("=== ADD TO BASKET AND CHECKOUT ===");
-    console.log("Product ID:", productId);
-    console.log("Size:", sizeName);
-    console.log("Color:", colorName);
-    console.log("Quantity:", quantity);
 
     // Hämta produktdata med productType
     const product = await spreadshirtService.getProductById(productId);

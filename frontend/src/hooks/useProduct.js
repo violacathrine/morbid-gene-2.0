@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiCall } from "../config/api.js";
 
 export const useProduct = (productId) => {
   const [product, setProduct] = useState(null);
@@ -7,10 +8,8 @@ export const useProduct = (productId) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("useEffect triggered with productId:", productId);
 
     if (!productId) {
-      console.log("No productId, returning early");
       return;
     }
 
@@ -20,22 +19,19 @@ export const useProduct = (productId) => {
 
       try {
         // Hämta produkt
-        console.log("Fetching product with ID:", productId);
-        const productResponse = await fetch(`/api/merch/${productId}`);
+        const productResponse = await apiCall(`/api/merch/${productId}`);
         if (!productResponse.ok) throw new Error("Failed to fetch product");
         const productData = await productResponse.json();
         setProduct(productData);
 
         // Hämta ProductType (sizes/colors)
         if (productData.productTypeId) {
-          console.log("Fetching productType:", productData.productTypeId);
-          const typeResponse = await fetch(
+          const typeResponse = await apiCall(
             `/api/merch/productType/${productData.productTypeId}`
           );
           if (typeResponse.ok) {
             const typeData = await typeResponse.json();
             setProductType(typeData);
-            console.log("ProductType loaded:", typeData);
           }
         }
       } catch (err) {

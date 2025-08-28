@@ -31,7 +31,8 @@ const ThumbnailSlider = styled.div`
   gap: 0.5rem;
   transition: transform 0.3s ease;
   transform: translateX(${props => props.$offset}px);
-  width: max-content; /* Allow it to be as wide as needed for all thumbnails */
+  width: max-content;
+  overflow: visible;
 `;
 
 const SliderArrow = styled.button`
@@ -72,6 +73,11 @@ const ThumbnailWrapper = styled.div`
   overflow: hidden;
   margin: 0 20px;
   width: 480px; /* Show 5 full thumbnails + hint of the 6th */
+  
+  @media (max-width: 767px) {
+    width: 176px; /* Show exactly 2 full thumbnails (80px * 2 + 16px for gap and safety) */
+    margin: 0 15px;
+  }
 `;
 
 const Thumbnail = styled.img`
@@ -105,34 +111,52 @@ export const ProductImageGallery = ({ images, productName, fallbackImage }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [sliderOffset, setSliderOffset] = useState(0);
   
-  const VISIBLE_THUMBNAILS = 5;
-  const THUMBNAIL_WIDTH = 80; // Actual thumbnail width
-  const GAP_SIZE = 8; // 0.5rem gap
-  const TOTAL_WIDTH_PER_THUMBNAIL = THUMBNAIL_WIDTH + GAP_SIZE; // 88px total per thumbnail
-  const shouldShowSlider = images && images.length > VISIBLE_THUMBNAILS;
+  const VISIBLE_THUMBNAILS_DESKTOP = 5;
+  const VISIBLE_THUMBNAILS_MOBILE = 2;
+  const THUMBNAIL_WIDTH = 80;
+  const GAP_SIZE = 8;
+  const TOTAL_WIDTH_PER_THUMBNAIL = THUMBNAIL_WIDTH + GAP_SIZE;
   
-  console.log('Gallery Debug:', {
-    imagesLength: images?.length,
-    shouldShowSlider,
-    VISIBLE_THUMBNAILS
-  });
+  // Check if we're on mobile (simplified check)
+  const isMobile = window.innerWidth <= 767;
+  const visibleThumbnails = isMobile ? VISIBLE_THUMBNAILS_MOBILE : VISIBLE_THUMBNAILS_DESKTOP;
+  const shouldShowSlider = images && images.length > visibleThumbnails;
   
   // Calculate disable states for arrows
-  const maxOffset = images ? -(Math.max(0, images.length - VISIBLE_THUMBNAILS) * TOTAL_WIDTH_PER_THUMBNAIL) : 0;
+  const maxOffset = images ? -(Math.max(0, images.length - visibleThumbnails) * TOTAL_WIDTH_PER_THUMBNAIL) : 0;
   const isFirstPage = sliderOffset === 0;
   const isLastPage = sliderOffset <= maxOffset;
   
   const moveSlider = (direction) => {
-    // Simple approach: move one thumbnail at a time
-    const moveDistance = TOTAL_WIDTH_PER_THUMBNAIL;
-    const maxOffset = -(Math.max(0, images.length - VISIBLE_THUMBNAILS) * TOTAL_WIDTH_PER_THUMBNAIL);
+    // Calculate how many positions we can move
+    const totalImages = images.length;
+    const maxSlidePositions = Math.max(0, totalImages - visibleThumbnails);
     
     if (direction === 'right') {
-      const newOffset = Math.max(maxOffset, sliderOffset - moveDistance);
-      setSliderOffset(newOffset);
+      // Calculate current position based on offset
+      const currentPosition = Math.abs(Math.round(sliderOffset / TOTAL_WIDTH_PER_THUMBNAIL));
+      
+      if (currentPosition < maxSlidePositions) {
+        // Move one position to the right
+        const newOffset = sliderOffset - TOTAL_WIDTH_PER_THUMBNAIL;
+        setSliderOffset(newOffset);
+        
+        // Update selected image to next one
+        if (selectedImageIndex < images.length - 1) {
+          setSelectedImageIndex(selectedImageIndex + 1);
+        }
+      }
     } else {
-      const newOffset = Math.min(0, sliderOffset + moveDistance);
-      setSliderOffset(newOffset);
+      // Move left
+      if (sliderOffset < 0) {
+        const newOffset = sliderOffset + TOTAL_WIDTH_PER_THUMBNAIL;
+        setSliderOffset(newOffset);
+        
+        // Update selected image to previous one
+        if (selectedImageIndex > 0) {
+          setSelectedImageIndex(selectedImageIndex - 1);
+        }
+      }
     }
   };
 
@@ -157,11 +181,12 @@ export const ProductImageGallery = ({ images, productName, fallbackImage }) => {
       
       {images.length > 1 && (
         <ThumbnailContainer>
-          {(shouldShowSlider || true) && (
+          {shouldShowSlider && (
             <SliderArrow 
               className="left"
               onClick={() => moveSlider('left')}
               disabled={isFirstPage}
+              aria-label="Previous image"
             >
               <FaChevronLeft />
             </SliderArrow>
@@ -181,11 +206,12 @@ export const ProductImageGallery = ({ images, productName, fallbackImage }) => {
             </ThumbnailSlider>
           </ThumbnailWrapper>
           
-          {(shouldShowSlider || true) && (
+          {shouldShowSlider && (
             <SliderArrow 
               className="right"
               onClick={() => moveSlider('right')}
               disabled={isLastPage}
+              aria-label="Next image"
             >
               <FaChevronRight />
             </SliderArrow>

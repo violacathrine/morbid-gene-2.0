@@ -93,13 +93,10 @@ export const Privacy = () => {
       <BackLink to="/cart">Back to Cart</BackLink>
       
       <Title>Privacy Policy</Title>
-      <LastUpdated>Last updated: [Date]</LastUpdated>
+      <LastUpdated>Last updated: August 28, 2025</LastUpdated>
       
       <Section>
         <SectionTitle>1. Introduction</SectionTitle>
-        <Paragraph>
-          [Your privacy policy content will go here. This is a placeholder for the actual privacy policy.]
-        </Paragraph>
         <Paragraph>
           Morbid Gene ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and share information about you when you use our website and services.
         </Paragraph>
@@ -144,19 +141,55 @@ export const Privacy = () => {
           We do not sell, trade, or rent your personal information to third parties. We may share your information with:
         </Paragraph>
         <List>
-          <li><strong>Spreadshirt:</strong> To process merchandise orders and handle shipping</li>
+          <li><strong>Spreadshirt:</strong> To process merchandise orders and handle shipping. When you make a purchase, your information is shared with Spreadshirt according to their privacy policy.</li>
           <li><strong>Service Providers:</strong> Who help us operate our website and business</li>
           <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+        </List>
+        <Paragraph>
+          For merchandise purchases, please also review:
+        </Paragraph>
+        <List>
+          <li>
+            <a href="https://www.spreadshirt.se/allmaenna-villkoren-C10183" target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', textDecoration: 'underline' }}>
+              Spreadshirt General Terms and Conditions (Swedish)
+            </a>
+          </li>
+          <li>
+            <a href="https://www.spreadshirt.se/allm%C3%A4nna-villkor-kunder-C2377" target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', textDecoration: 'underline' }}>
+              Spreadshirt Customer Terms and Conditions (Swedish)
+            </a>
+          </li>
         </List>
       </Section>
       
       <Section>
-        <SectionTitle>5. Cookies</SectionTitle>
+        <SectionTitle>5. Cookies and Local Storage</SectionTitle>
         <Paragraph>
-          Our website uses cookies to enhance your browsing experience. Cookies are small text files stored on your device that help us remember your preferences and understand how you use our site.
+          Our website uses cookies and local storage to enhance your browsing experience and provide essential functionality.
         </Paragraph>
+        
+        <SubSection>Essential Cookies</SubSection>
         <Paragraph>
-          You can control cookies through your browser settings. However, disabling cookies may affect some features of our website.
+          These cookies are necessary for the website to function properly:
+        </Paragraph>
+        <List>
+          <li><strong>Authentication Cookie:</strong> Keeps you logged in securely using httpOnly cookies that cannot be accessed by JavaScript</li>
+          <li><strong>Shopping Cart:</strong> Stores items in your cart locally on your device</li>
+          <li><strong>Cookie Consent:</strong> Remembers your cookie preferences</li>
+        </List>
+        
+        <SubSection>Data Storage</SubSection>
+        <Paragraph>
+          We use the following storage methods:
+        </Paragraph>
+        <List>
+          <li><strong>HttpOnly Cookies:</strong> For secure authentication (cannot be accessed by scripts)</li>
+          <li><strong>Local Storage:</strong> For shopping cart items and user preferences</li>
+          <li><strong>Session Storage:</strong> For temporary data during your browsing session</li>
+        </List>
+        
+        <Paragraph>
+          You can control cookies through your browser settings. However, disabling essential cookies will prevent you from logging in or using the shopping cart.
         </Paragraph>
       </Section>
       
@@ -171,7 +204,29 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>7. Your Rights</SectionTitle>
+        <SectionTitle>7. Data Retention</SectionTitle>
+        <Paragraph>
+          We retain your personal information only as long as necessary to fulfill the purposes outlined in this policy.
+        </Paragraph>
+        
+        <SubSection>Account Data Retention</SubSection>
+        <Paragraph>
+          For user accounts created on our website:
+        </Paragraph>
+        <List>
+          <li><strong>Active Accounts:</strong> We retain your account data as long as your account remains active</li>
+          <li><strong>Inactive Accounts:</strong> Accounts that have been inactive (no login) for 30 months will be automatically deleted from our system</li>
+          <li><strong>Account Recovery:</strong> After deletion, you may create a new account using the same email address if desired</li>
+          <li><strong>Data Deletion:</strong> When an account is deleted, all associated personal data (name, email, preferences, favorites) is permanently removed from our database</li>
+        </List>
+        
+        <Paragraph>
+          This automated cleanup process helps us comply with data minimization principles and ensures we only retain data that serves a legitimate purpose.
+        </Paragraph>
+      </Section>
+      
+      <Section>
+        <SectionTitle>8. Your Rights</SectionTitle>
         <Paragraph>
           Depending on your location, you may have certain rights regarding your personal information, including:
         </Paragraph>
@@ -184,14 +239,14 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>8. Children's Privacy</SectionTitle>
+        <SectionTitle>9. Children's Privacy</SectionTitle>
         <Paragraph>
           Our website is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.
         </Paragraph>
       </Section>
       
       <Section>
-        <SectionTitle>9. Changes to This Policy</SectionTitle>
+        <SectionTitle>10. Changes to This Policy</SectionTitle>
         <Paragraph>
           We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.
         </Paragraph>
@@ -205,8 +260,8 @@ export const Privacy = () => {
           If you have any questions about this Privacy Policy, please contact us at:
         </Paragraph>
         <Paragraph style={{ marginBottom: '0' }}>
-          Email: [Your email]<br/>
-          Address: [Your address]
+          Email: morbidgenemusic@gmail.com<br/>
+          Website: morbidgeneofficial.com
         </Paragraph>
       </InfoBox>
       

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 
 const NavbarWrapper = styled.nav`
-  position: ${({ $isHomepage }) => $isHomepage ? 'fixed' : 'relative'};
+  position: ${({ $isHomepage }) => $isHomepage ? 'absolute' : 'relative'};
   top: ${({ $isHomepage }) => $isHomepage ? '0' : 'auto'};
   left: ${({ $isHomepage }) => $isHomepage ? '0' : 'auto'};
   width: 100%;
@@ -101,12 +101,12 @@ const BurgerToggle = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 20px;
   cursor: pointer;
   position: fixed;
-  top: 15px;
-  right: 10px;
+  top: 18px;
+  right: 15px;
   z-index: 1001;
 
   @media (min-width: 768px) {
@@ -116,21 +116,21 @@ const BurgerToggle = styled.div`
 
 const Bar = styled.div`
   width: 100%;
-  height: 3px;
+  height: 2px;
   background-color: white;
   border-radius: 5px;
   transition: 0.4s;
 
   &:nth-child(1) {
     transform: ${({ $isOpen }) =>
-      $isOpen ? "rotate(45deg) translateY(19px)" : "none"};
+      $isOpen ? "rotate(45deg) translateY(9px)" : "none"};
   }
   &:nth-child(2) {
     opacity: ${({ $isOpen }) => ($isOpen ? 0 : 1)};
   }
   &:nth-child(3) {
     transform: ${({ $isOpen }) =>
-      $isOpen ? "rotate(-45deg) translateY(-19px)" : "none"};
+      $isOpen ? "rotate(-45deg) translateY(-9px)" : "none"};
   }
 `;
 
@@ -276,12 +276,10 @@ export const Navbar = () => {
   };
 
   const toggleMenu = () => {
-    console.log('Toggle menu clicked, current state:', isOpen); // Debug log
     setIsOpen(!isOpen);
   };
 
   useEffect(() => {
-    console.log('Location changed, closing menu'); // Debug log
     setIsOpen(false);
   }, [location.pathname]);
 
@@ -313,10 +311,6 @@ export const Navbar = () => {
     }
   }, [isHomepage]);
 
-  // Debug log för state
-  useEffect(() => {
-    console.log('Menu state changed:', isOpen);
-  }, [isOpen]);
 
   const pageTitle = getPageTitle();
 
@@ -372,6 +366,9 @@ export const Navbar = () => {
         </li>
         <li>
           <Link to="/contact">Contact</Link>
+        </li>
+        <li>
+          <button onClick={() => setIsOpen(false)}>✕ Close</button>
         </li>
       </MobileMenu>
     </NavbarWrapper>

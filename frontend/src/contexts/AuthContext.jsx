@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { apiCall } from '../config/api.js';
 
 const AuthContext = createContext();
 
@@ -13,25 +14,18 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
 
   // Check if user is authenticated on app load
   useEffect(() => {
-    if (token) {
-      fetchCurrentUser();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
+    fetchCurrentUser();
+  }, []);
 
   const fetchCurrentUser = async () => {
     try {
-      const response = await fetch('/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const response = await apiCall('/auth/me', {
+        credentials: 'include' // Include cookies
       });
 
       if (response.ok) {
@@ -39,25 +33,23 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
         fetchFavorites();
       } else {
-        // Token is invalid
-        logout();
+        // Token is invalid or user not logged in
+        setUser(null);
       }
     } catch (error) {
       console.error('Error fetching user:', error);
-      logout();
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
   const fetchFavorites = async () => {
-    if (!token) return;
+    if (!user) return;
     
     try {
-      const response = await fetch('/auth/favorites', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const response = await apiCall('/auth/favorites', {
+        credentials: 'include'
       });
 
       if (response.ok) {
@@ -71,20 +63,19 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('/auth/login', {
+      const response = await apiCall('/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setToken(data.token);
         setUser(data.user);
-        localStorage.setItem('token', data.token);
         fetchFavorites();
         return { success: true };
       } else {
@@ -98,20 +89,19 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await fetch('/auth/register', {
+      const response = await apiCall('/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ name, email, password })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setToken(data.token);
         setUser(data.user);
-        localStorage.setItem('token', data.token);
         return { success: true };
       } else {
         return { success: false, error: data.message };
@@ -122,29 +112,38 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    setFavorites([]);
-    localStorage.removeItem('token');
-    
-    // Redirect to merch shop if on protected pages
-    const currentPath = window.location.pathname;
-    if (currentPath === '/settings' || currentPath === '/favorites') {
-      window.location.href = '/merch';
+  const logout = async () => {
+    try {
+      // Call backend logout to clear httpOnly cookie
+      await apiCall('/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear local state regardless of backend response
+      setUser(null);
+      setFavorites([]);
+      
+      // Redirect to merch shop if on protected pages
+      const currentPath = window.location.pathname;
+      if (currentPath === '/settings' || currentPath === '/favorites') {
+        window.location.href = '/merch';
+      }
     }
   };
 
   const addToFavorites = async (product) => {
-    if (!token) return { success: false, error: 'Please login to add favorites' };
+    if (!user) return { success: false, error: 'Please login to add favorites' };
 
     try {
-      const response = await fetch('/auth/favorites', {
+      const response = await apiCall('/auth/favorites', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({
           sellableId: product.sellableId,
           name: product.name,
@@ -169,14 +168,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const removeFromFavorites = async (sellableId) => {
-    if (!token) return { success: false, error: 'Please login first' };
+    if (!user) return { success: false, error: 'Please login first' };
 
     try {
-      const response = await fetch(`/auth/favorites/${sellableId}`, {
+      const response = await apiCall(`/auth/favorites/${sellableId}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        credentials: 'include'
       });
 
       const data = await response.json();
@@ -199,7 +196,6 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
-    token,
     loading,
     favorites,
     login,

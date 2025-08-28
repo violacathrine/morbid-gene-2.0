@@ -27,6 +27,25 @@ const HeartButton = styled.button`
     opacity: 0.5;
     cursor: not-allowed;
   }
+  
+  /* Tooltip för icke-inloggade användare */
+  ${props => !props.$isAuthenticated && props.$showTooltip ? `
+    &:hover::after {
+      content: "Login to add favorites";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 5px;
+      background: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+  ` : ''}
 `;
 
 const HeartIcon = styled.svg`
@@ -46,32 +65,9 @@ const HeartIcon = styled.svg`
   }
 `;
 
-const LoginPrompt = styled.div`
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background: #000;
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 1000;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    right: 20px;
-    border: 5px solid transparent;
-    border-top-color: #000;
-  }
-`;
-
 const FavoriteButton = ({ product, size = 20, showTooltip = false }) => {
   const { isAuthenticated, isFavorite, addToFavorites, removeFromFavorites } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   
   const productIsFavorite = isFavorite(product.sellableId);
 
@@ -80,10 +76,6 @@ const FavoriteButton = ({ product, size = 20, showTooltip = false }) => {
     e.stopPropagation(); // Prevent event bubbling
     
     if (!isAuthenticated) {
-      if (showTooltip) {
-        setShowLoginPrompt(true);
-        setTimeout(() => setShowLoginPrompt(false), 2000);
-      }
       return;
     }
 
@@ -106,12 +98,14 @@ const FavoriteButton = ({ product, size = 20, showTooltip = false }) => {
     <HeartButton 
       onClick={handleClick}
       disabled={loading}
+      $isAuthenticated={isAuthenticated}
+      $showTooltip={showTooltip}
       title={
-        !isAuthenticated 
-          ? "Login to add favorites" 
-          : productIsFavorite 
+        isAuthenticated 
+          ? (productIsFavorite 
             ? "Remove from favorites" 
-            : "Add to favorites"
+            : "Add to favorites")
+          : undefined // Ingen title för icke-inloggade, vi använder CSS tooltip istället
       }
       style={{ position: 'relative' }}
     >
@@ -123,12 +117,6 @@ const FavoriteButton = ({ product, size = 20, showTooltip = false }) => {
       >
         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
       </HeartIcon>
-      
-      {showLoginPrompt && showTooltip && (
-        <LoginPrompt>
-          Login to add favorites
-        </LoginPrompt>
-      )}
     </HeartButton>
   );
 };

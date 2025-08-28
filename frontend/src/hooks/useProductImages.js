@@ -6,10 +6,7 @@ export const useProductImages = (sellableId, appearanceId, ideaId) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("🖼️ useProductImages triggered:", { sellableId, appearanceId });
-
     if (!sellableId || !appearanceId) {
-      console.log("Missing sellableId or appearanceId, skipping fetch");
       return;
     }
 
@@ -18,16 +15,12 @@ export const useProductImages = (sellableId, appearanceId, ideaId) => {
       setError(null);
 
       try {
-        console.log(
-          `Fetching images for sellable: ${sellableId}, appearance: ${appearanceId}, ideaId: ${ideaId}`
-        );
         const response = await fetch(
           `/api/merch/sellable/${sellableId}/${appearanceId}/${ideaId}`
         );
         if (!response.ok) throw new Error("Failed to fetch images");
 
         const data = await response.json();
-        console.log("📸 Images fetched:", data.images);
         setImages(data.images || []);
       } catch (err) {
         console.error("Error fetching images:", err);

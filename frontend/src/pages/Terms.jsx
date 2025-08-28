@@ -72,19 +72,24 @@ const List = styled.ul`
   }
 `;
 
+const InfoBox = styled.div`
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+`;
+
 export const Terms = () => {
   return (
     <Container>
       <BackLink to="/cart">Back to Cart</BackLink>
       
       <Title>Terms of Use</Title>
-      <LastUpdated>Last updated: [Date]</LastUpdated>
+      <LastUpdated>Last updated: August 28, 2025</LastUpdated>
       
       <Section>
         <SectionTitle>1. Acceptance of Terms</SectionTitle>
-        <Paragraph>
-          [Your terms content will go here. This is a placeholder for the actual terms of use.]
-        </Paragraph>
         <Paragraph>
           By accessing and using this website, you accept and agree to be bound by the terms and provision of this agreement.
         </Paragraph>
@@ -103,32 +108,66 @@ export const Terms = () => {
       </Section>
       
       <Section>
-        <SectionTitle>3. Product Purchases</SectionTitle>
+        <SectionTitle>3. Product Purchases and Third-Party Terms</SectionTitle>
         <Paragraph>
           All merchandise purchases are processed through our partner Spreadshirt. When making a purchase, you will be redirected to Spreadshirt's secure checkout system.
         </Paragraph>
         <Paragraph>
-          By purchasing products through our store, you also agree to Spreadshirt's terms and conditions.
+          By purchasing products through our store, you also agree to Spreadshirt's terms and conditions:
+        </Paragraph>
+        <List>
+          <li>
+            <a href="https://www.spreadshirt.se/allmaenna-villkoren-C10183" target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', textDecoration: 'underline' }}>
+              Spreadshirt General Terms and Conditions
+            </a>
+          </li>
+          <li>
+            <a href="https://www.spreadshirt.se/allm%C3%A4nna-villkor-kunder-C2377" target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', textDecoration: 'underline' }}>
+              Spreadshirt Customer Terms and Conditions
+            </a>
+          </li>
+        </List>
+        <Paragraph>
+          <strong>Note:</strong> These are Spreadshirt's terms and conditions in Swedish. They govern all aspects of product ordering, payment, shipping, returns, and customer service for merchandise purchases.
         </Paragraph>
       </Section>
       
       <Section>
-        <SectionTitle>4. Privacy</SectionTitle>
+        <SectionTitle>4. User Accounts and Data Retention</SectionTitle>
+        <Paragraph>
+          If you create an account on our website, the following terms apply:
+        </Paragraph>
+        <List>
+          <li><strong>Account Security:</strong> You are responsible for maintaining the confidentiality of your account and password</li>
+          <li><strong>Inactive Account Deletion:</strong> Accounts that remain inactive (no login) for 30 months will be automatically deleted from our system</li>
+          <li><strong>Data Deletion:</strong> When an account is deleted, all associated personal data is permanently removed from our database</li>
+          <li><strong>Account Recreation:</strong> After deletion, you may create a new account using the same email address if desired</li>
+          <li><strong>No Recovery:</strong> Once deleted, inactive account data cannot be recovered</li>
+        </List>
+        <Paragraph>
+          This policy ensures compliance with data protection regulations and helps maintain system security and performance.
+        </Paragraph>
+      </Section>
+      
+      <Section>
+        <SectionTitle>5. Privacy</SectionTitle>
         <Paragraph>
           Your use of our website is also governed by our Privacy Policy. Please review our Privacy Policy, which also governs the Site and informs users of our data collection practices.
         </Paragraph>
       </Section>
       
-      <Section>
-        <SectionTitle>5. Contact Information</SectionTitle>
-        <Paragraph>
+      <InfoBox>
+        <SectionTitle style={{ fontSize: '1.2rem', marginBottom: '0.75rem' }}>
+          Contact Us
+        </SectionTitle>
+        <Paragraph style={{ marginBottom: '0.5rem' }}>
           If you have any questions about these Terms of Use, please contact us at:
         </Paragraph>
-        <Paragraph>
-          Email: [Your email]<br/>
-          Address: [Your address]
+        <Paragraph style={{ marginBottom: '0' }}>
+          Email: morbidgenemusic@gmail.com<br/>
+          Website: morbidgeneofficial.com
         </Paragraph>
-      </Section>
+      </InfoBox>
       
       <ScrollToTop />
     </Container>

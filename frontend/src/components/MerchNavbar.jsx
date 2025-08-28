@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { CartContext } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
-import { GiShoppingCart } from "react-icons/gi";
+import { FaShoppingCart, FaHeart, FaUser, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import logoUrl from "../assets/logo.svg";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 // NAVBAR med grid
 const MerchNavWrapper = styled.nav`
@@ -16,13 +17,17 @@ const MerchNavWrapper = styled.nav`
 
   display: grid;
   grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto auto;
   align-items: center;
   gap: 1rem;
   
   @media (min-width: 768px) {
     padding: 1.5rem 2rem;
-    grid-template-columns: auto 1fr auto;
-    gap: 2rem;
+    padding-top: 0.5rem;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: auto auto auto;  /* welcome-rad, logo-rad, breadcrumb-rad */
+    column-gap: 2rem;
+    row-gap: 0.5rem;
   }
 `;
 
@@ -30,28 +35,54 @@ const MerchNavWrapper = styled.nav`
 const LeftSection = styled.div`
   display: flex;
   justify-content: center;
-  grid-column: 1 / -1; /* Take full width on mobile */
+  grid-column: 1 / -1;
+  grid-row: 2;
   
   @media (min-width: 768px) {
     justify-content: flex-start;
     grid-column: 1;
+    grid-row: 1;
+    align-self: start;  /* Högst upp i grid-cellen */
   }
 `;
 
 const LogoLink = styled(Link)`
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   text-decoration: none;
+  position: relative;
+  
+  @media (min-width: 768px) {
+    &:hover::after {
+      content: "Home";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 5px;
+      background: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+  }
 `;
 
 const LogoImg = styled.img`
-  height: 100px; /* anpassa storlek */
+  height: 120px;
   width: auto;
   display: block;
-  margin-top: 1rem;
+  margin-top: 0;
   
   @media (min-width: 768px) {
-    margin-top: 0;
+    height: 90px;
+  }
+  
+  @media (min-width: 1024px) {
+    height: 100px;
   }
 `;
 
@@ -63,21 +94,36 @@ const CenterSection = styled.div`
   justify-content: center;
   text-align: center;
   color: #fff;
-  grid-column: 1 / -1; /* Take full width on mobile */
+  grid-row: 3;
+  grid-column: 1 / -1;
   
   @media (min-width: 768px) {
+    grid-row: 2;
     grid-column: 2;
-    align-items: center;
+    justify-content: flex-start;
+    margin-top: -0.5rem;
   }
 `;
 
 const ShopTitle = styled(Link)`
   color: white;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 800;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+
+  @media (min-width: 480px) {
+    font-size: 20px;
+  }
+  
+  @media (min-width: 768px) {
+    font-size: 22px;
+  }
+  
+  @media (min-width: 1024px) {
+    font-size: 24px;
+  }
 
   &:hover {
     color: #ccc;
@@ -94,14 +140,20 @@ const ShopSubtitle = styled.div`
   }
 `;
 
-// Höger: login + cart
+// Höger: login + cart (bara mobil)
 const RightSection = styled.div`
-  justify-self: end;
-  align-self: start; /* uppe i cellen */
+  position: absolute;
+  top: 14px;
+  right: 15px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  z-index: 1001;
+  
+  @media (min-width: 768px) {
+    display: none;
+  }
 `;
 
 const AuthLink = styled(Link)`
@@ -119,10 +171,20 @@ const AuthLink = styled(Link)`
   transition: all 0.2s ease;
   height: 44px;
   box-sizing: border-box;
+  margin: 0;
+  vertical-align: middle;
 
   &:hover {
     background: rgba(220, 38, 38, 0.1);
     color: #dc2626;
+  }
+  
+  @media (min-width: 768px) {
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: 25px;
+    min-width: 80px;
+    margin-right: -1rem; /* Putta till höger */
   }
 `;
 
@@ -153,33 +215,191 @@ const AuthButton = styled.button`
   }
 `;
 
+const DesktopLogoutButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background: none;
+  border: none;
+  font-size: 20px;
+  padding: 12px;
+  margin: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  height: 44px;
+  width: 44px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  
+  &:hover {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+  }
+  
+  &:hover::after {
+    content: "Logout";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 5px;
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+  }
+`;
+
 const FavoritesLink = styled(Link)`
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   line-height: 1;
   color: white;
   text-decoration: none;
-  font-weight: bold;
-  font-size: 14px;
-  text-transform: uppercase;
-  padding: 10px 16px;
-  border-radius: 4px;
+  font-size: 20px;
+  padding: 12px;
+  margin: 0;
+  border-radius: 50%;
   transition: all 0.2s ease;
+  position: relative;
   height: 44px;
+  width: 44px;
   box-sizing: border-box;
+  vertical-align: middle;
 
   &:hover {
     background: rgba(220, 38, 38, 0.1);
     color: #dc2626;
   }
-
-  &::before {
-    content: "♥";
-    margin-right: 0.5rem;
-    color: #dc2626;
-    vertical-align: baseline;
+  
+  @media (min-width: 768px) {
+    &:hover::after {
+      content: "Favorites";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 5px;
+      background: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
   }
+`;
+
+const CartSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  @media (max-width: 767px) {
+    align-items: flex-end;
+  }
+`;
+
+const CartLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  padding: 0;
+  margin: 0;
+  transition: all 0.2s ease;
+  position: relative;
+  height: 24px;
+  width: 24px;
+  box-sizing: border-box;
+  vertical-align: middle;
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+    padding: 12px;
+    height: 44px;
+    width: 44px;
+    border-radius: 50%;
+  }
+
+  &:hover {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+  }
+  
+  @media (min-width: 768px) {
+    &:hover::after {
+      content: "Cart";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 5px;
+      background: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+  }
+`;
+
+const CartBadge = styled.span`
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #dc2626;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 4px;
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+
+  @media (min-width: 768px) {
+    top: -5px;
+    right: -5px;
+    padding: 2px 6px;
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+  }
+`;
+
+const FavoritesBadge = styled.span`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #dc2626;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 `;
 
 const AuthenticatedSection = styled.div`
@@ -187,6 +407,7 @@ const AuthenticatedSection = styled.div`
   flex-direction: column;
   align-items: flex-end;
   gap: 0.5rem;
+  position: relative;
 `;
 
 const UserSection = styled.div`
@@ -197,6 +418,22 @@ const UserSection = styled.div`
   height: 24px;
   line-height: 1;
   justify-self: center;
+`;
+
+const UserName = styled.span`
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+  }
 `;
 
 const ActionsRow = styled.div`
@@ -223,9 +460,9 @@ const UserInfo = styled.span`
 const SettingsLink = styled(Link)`
   background: none;
   border: none;
-  color: #ccc;
+  color: white;
   cursor: pointer;
-  padding: 0;
+  padding: 8px;
   margin: 0;
   border-radius: 4px;
   display: inline-flex;
@@ -235,68 +472,204 @@ const SettingsLink = styled(Link)`
   transition: all 0.2s ease;
   line-height: 1;
   vertical-align: baseline;
+  font-size: 16px;
+  gap: 0.25rem;
   
   &:hover {
     color: #dc2626;
     background: rgba(220, 38, 38, 0.1);
   }
   
-  @media (max-width: 768px) {
+  @media (min-width: 768px) {
+    padding: 12px;
+    font-size: 20px;
+    border-radius: 50%;
+    height: 44px;
+    width: 44px;
+    position: relative;
+    vertical-align: middle;
+    box-sizing: border-box;
+    
+    &:hover::after {
+      content: "Settings";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 5px;
+      background: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+  }
+`;
+
+const SettingsIcon = styled(FaUser)`
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  
+  @media (min-width: 768px) {
+    font-size: 20px;
+  }
+`;
+
+
+const WelcomeTopSection = styled.div`
+  display: none;
+  
+  @media (min-width: 768px) {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    grid-column: 2;  /* Mitten kolumnen */
+    grid-row: 1;
+    padding-top: 0;
+    margin-top: 0.5rem;
+    align-self: start;
+  }
+`;
+
+const TopUserBar = styled.div`
+  display: none;
+  
+  @media (min-width: 768px) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    grid-column: 3;  /* Bara högra kolumnen */
+    grid-row: 1;
+    padding-top: 0;
+    margin-top: 0.5rem;
+    gap: 1rem;
+    align-self: start;
+  }
+`;
+
+const UserIconsGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`;
+
+const BottomRowContainer = styled.div`
+  display: none;
+  
+  @media (min-width: 768px) {
+    display: block;
+    grid-column: 1 / -1;
+    grid-row: 3;
+    padding-top: 1rem;
+  }
+`;
+
+
+const WelcomeMessage = styled.div`
+  color: #ffffff;
+  font-size: 12px;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 0.25rem;
+  
+  @media (min-width: 768px) {
+    text-align: left;
+    margin-bottom: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+`;
+
+const MobileWelcomeMessage = styled(WelcomeMessage)`
+  @media (min-width: 768px) {
     display: none;
   }
 `;
 
-const SettingsIcon = styled(IoSettingsOutline)`
-  font-size: 12px;
-  vertical-align: middle;
-  margin: 0;
-  padding: 0;
-  display: block;
-`;
-
-const CartIcon = styled(GiShoppingCart)`
-  display: block;
-  font-size: 28px;
-  flex-shrink: 0;
-  vertical-align: baseline;
-  margin: 0;
-  padding: 0;
-`;
-
-const CartButton = styled(Link)`
-  display: inline-flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 0.4rem;
-  line-height: 1;
-  text-decoration: none;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  height: 44px;
-  box-sizing: border-box;
-
-  &:hover {
-    background: rgba(220, 38, 38, 0.1);
-    color: #dc2626;
+const MobileBreadcrumbWrapper = styled.div`
+  @media (min-width: 768px) {
+    display: none;
   }
 `;
-const CartCount = styled.span`
-  line-height: 1; /* samma som texten */
-  font-size: 16px;
+
+const BurgerToggle = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 1001;
+  position: relative;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
 `;
 
-const MobileMenuButton = styled.button`
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
+const Bar = styled.div`
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  border-radius: 5px;
+  transition: 0.4s;
 
-  @media (max-width: 768px) {
-    display: block;
+  &:nth-child(1) {
+    transform: ${({ $isOpen }) =>
+      $isOpen ? "rotate(45deg) translateY(9px)" : "none"};
+  }
+  &:nth-child(2) {
+    opacity: ${({ $isOpen }) => ($isOpen ? 0 : 1)};
+  }
+  &:nth-child(3) {
+    transform: ${({ $isOpen }) =>
+      $isOpen ? "rotate(-45deg) translateY(-9px)" : "none"};
+  }
+`;
+
+const MobileMenu = styled.ul`
+  position: fixed;
+  top: ${({ $isOpen }) => ($isOpen ? "0" : "-100vh")};
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.95);
+  list-style: none;
+  padding: 5rem 2rem 2rem;
+  margin: 0;
+  transition: top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1002;
+  transform: none !important;
+  visibility: ${({ $isOpen }) => ($isOpen ? "visible" : "hidden")};
+
+  li {
+    margin-bottom: 1.5rem;
+
+    a, button {
+      color: white;
+      text-decoration: none;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      background: none;
+      border: none;
+      cursor: pointer;
+      
+      &:hover {
+        color: #dc2626;
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    display: none !important;
   }
 `;
 
@@ -374,6 +747,7 @@ export const MerchNavbar = () => {
   const { isAuthenticated, user, logout, favorites } = useAuth();
   const totalItems = getTotalItems();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const handleLogoutClick = () => {
     setShowLogoutConfirm(true);
@@ -388,8 +762,22 @@ export const MerchNavbar = () => {
     setShowLogoutConfirm(false);
   };
 
+  const toggleMobileMenu = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  const closeMobileMenu = () => {
+    setShowMobileMenu(false);
+  };
+
+  const handleMobileLogout = () => {
+    logout();
+    closeMobileMenu();
+  };
+
   return (
-    <MerchNavWrapper>
+    <>
+      <MerchNavWrapper>
       {/* Vänster: klickbar logga */}
       <LeftSection>
         <LogoLink to="/" aria-label="Gå till startsidan">
@@ -403,8 +791,94 @@ export const MerchNavbar = () => {
         <ShopSubtitle>Powered by Spreadshirt</ShopSubtitle>
       </CenterSection>
 
-      {/* Höger: tom för att hålla grid-layout */}
-      <div></div>
+      {/* Desktop Layout - Rad 1: Welcome text centrerat */}
+      {isAuthenticated && (
+        <WelcomeTopSection>
+          <WelcomeMessage>Welcome, {user?.name || 'User'}!</WelcomeMessage>
+        </WelcomeTopSection>
+      )}
+
+      {/* Desktop Layout - Rad 1: User actions till höger */}
+      <TopUserBar>
+        {isAuthenticated ? (
+          <>
+            <SettingsLink to="/settings" aria-label="Settings">
+              <SettingsIcon />
+            </SettingsLink>
+            <FavoritesLink to="/favorites" aria-label={`Favoriter med ${favorites?.length || 0} ${favorites?.length === 1 ? 'vara' : 'varor'}`}>
+              <FaHeart />
+              {favorites?.length > 0 && <FavoritesBadge>{favorites.length}</FavoritesBadge>}
+            </FavoritesLink>
+            <CartLink to="/cart" aria-label={`Varukorg med ${totalItems} ${totalItems === 1 ? 'vara' : 'varor'}`}>
+              <FaShoppingCart />
+              {totalItems > 0 && <CartBadge>{totalItems}</CartBadge>}
+            </CartLink>
+            <DesktopLogoutButton onClick={() => setShowLogoutConfirm(true)} aria-label="Logout">
+              <FaSignOutAlt />
+            </DesktopLogoutButton>
+          </>
+        ) : (
+          <>
+            <CartLink to="/cart" aria-label={`Varukorg med ${totalItems} ${totalItems === 1 ? 'vara' : 'varor'}`}>
+              <FaShoppingCart />
+              {totalItems > 0 && <CartBadge>{totalItems}</CartBadge>}
+            </CartLink>
+            <AuthLink to="/login">Login</AuthLink>
+          </>
+        )}
+      </TopUserBar>
+
+      {/* Desktop Layout - Rad 3: Endast Breadcrumbs */}
+      <BottomRowContainer>
+        <Breadcrumbs />
+      </BottomRowContainer>
+
+      {/* Mobile Layout */}
+      <RightSection>
+        <CartLink to="/cart" aria-label={`Varukorg med ${totalItems} ${totalItems === 1 ? 'vara' : 'varor'}`}>
+          <FaShoppingCart />
+          {totalItems > 0 && <CartBadge>{totalItems}</CartBadge>}
+        </CartLink>
+        
+        {/* Mobile hamburger button */}
+        <BurgerToggle onClick={toggleMobileMenu} $isOpen={showMobileMenu}>
+          <Bar $isOpen={showMobileMenu} />
+          <Bar $isOpen={showMobileMenu} />
+          <Bar $isOpen={showMobileMenu} />
+        </BurgerToggle>
+      </RightSection>
+
+      {/* Mobile menu */}
+      <MobileMenu $isOpen={showMobileMenu}>
+        <li>
+          <Link to="/" onClick={closeMobileMenu}>Home</Link>
+        </li>
+        <li>
+          <Link to="/merch" onClick={closeMobileMenu}>Shop</Link>
+        </li>
+        {isAuthenticated ? (
+          <>
+            <li>
+              <Link to="/favorites" onClick={closeMobileMenu}>
+                Favorites ({favorites?.length || 0})
+              </Link>
+            </li>
+            <li>
+              <Link to="/settings" onClick={closeMobileMenu}>Settings</Link>
+            </li>
+            <li>
+              <button onClick={handleMobileLogout}>Logout</button>
+            </li>
+          </>
+        ) : (
+          <li>
+            <Link to="/login" onClick={closeMobileMenu}>Login</Link>
+          </li>
+        )}
+        <li>
+          <button onClick={closeMobileMenu}>✕ Close</button>
+        </li>
+      </MobileMenu>
 
       {/* Logout Confirmation Dialog */}
       {showLogoutConfirm && (
@@ -423,6 +897,12 @@ export const MerchNavbar = () => {
           </ConfirmationDialog>
         </ConfirmationOverlay>
       )}
-    </MerchNavWrapper>
+      </MerchNavWrapper>
+      
+      {/* Mobile Breadcrumbs - visas bara på mobil som separat komponent */}
+      <MobileBreadcrumbWrapper>
+        <Breadcrumbs />
+      </MobileBreadcrumbWrapper>
+    </>
   );
 };

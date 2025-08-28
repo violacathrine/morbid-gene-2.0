@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { apiCall } from '../config/api.js';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -14,11 +15,11 @@ const Container = styled.div`
   }
   
   @media (min-width: 768px) {
-    padding: 2rem;
+    padding: 0.5rem 2rem 2rem 2rem;
   }
   
   @media (min-width: 1024px) {
-    padding: 3rem;
+    padding: 0.5rem 3rem 3rem 3rem;
   }
 `;
 
@@ -40,16 +41,24 @@ const Header = styled.div`
   text-align: center;
   margin-bottom: 3rem;
   
+  @media (min-width: 768px) {
+    margin-bottom: 1.5rem;
+  }
+  
   h1 {
     color: #ffffff;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 0.5rem;
     
     @media (min-width: 480px) {
-      font-size: 2.5rem;
+      font-size: 1.75rem;
+    }
+    
+    @media (min-width: 768px) {
+      font-size: 1.75rem;
     }
   }
   
@@ -353,6 +362,7 @@ export const AccountSettings = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
   
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -385,11 +395,10 @@ export const AccountSettings = () => {
     setLoading(true);
     
     try {
-      const response = await fetch('/auth/change-password', {
+      const response = await apiCall('/auth/change-password', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           currentPassword: passwordForm.currentPassword,
@@ -419,17 +428,16 @@ export const AccountSettings = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const response = await fetch('/auth/delete-account', {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+      const response = await apiCall('/auth/delete-account', {
+        method: 'DELETE'
       });
 
       if (response.ok) {
-        alert('Account deleted successfully');
-        logout();
-        navigate('/');
+        setShowDeleteSuccess(true);
+        setTimeout(() => {
+          logout();
+          navigate('/');
+        }, 2000); // Visa popup i 2 sekunder innan omdirigering
       } else {
         const data = await response.json();
         setError(data.message || 'Failed to delete account');
@@ -473,6 +481,12 @@ export const AccountSettings = () => {
               <InfoLabel>Account Created</InfoLabel>
               <InfoValue>
                 {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+              </InfoValue>
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>Last Login</InfoLabel>
+              <InfoValue>
+                {user?.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Unknown'}
               </InfoValue>
             </InfoItem>
           </InfoGrid>
@@ -557,6 +571,16 @@ export const AccountSettings = () => {
                   Delete Forever
                 </ConfirmButton>
               </ConfirmationButtons>
+            </ConfirmationDialog>
+          </ConfirmationOverlay>
+        )}
+
+        {/* Delete Account Success Dialog */}
+        {showDeleteSuccess && (
+          <ConfirmationOverlay>
+            <ConfirmationDialog>
+              <h3>Account Deleted Successfully</h3>
+              <p>Your account and all associated data have been permanently deleted. You will be redirected to the homepage shortly.</p>
             </ConfirmationDialog>
           </ConfirmationOverlay>
         )}

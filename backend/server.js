@@ -3,11 +3,15 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
+import cron from "node-cron";
 
 import authRoutes from "./routes/auth.js";
 import profileRoutes from "./routes/profile.js";
 import merchRoutes from "./routes/merch.js";
+import cleanupRoutes from "./routes/cleanup.js";
+import User from "./models/User.js";
 
 // Setup för __dirname i ES-moduler
 const __filename = fileURLToPath(import.meta.url);
@@ -33,12 +37,6 @@ if (missingVars.length > 0) {
 }
 
 // Debug info
-console.log("✅ Miljövariabler laddade:", {
-  shopId: process.env.SPREADSHOP_ID,
-  hasApiKey: !!process.env.SPREADSHOP_API_KEY,
-  hasJwtSecret: !!process.env.JWT_SECRET,
-  userAgent: process.env.SPREAD_USER_AGENT,
-});
 
 // Environment variables
 const PORT = process.env.PORT || 8080;
@@ -48,7 +46,7 @@ const MONGO_URL =
 // Connect to MongoDB
 mongoose
   .connect(MONGO_URL)
-  .then(() => console.log("✅ MongoDB ansluten"))
+  .then(() => {})
   .catch((error) => {
     console.error("❌ MongoDB anslutningsfel:", error);
     process.exit(1);
@@ -57,13 +55,27 @@ mongoose
 // Create Express app
 const app = express();
 
+// CORS configuration for production
+const corsOptions = {
+  origin: [
+    'http://localhost:5173', // Vite dev server
+    'http://localhost:5174', // Alternative Vite dev port
+    'http://localhost:3000', // Alternative dev port
+    'https://morbidgeneofficial.com', // Production frontend (custom domain)
+    process.env.FRONTEND_URL || 'https://morbidgeneofficial.netlify.app', // Production frontend (netlify)
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
 
 // Logga varje request (metod + url)
 app.use((req, res, next) => {
-  console.log(`→ ${req.method} ${req.url}`);
   next();
 });
 
@@ -85,6 +97,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/user", profileRoutes);
 app.use("/api/merch", merchRoutes);
+app.use("/admin/cleanup", cleanupRoutes);
 
 // 404 handler för okända endpoints
 app.use("*", (req, res) => {
@@ -102,12 +115,34 @@ app.use((err, req, res, next) => {
 
 // Graceful shutdown
 process.on("SIGTERM", () => {
-  console.log("👋 Stänger av servern...");
   mongoose.connection.close();
   process.exit(0);
 });
 
+// Schedule automatic cleanup - runs on the 1st of each month at 02:00
+cron.schedule('0 2 1 * *', async () => {
+  try {
+    console.log('🧹 Running scheduled account cleanup...');
+    
+    // Calculate the cutoff date (30 months ago)
+    const monthsInactive = parseInt(process.env.INACTIVE_MONTHS) || 30;
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - monthsInactive);
+
+    console.log(`Cleaning up accounts inactive since: ${cutoffDate}`);
+
+    // Find and delete inactive accounts
+    const result = await User.deleteMany({
+      lastLogin: { $lt: cutoffDate }
+    });
+
+    console.log(`✅ Cleanup completed: ${result.deletedCount} inactive accounts deleted`);
+  } catch (error) {
+    console.error('❌ Scheduled cleanup failed:', error);
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🧹 Scheduled cleanup: 1st of each month at 02:00 (${process.env.INACTIVE_MONTHS || 30} months inactive)`);
 });

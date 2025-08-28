@@ -10,6 +10,10 @@ const Container = styled.div`
   max-width: 1280px;
   margin: 0 auto;
   min-height: 100vh;
+  
+  @media (min-width: 768px) {
+    min-height: auto;
+  }
 `;
 
 const Header = styled.div`
@@ -40,7 +44,7 @@ const Title = styled.h1`
 
 const EmptyState = styled.div`
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 2rem 1rem;
   color: #cccccc;
 `;
 
@@ -63,12 +67,18 @@ const ShopButton = styled(Link)`
   display: inline-block;
   background-color: #dc2626;
   color: #ffffff;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   text-decoration: none;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: background-color 0.2s;
+  font-size: 0.9rem;
+  
+  @media (max-width: 768px) {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
   
   &:hover {
     background-color: #b91c1c;
@@ -151,16 +161,13 @@ export const Favorites = () => {
 
   return (
     <Container>
-      <Header>
-        <div>
-          <Title>My Favorites</Title>
-          {user && (
-            <p style={{ color: '#cccccc', margin: '0.5rem 0 0 0' }}>
-              Hello, {user.name}! You have {favorites.length} favorite product{favorites.length !== 1 ? 's' : ''}.
-            </p>
-          )}
-        </div>
-      </Header>
+      {favorites.length > 0 && (
+        <Header>
+          <div>
+            <Title>My Favorites</Title>
+          </div>
+        </Header>
+      )}
 
       {favorites.length === 0 ? (
         <EmptyState>

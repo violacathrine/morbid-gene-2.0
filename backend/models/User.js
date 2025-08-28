@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
       trim: true,
       maxlength: [50, 'Name cannot exceed 50 characters']
     },
+    lastLogin: {
+      type: Date,
+      default: Date.now
+    },
     favorites: [{
       sellableId: {
         type: String,
