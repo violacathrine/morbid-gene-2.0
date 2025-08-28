@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiCall } from "../config/api";
 
 export const useProductImages = (sellableId, appearanceId, ideaId) => {
   const [images, setImages] = useState([]);
@@ -15,7 +16,7 @@ export const useProductImages = (sellableId, appearanceId, ideaId) => {
       setError(null);
 
       try {
-        const response = await fetch(
+        const response = await apiCall(
           `/api/merch/sellable/${sellableId}/${appearanceId}/${ideaId}`
         );
         if (!response.ok) throw new Error("Failed to fetch images");
