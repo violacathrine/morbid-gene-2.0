@@ -123,38 +123,39 @@ export const ProductImageGallery = ({ images, productName, fallbackImage }) => {
   const shouldShowSlider = images && images.length > visibleThumbnails;
   
   // Calculate disable states for arrows
-  const maxOffset = images ? -(Math.max(0, images.length - visibleThumbnails) * TOTAL_WIDTH_PER_THUMBNAIL) : 0;
-  const isFirstPage = sliderOffset === 0;
-  const isLastPage = sliderOffset <= maxOffset;
+  const isFirstPage = selectedImageIndex === 0;
+  const isLastPage = selectedImageIndex === (images ? images.length - 1 : 0);
   
   const moveSlider = (direction) => {
-    // Calculate how many positions we can move
-    const totalImages = images.length;
-    const maxSlidePositions = Math.max(0, totalImages - visibleThumbnails);
-    
     if (direction === 'right') {
-      // Calculate current position based on offset
-      const currentPosition = Math.abs(Math.round(sliderOffset / TOTAL_WIDTH_PER_THUMBNAIL));
-      
-      if (currentPosition < maxSlidePositions) {
-        // Move one position to the right
-        const newOffset = sliderOffset - TOTAL_WIDTH_PER_THUMBNAIL;
-        setSliderOffset(newOffset);
+      // Move to next image if possible
+      if (selectedImageIndex < images.length - 1) {
+        const newIndex = selectedImageIndex + 1;
+        setSelectedImageIndex(newIndex);
         
-        // Update selected image to next one
-        if (selectedImageIndex < images.length - 1) {
-          setSelectedImageIndex(selectedImageIndex + 1);
+        // Check if we need to scroll the thumbnails
+        const currentPosition = Math.abs(Math.round(sliderOffset / TOTAL_WIDTH_PER_THUMBNAIL));
+        const maxVisibleIndex = currentPosition + visibleThumbnails - 1;
+        
+        if (newIndex > maxVisibleIndex) {
+          // Need to scroll right
+          const newOffset = sliderOffset - TOTAL_WIDTH_PER_THUMBNAIL;
+          setSliderOffset(newOffset);
         }
       }
     } else {
-      // Move left
-      if (sliderOffset < 0) {
-        const newOffset = sliderOffset + TOTAL_WIDTH_PER_THUMBNAIL;
-        setSliderOffset(newOffset);
+      // Move to previous image if possible
+      if (selectedImageIndex > 0) {
+        const newIndex = selectedImageIndex - 1;
+        setSelectedImageIndex(newIndex);
         
-        // Update selected image to previous one
-        if (selectedImageIndex > 0) {
-          setSelectedImageIndex(selectedImageIndex - 1);
+        // Check if we need to scroll the thumbnails
+        const currentPosition = Math.abs(Math.round(sliderOffset / TOTAL_WIDTH_PER_THUMBNAIL));
+        
+        if (newIndex < currentPosition) {
+          // Need to scroll left
+          const newOffset = sliderOffset + TOTAL_WIDTH_PER_THUMBNAIL;
+          setSliderOffset(newOffset);
         }
       }
     }
