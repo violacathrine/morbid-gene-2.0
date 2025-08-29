@@ -36,6 +36,7 @@ export const sendContactEmail = async (formData) => {
     const mailOptionsToYou = {
       from: process.env.EMAIL_USER,
       to: process.env.CONTACT_EMAIL || process.env.EMAIL_USER,
+      replyTo: email, // När du svarar går det till kundens email
       subject: `🎵 ${name} - ${subject || 'Allmän förfrågan'}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -115,6 +116,7 @@ export const sendBookingEmail = async (formData) => {
     const mailOptionsToYou = {
       from: process.env.EMAIL_USER,
       to: process.env.BOOKING_EMAIL || process.env.EMAIL_USER,
+      replyTo: email, // När du svarar går det till kundens email
       subject: `🎤 NY BOKNINGSFÖRFRÅGAN - ${eventType} - ${venue}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

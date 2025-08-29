@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ScrollToTop from "../components/ScrollToTop";
 
 const Container = styled.div`
@@ -9,8 +9,11 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
-const BackLink = styled(Link)`
+const BackButton = styled.button`
   color: #ffffff;
+  background: none;
+  border: none;
+  cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -18,6 +21,7 @@ const BackLink = styled(Link)`
   margin-bottom: 2rem;
   font-size: 0.9rem;
   transition: color 0.2s ease;
+  padding: 0;
   
   &:hover {
     color: #dc2626;
@@ -88,9 +92,15 @@ const InfoBox = styled.div`
 `;
 
 export const Privacy = () => {
+  const navigate = useNavigate();
+  
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+  
   return (
     <Container>
-      <BackLink to="/cart">Back to Cart</BackLink>
+      <BackButton onClick={handleGoBack}>Go Back</BackButton>
       
       <Title>Privacy Policy</Title>
       <LastUpdated>Last updated: August 28, 2025</LastUpdated>

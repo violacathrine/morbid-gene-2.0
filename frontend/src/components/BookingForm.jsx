@@ -337,8 +337,8 @@ const BookingForm = () => {
         <SuccessMessage>
           <h2>BOOKING REQUEST SENT</h2>
           <p>
-            Thanks for your booking request! We will get back to you within 24-48 hours with
-            more information.
+            Thanks for your booking request! We will get back to you within
+            24-48 hours with more information.
           </p>
           <SubmitButton onClick={resetForm}>Send another request</SubmitButton>
         </SuccessMessage>
@@ -406,8 +406,6 @@ const BookingForm = () => {
               <option value="festival">Festival</option>
               <option value="club">Club/Bar</option>
               <option value="private">Private Event</option>
-              <option value="corporate">Corporate Event</option>
-              <option value="wedding">Wedding</option>
               <option value="other">Other</option>
             </Select>
           </FormGroup>
