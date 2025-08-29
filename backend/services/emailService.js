@@ -70,6 +70,9 @@ export const sendContactEmail = async (formData) => {
       subject: "Thanks for contacting Morbid Gene",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <img src="https://morbidgeneofficial.com/icon.png" alt="Morbid Gene" style="height: 80px; width: auto;">
+          </div>
           <h2 style="color: #dc2626;">Thanks for your message!</h2>
 
           <p>Hi ${name},</p>
@@ -157,6 +160,9 @@ export const sendBookingEmail = async (formData) => {
       subject: "Booking Request Received - Morbid Gene",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <img src="https://morbidgeneofficial.com/icon.png" alt="Morbid Gene" style="height: 80px; width: auto;">
+          </div>
           <h2 style="color: #dc2626;">Thank you for your booking request!</h2>
 
           <p>Hi ${name},</p>
