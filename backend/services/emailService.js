@@ -1,10 +1,11 @@
-import nodemailer from 'nodemailer';
+import pkg from 'nodemailer';
+const { createTransport } = pkg;
 
 // Create email transporter
 const createTransporter = () => {
   // Gmail configuration (most common)
   if (process.env.EMAIL_PROVIDER === 'gmail') {
-    return nodemailer.createTransporter({
+    return createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
@@ -14,7 +15,7 @@ const createTransporter = () => {
   }
 
   // Generic SMTP configuration
-  return nodemailer.createTransporter({
+  return createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT || 587,
     secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
