@@ -64,9 +64,10 @@ export const sendContactEmail = async (formData) => {
 
     // Auto-reply to customer
     const mailOptionsToCustomer = {
-      from: process.env.EMAIL_USER,
+      from: `"Morbid Gene" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: '🎵 Morbid Gene - Thanks for your message!',
+      replyTo: process.env.EMAIL_USER,
+      subject: 'Thanks for contacting Morbid Gene',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #dc2626;">Thanks for your message!</h2>
@@ -87,7 +88,7 @@ export const sendContactEmail = async (formData) => {
           <strong>Morbid Gene</strong></p>
 
           <p style="color: #666; font-size: 12px; margin-top: 30px;">
-            Detta är ett automatiskt svar från morbidgeneofficial.com
+            This is an automated response from morbidgeneofficial.com
           </p>
         </div>
       `,
@@ -155,9 +156,10 @@ export const sendBookingEmail = async (formData) => {
 
     // Auto-reply to customer
     const mailOptionsToCustomer = {
-      from: process.env.EMAIL_USER,
+      from: `"Morbid Gene Booking" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: '🎤 Bokningsförfrågan mottagen - Morbid Gene',
+      replyTo: process.env.EMAIL_USER,
+      subject: 'Booking Request Received - Morbid Gene',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #dc2626;">Tack för din bokningsförfrågan!</h2>
