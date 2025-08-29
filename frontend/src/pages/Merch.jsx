@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useMerch } from "../hooks/useMerch";
 import MerchCard from "../components/MerchCard";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 import ScrollToTop from "../components/ScrollToTop";
 
 const HeaderSection = styled.div`
@@ -242,7 +243,7 @@ export const Merch = () => {
         )}
       </div>
 
-      {loading && <p>Loading merch…</p>}
+      {loading && <LoadingSpinner text="Loading products..." minHeight="400px" />}
       {error && (
         <p>
           We're sorry, but we couldn't load the merch right now. Please try

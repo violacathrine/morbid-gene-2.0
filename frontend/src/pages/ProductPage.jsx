@@ -6,6 +6,7 @@ import { formatPrice } from "../utils/formatPrice";
 import { translateSize, translateColor, translateProductType } from "../utils/translations";
 import { CartContext } from "../contexts/CartContext";
 import { ProductImageGallery } from "../components/ProductImageGallery";
+import { LoadingSpinner, InlineLoadingSpinner } from "../components/LoadingSpinner";
 import ScrollToTop from "../components/ScrollToTop";
 import FavoriteButton from "../components/FavoriteButton";
 import {
@@ -46,6 +47,7 @@ export const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   // Hämta bilder för vald färg (bara om produkten är laddad)
   const { images } = useProductImages(
@@ -84,29 +86,35 @@ export const ProductPage = () => {
     }
 
     if (product) {
-      // Hitta färg- och storleksnamn
-      const colorName = productType.appearances.find(
-        (a) => a.id === selectedColor
-      )?.name;
-      const sizeName = productType.sizes.find(
-        (s) => s.id === selectedSize
-      )?.name;
-
-      // Hämta rätt bild för vald färg
-      const selectedImage =
-        images && images.length > 0 ? images[0].url : product.previewImage?.url;
-
+      setIsAddingToCart(true);
       
-      // Add the specified quantity directly with the correct price
-      await addToCart(product, sizeName, selectedImage, colorName, quantity, product.price);
+      try {
+        // Hitta färg- och storleksnamn
+        const colorName = productType.appearances.find(
+          (a) => a.id === selectedColor
+        )?.name;
+        const sizeName = productType.sizes.find(
+          (s) => s.id === selectedSize
+        )?.name;
 
-      setIsPopupOpen(true);
+        // Hämta rätt bild för vald färg
+        const selectedImage =
+          images && images.length > 0 ? images[0].url : product.previewImage?.url;
+
+        
+        // Add the specified quantity directly with the correct price
+        await addToCart(product, sizeName, selectedImage, colorName, quantity, product.price);
+
+        setIsPopupOpen(true);
+      } finally {
+        setIsAddingToCart(false);
+      }
     }
   };
 
-  if (loading) return <LoadingMessage>Loading product..</LoadingMessage>;
+  if (loading) return <LoadingSpinner fullScreen text="Loading product..." />;
   if (error) return <ErrorMessage>Error: {error}</ErrorMessage>;
-  if (!product) return <LoadingMessage>Product not found.</LoadingMessage>;
+  if (!product) return <LoadingSpinner fullScreen text="Product not found." />;
 
   const isButtonEnabled = selectedColor && selectedSize;
 
@@ -198,9 +206,17 @@ export const ProductPage = () => {
         {/* Add to Cart Button */}
         <AddToCartButton 
           onClick={handleAddToCart} 
-          $enabled={isButtonEnabled}
+          $enabled={isButtonEnabled && !isAddingToCart}
+          disabled={!isButtonEnabled || isAddingToCart}
         >
-          Add to Cart
+          {isAddingToCart ? (
+            <>
+              <InlineLoadingSpinner />
+              Adding to Cart...
+            </>
+          ) : (
+            'Add to Cart'
+          )}
         </AddToCartButton>
 
         {/* Product Information */}
