@@ -27,7 +27,7 @@ const ContactContainer = styled.div`
 `;
 
 const Header = styled.div`
-  text-align: left;
+  text-align: center;
   margin-bottom: 1.5rem;
   padding: 0;
   
@@ -74,7 +74,7 @@ const SubHeading = styled.h2`
 
 const ToggleSection = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   margin-bottom: 1.5rem;
   gap: 0;
   
@@ -93,14 +93,14 @@ const ToggleSection = styled.div`
 
 const ToggleButton = styled.button`
   background: ${(props) => 
-    props.active 
+    props.$active 
       ? "linear-gradient(45deg, #dc2626, #991b1b)" 
       : "#333333"
   };
-  color: ${(props) => (props.active ? "#ffffff" : "#cccccc")};
-  border: 2px solid ${(props) => (props.active ? "#dc2626" : "#555555")};
-  padding: 0.6rem 1rem;
-  font-size: 0.8rem;
+  color: ${(props) => (props.$active ? "#ffffff" : "#cccccc")};
+  border: 1px solid ${(props) => (props.$active ? "#dc2626" : "#555555")};
+  padding: 0.5rem 0.9rem;
+  font-size: 0.75rem;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -108,45 +108,45 @@ const ToggleButton = styled.button`
   transition: all 0.3s ease;
   
   &:first-child {
-    border-radius: 4px 0 0 4px;
+    border-radius: 6px 0 0 6px;
     border-right: none;
   }
   
   &:last-child {
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 6px 6px 0;
     border-left: none;
   }
 
   @media (min-width: 480px) {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
   }
 
   @media (min-width: 768px) {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.95rem;
-    letter-spacing: 0.75px;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
   }
   
   @media (min-width: 1024px) {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    letter-spacing: 1px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.75px;
   }
 
   &:hover {
     background: ${(props) => 
-      props.active 
+      props.$active 
         ? "linear-gradient(45deg, #991b1b, #dc2626)" 
         : "#444444"
     };
     color: #ffffff;
-    border-color: ${(props) => (props.active ? "#dc2626" : "#666666")};
+    border-color: ${(props) => (props.$active ? "#dc2626" : "#666666")};
   }
 `;
 
 const FormDescription = styled.p`
-  text-align: left;
+  text-align: center;
   color: #999999;
   font-size: 0.8rem;
   margin: 0 0 1rem 0;
@@ -175,13 +175,13 @@ export const Contact = () => {
   const getSubHeading = () => {
     return activeForm === "booking" 
       ? "Ready to bring the darkness to your event?" 
-      : "Get in touch with us";
+      : "Get in touch with us!";
   };
 
   const getDescription = () => {
     return activeForm === "booking"
-      ? "Fill out the booking form below to request Morbid Gene for your event"
-      : "Send us a message for general inquiries, collaboration, or any other questions";
+      ? "Fill out the booking form below to request Morbid Gene for your event."
+      : "Send us a message for general inquiries, collaboration, or any other questions.";
   };
 
   return (
@@ -191,13 +191,13 @@ export const Contact = () => {
         
         <ToggleSection>
           <ToggleButton
-            active={activeForm === "contact"}
+            $active={activeForm === "contact"}
             onClick={() => setActiveForm("contact")}
           >
             General Contact
           </ToggleButton>
           <ToggleButton
-            active={activeForm === "booking"}
+            $active={activeForm === "booking"}
             onClick={() => setActiveForm("booking")}
           >
             Booking Request

@@ -254,7 +254,7 @@ export const Navbar = () => {
       case '/':
         return null; // No title for homepage
       case '/contact':
-        return 'Get In Touch!';
+        return 'Contact';
       case '/media':
         return 'Media';
       case '/merch':

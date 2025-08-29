@@ -130,7 +130,7 @@ export const sendBookingEmail = async (formData) => {
             <h3>Event Information:</h3>
             <p><strong>Event type:</strong> ${eventType}</p>
             <p><strong>Date:</strong> ${eventDate}</p>
-            <p><strong>Venue:</strong> ${venue}</p>
+            <p><strong>City:</strong> ${venue}</p>
           </div>
 
           <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -167,13 +167,13 @@ export const sendBookingEmail = async (formData) => {
 
           <p>Hi ${name},</p>
 
-          <p>We have received your booking request for <strong>${eventType}</strong> on <strong>${eventDate}</strong> at <strong>${venue}</strong>.</p>
+          <p>We have received your booking request for a <strong>${eventType.charAt(0).toUpperCase() + eventType.slice(1)} Event</strong> on <strong>${eventDate}</strong> in <strong>${venue}</strong>.</p>
 
           <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <h3>Your Request:</h3>
-            <p><strong>Event:</strong> ${eventType}</p>
+            <p><strong>Event Type:</strong> ${eventType.charAt(0).toUpperCase() + eventType.slice(1)}</p>
             <p><strong>Date:</strong> ${eventDate}</p>
-            <p><strong>Venue:</strong> ${venue}</p>
+            <p><strong>City:</strong> ${venue}</p>
             <p><strong>Message:</strong></p>
             <p style="white-space: pre-wrap;">${message}</p>
           </div>

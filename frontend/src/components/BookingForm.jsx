@@ -4,37 +4,49 @@ import { apiCall } from "../config/api";
 
 const FormWrapper = styled.div`
   max-width: 100%;
-  margin: 0;
-  padding: 0;
+  margin: 0 auto;
+  padding: 1rem 0.75rem;
+
+  @media (min-width: 480px) {
+    padding: 1.5rem 1rem;
+  }
 
   @media (min-width: 768px) {
-    max-width: 600px;
+    max-width: 500px;
+    padding: 2rem 1rem;
   }
 
   @media (min-width: 1024px) {
-    max-width: 700px;
+    max-width: 550px;
   }
 
   @media (min-width: 1200px) {
-    max-width: 750px;
+    max-width: 600px;
   }
 
   @media (min-width: 1400px) {
-    max-width: 800px;
+    max-width: 650px;
   }
 `;
 
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 
   @media (min-width: 480px) {
-    gap: 1.2rem;
+    gap: 1.5rem;
+    padding: 2rem;
   }
 
   @media (min-width: 768px) {
-    gap: 1.5rem;
+    gap: 1.75rem;
+    padding: 2.5rem;
   }
 `;
 
@@ -81,138 +93,157 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-  padding: 0.6rem;
-  background: #222222;
-  border: 2px solid #444444;
-  border-radius: 4px;
+  padding: 0.65rem;
+  background: #2a2a2a;
+  border: 1px solid #444444;
+  border-radius: 8px;
   color: #ffffff;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
 
   @media (min-width: 480px) {
-    padding: 0.7rem;
+    padding: 0.75rem;
     font-size: 1rem;
   }
 
   @media (min-width: 768px) {
-    padding: 0.75rem;
+    padding: 0.85rem;
   }
 
   &:focus {
     outline: none;
     border-color: #dc2626;
-    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+    background: #333;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+
+  &:hover:not(:focus) {
+    border-color: #555;
   }
 
   &::placeholder {
-    color: #666666;
+    color: #888;
   }
 `;
 
 const Select = styled.select`
-  padding: 0.6rem;
-  background: #222222;
-  border: 2px solid #444444;
-  border-radius: 4px;
+  padding: 0.65rem;
+  background: #2a2a2a;
+  border: 1px solid #444444;
+  border-radius: 8px;
   color: #ffffff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
 
   @media (min-width: 480px) {
-    padding: 0.7rem;
+    padding: 0.75rem;
     font-size: 1rem;
   }
 
   @media (min-width: 768px) {
-    padding: 0.75rem;
+    padding: 0.85rem;
   }
 
   &:focus {
     outline: none;
     border-color: #dc2626;
-    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+    background: #333;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+
+  &:hover:not(:focus) {
+    border-color: #555;
   }
 
   option {
-    background: #222222;
+    background: #2a2a2a;
     color: #ffffff;
   }
 `;
 
 const TextArea = styled.textarea`
-  padding: 0.6rem;
-  background: #222222;
-  border: 2px solid #444444;
-  border-radius: 4px;
+  padding: 0.65rem;
+  background: #2a2a2a;
+  border: 1px solid #444444;
+  border-radius: 8px;
   color: #ffffff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   min-height: 100px;
   resize: vertical;
   font-family: inherit;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
 
   @media (min-width: 480px) {
-    padding: 0.7rem;
+    padding: 0.75rem;
     font-size: 1rem;
-    min-height: 110px;
+    min-height: 120px;
   }
 
   @media (min-width: 768px) {
-    padding: 0.75rem;
-    min-height: 120px;
+    padding: 0.85rem;
+    min-height: 140px;
   }
 
   &:focus {
     outline: none;
     border-color: #dc2626;
-    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+    background: #333;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+
+  &:hover:not(:focus) {
+    border-color: #555;
   }
 
   &::placeholder {
-    color: #666666;
+    color: #888;
   }
 `;
 
 const SubmitButton = styled.button`
   background: linear-gradient(45deg, #dc2626, #991b1b);
   color: #ffffff;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
+  border: 1px solid #dc2626;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.75rem;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  border-radius: 4px;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
   cursor: pointer;
   margin-top: 0.5rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
   width: 100%;
   align-self: flex-start;
 
   @media (min-width: 480px) {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    margin-top: 0.75rem;
   }
 
   @media (min-width: 768px) {
-    font-size: 1.2rem;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.85rem;
     width: auto;
     align-self: flex-start;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
   }
 
   &:hover {
     background: linear-gradient(45deg, #991b1b, #dc2626);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
   }
 
   &:active {
@@ -223,7 +254,6 @@ const SubmitButton = styled.button`
     background: #666666;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
   }
 `;
 
@@ -427,7 +457,7 @@ const BookingForm = () => {
 
           <FormGroup>
             <Label htmlFor="venue">
-              Venue/Location <RequiredStar>*</RequiredStar>
+              City <RequiredStar>*</RequiredStar>
             </Label>
             <Input
               type="text"
@@ -435,7 +465,7 @@ const BookingForm = () => {
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              placeholder="Venue name and city"
+              placeholder="City name"
             />
           </FormGroup>
         </FormRow>
