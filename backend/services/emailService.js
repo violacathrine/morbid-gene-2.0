@@ -36,26 +36,26 @@ export const sendContactEmail = async (formData) => {
     const mailOptionsToYou = {
       from: process.env.EMAIL_USER,
       to: process.env.CONTACT_EMAIL || process.env.EMAIL_USER,
-      subject: `🎵 Kontakt från ${name} - ${subject || 'Allmän förfrågan'}`,
+      subject: `🎵 ${name} - ${subject || 'Allmän förfrågan'}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #dc2626;">Ny kontaktförfrågan från webbsidan</h2>
-          
+          <h2 style="color: #dc2626;">New contact request from the website</h2>
+
           <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3>Kontaktinformation:</h3>
-            <p><strong>Namn:</strong> ${name}</p>
-            <p><strong>E-post:</strong> ${email}</p>
-            ${phone ? `<p><strong>Telefon:</strong> ${phone}</p>` : ''}
-            <p><strong>Ämne:</strong> ${subject || 'Ej valt'}</p>
+            <h3>Contact Information:</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+            <p><strong>Subject:</strong> ${subject || 'Not specified'}</p>
           </div>
 
           <div style="background: #ffffff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-            <h3>Meddelande:</h3>
+            <h3>Message:</h3>
             <p style="white-space: pre-wrap;">${message}</p>
           </div>
 
           <p style="color: #666; font-size: 12px; margin-top: 30px;">
-            Detta meddelande skickades från kontaktformuläret på morbidgeneofficial.com
+            This message was sent from the contact form on morbidgeneofficial.com
           </p>
         </div>
       `,
@@ -65,24 +65,24 @@ export const sendContactEmail = async (formData) => {
     const mailOptionsToCustomer = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: '🎵 Tack för ditt meddelande - Morbid Gene',
+      subject: '🎵 Morbid Gene - Thanks for your message!',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #dc2626;">Tack för ditt meddelande!</h2>
-          
-          <p>Hej ${name},</p>
-          
-          <p>Tack för att du kontaktade oss! Vi har mottagit ditt meddelande och återkommer så snart som möjligt.</p>
-          
+          <h2 style="color: #dc2626;">Thanks for your message!</h2>
+
+          <p>Hi ${name},</p>
+
+          <p>Thank you for contacting us! We have received your message and will get back to you as soon as possible.</p>
+
           <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <h3>Ditt meddelande:</h3>
-            <p><strong>Ämne:</strong> ${subject || 'Allmän förfrågan'}</p>
+            <h3>Your Message:</h3>
+            <p><strong>Subject:</strong> ${subject || 'General Inquiry'}</p>
             <p style="white-space: pre-wrap;">${message}</p>
           </div>
 
-          <p>Vi strävar efter att svara inom 24-48 timmar.</p>
-          
-          <p>Med vänliga hälsningar,<br>
+          <p>We strive to respond to you asap otherwise within 24-48 hours.</p>
+
+          <p>Best regards,<br>
           <strong>Morbid Gene</strong></p>
 
           <p style="color: #666; font-size: 12px; margin-top: 30px;">

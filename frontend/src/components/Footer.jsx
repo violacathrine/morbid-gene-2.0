@@ -109,7 +109,7 @@ export const Footer = () => {
       <FooterContent>
         <SocialSection>
           <SocialLink 
-            href="https://open.spotify.com/artist/YOUR_ARTIST_ID" 
+            href="https://open.spotify.com/artist/5AfmmWHx8TRE8mMU2uqhQC?si=VzjHLDFSTsiCfsc59r9nnw" 
             target="_blank" 
             rel="noopener noreferrer"
             aria-label="Spotify"
@@ -117,7 +117,7 @@ export const Footer = () => {
             <FaSpotify />
           </SocialLink>
           <SocialLink 
-            href="https://instagram.com/morbidgeneofficial" 
+            href="https://www.instagram.com/morbidgenebandpage" 
             target="_blank" 
             rel="noopener noreferrer"
             aria-label="Instagram"
@@ -125,7 +125,7 @@ export const Footer = () => {
             <FaInstagram />
           </SocialLink>
           <SocialLink 
-            href="https://youtube.com/YOUR_CHANNEL" 
+            href="https://www.youtube.com/@morbidgeneofficial" 
             target="_blank" 
             rel="noopener noreferrer"
             aria-label="YouTube"
@@ -133,7 +133,7 @@ export const Footer = () => {
             <FaYoutube />
           </SocialLink>
           <SocialLink 
-            href="https://facebook.com/YOUR_PAGE" 
+            href="https://www.facebook.com/morbidgene" 
             target="_blank" 
             rel="noopener noreferrer"
             aria-label="Facebook"

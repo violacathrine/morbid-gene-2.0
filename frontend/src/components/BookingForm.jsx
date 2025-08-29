@@ -337,10 +337,10 @@ const BookingForm = () => {
         <SuccessMessage>
           <h2>BOOKING REQUEST SENT</h2>
           <p>
-            Tack för din bokningsförfrågan! Vi återkommer inom 24-48 timmar med
-            mer information.
+            Thanks for your booking request! We will get back to you within 24-48 hours with
+            more information.
           </p>
-          <SubmitButton onClick={resetForm}>SEND ANOTHER REQUEST</SubmitButton>
+          <SubmitButton onClick={resetForm}>Send another request</SubmitButton>
         </SuccessMessage>
       </FormWrapper>
     );
