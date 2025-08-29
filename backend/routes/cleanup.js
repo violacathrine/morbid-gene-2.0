@@ -28,12 +28,7 @@ router.post("/inactive-accounts", async (req, res) => {
       });
     }
 
-    // In production, you might want to:
-    // 1. First send warning emails
-    // 2. Wait 30 days
-    // 3. Then delete
-    
-    // For now, we'll delete immediately
+
     const result = await User.deleteMany({
       lastLogin: { $lt: cutoffDate }
     });

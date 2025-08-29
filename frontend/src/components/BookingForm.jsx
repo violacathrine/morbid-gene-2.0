@@ -297,16 +297,13 @@ const BookingForm = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        "https://yourdomain.com/booking-handler.php",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch("/api/forms/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       const result = await response.json();
 

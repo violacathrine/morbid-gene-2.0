@@ -288,12 +288,21 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulera API-anrop (ersätt med din kontakt-endpoint)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // Här skulle du skicka till din kontakt-endpoint
-      
-      setIsSubmitted(true);
+      const response = await fetch("/api/forms/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setIsSubmitted(true);
+      } else {
+        alert("Error: " + result.error);
+      }
     } catch (error) {
       console.error("Error submitting contact form:", error);
       alert("Failed to send message. Please try again.");

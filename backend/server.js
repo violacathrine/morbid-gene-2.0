@@ -11,6 +11,7 @@ import authRoutes from "./routes/auth.js";
 import profileRoutes from "./routes/profile.js";
 import merchRoutes from "./routes/merch.js";
 import cleanupRoutes from "./routes/cleanup.js";
+import contactRoutes from "./routes/contact.js";
 import User from "./models/User.js";
 
 // Setup för __dirname i ES-moduler
@@ -89,6 +90,7 @@ app.get("/", (req, res) => {
       auth: "/auth",
       user: "/user",
       merch: "/api/merch",
+      contact: "/api/forms",
     },
   });
 });
@@ -98,6 +100,7 @@ app.use("/auth", authRoutes);
 app.use("/user", profileRoutes);
 app.use("/api/merch", merchRoutes);
 app.use("/admin/cleanup", cleanupRoutes);
+app.use("/api/forms", contactRoutes);
 
 // 404 handler för okända endpoints
 app.use("*", (req, res) => {
