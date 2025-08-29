@@ -12,9 +12,13 @@ export const formatPrice = (priceData) => {
 
   if (!amount || amount === 0) return "0,00 €";
 
+  // Om amount är över 100, är det troligen i cents
+  // Konvertera från cents till euro genom att dela med 100
+  const euroAmount = amount > 100 ? amount / 100 : amount;
+
   return new Intl.NumberFormat("sv-SE", {
     style: "currency",
     currency: "EUR",
     minimumFractionDigits: 2,
-  }).format(amount);
+  }).format(euroAmount);
 };

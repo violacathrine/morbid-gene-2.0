@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { formatPrice } from "../utils/formatPrice";
 import { translateSize, translateColor, translateProductType } from "../utils/translations";
 import { FaTrash } from "react-icons/fa";
@@ -26,12 +27,23 @@ const CartItemContainer = styled.div`
   }
 `;
 
+const ProductImageLink = styled(Link)`
+  display: block;
+  align-self: flex-start;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 const ProductImage = styled.img`
   object-fit: cover;
   width: 60px;
   height: 60px;
-  align-self: flex-start;
-  flex-shrink: 0;
+  display: block;
   
   @media (min-width: 480px) {
     width: 80px;
@@ -83,12 +95,19 @@ const QuantityAndActions = styled.div`
   }
 `;
 
-const ProductName = styled.h3`
+const ProductName = styled(Link)`
   margin: 0 0 0.5rem 0;
   font-size: 16px;
   color: #333333;
   text-align: left;
   font-weight: bold;
+  text-decoration: none;
+  display: block;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: #666666;
+  }
   
   @media (min-width: 480px) {
     font-size: 18px;
@@ -222,21 +241,25 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
 
   return (
     <CartItemContainer>
-      <ProductImage
-        src={imageUrl}
-        alt={item.name || "Product image"}
-        width="120"
-        height="120"
-        onError={(e) => {
-          // Förhindra evighetsloop - sätt bara till grå ruta och logga inte
-          e.target.src =
-            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjQ0NDIi8+Cjx0ZXh0IHg9IjQwIiB5PSI0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD4KPHN2Zz4K";
-        }}
-      />
+      <ProductImageLink to={`/product/${item.sellableId}`}>
+        <ProductImage
+          src={imageUrl}
+          alt={item.name || "Product image"}
+          width="120"
+          height="120"
+          onError={(e) => {
+            // Förhindra evighetsloop - sätt bara till grå ruta och logga inte
+            e.target.src =
+              "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjQ0NDIi8+Cjx0ZXh0IHg9IjQwIiB5PSI0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD4KPHN2Zz4K";
+          }}
+        />
+      </ProductImageLink>
 
       <ProductDetails>
         <ProductInfo>
-          <ProductName>{translateProductType(item.name)}</ProductName>
+          <ProductName to={`/product/${item.sellableId}`}>
+            {translateProductType(item.name)}
+          </ProductName>
           <ProductInfoDetails>
             <InfoSpan>Size: {translateSize(item.size)}</InfoSpan>
             {item.color && (

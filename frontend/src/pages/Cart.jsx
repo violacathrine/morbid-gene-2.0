@@ -429,19 +429,19 @@ export const Cart = () => {
         <SummaryTitle>Order Summary</SummaryTitle>
 
         <SummaryItem>
-          <SummaryLabel>Subtotal ({getTotalItems()} items):</SummaryLabel>
+          <SummaryLabel>Items ({getTotalItems()}):</SummaryLabel>
           <SummaryValue>{formatPrice(getTotalPrice())}</SummaryValue>
         </SummaryItem>
 
         <SummaryItem>
           <SummaryLabel>
-            Shipping: Final shipping calculated at checkout
+            Shipping:
           </SummaryLabel>
-          <SummaryValue></SummaryValue>
+          <SummaryValue>Calculated at checkout</SummaryValue>
         </SummaryItem>
 
         <SummaryItem>
-          <SummaryLabel bold>Total:</SummaryLabel>
+          <SummaryLabel bold>Total (excl. shipping):</SummaryLabel>
           <SummaryValue bold>{formatPrice(totalWithShipping)}</SummaryValue>
         </SummaryItem>
       </OrderSummarySection>

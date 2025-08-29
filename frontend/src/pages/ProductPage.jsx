@@ -3,11 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useProduct } from "../hooks/useProduct";
 import { useProductImages } from "../hooks/useProductImages";
 import { formatPrice } from "../utils/formatPrice";
+import { translateSize, translateColor, translateProductType } from "../utils/translations";
 import { CartContext } from "../contexts/CartContext";
 import { ProductImageGallery } from "../components/ProductImageGallery";
 import ScrollToTop from "../components/ScrollToTop";
 import FavoriteButton from "../components/FavoriteButton";
-import { translateSize, translateColor, translateProductType } from "../utils/translations";
 import {
   Container,
   ImageSection,
@@ -97,8 +97,8 @@ export const ProductPage = () => {
         images && images.length > 0 ? images[0].url : product.previewImage?.url;
 
       
-      // Add the specified quantity directly
-      await addToCart(product, sizeName, selectedImage, colorName, quantity);
+      // Add the specified quantity directly with the correct price
+      await addToCart(product, sizeName, selectedImage, colorName, quantity, product.price);
 
       setIsPopupOpen(true);
     }

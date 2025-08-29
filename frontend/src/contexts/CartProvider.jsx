@@ -21,7 +21,7 @@ export const CartProvider = ({ children }) => {
         if (basket?.basketItems) {
           setBasketId(savedBasketId);
           const items = basket.basketItems.map((item) =>
-            convertSpreadshirtItem(item, null)
+            convertSpreadshirtItem(item, null, null)
           );
 
           setCartItems(items);
@@ -72,7 +72,7 @@ export const CartProvider = ({ children }) => {
           };
         } else {
           // New item, convert normally
-          return convertSpreadshirtItem(item, null);
+          return convertSpreadshirtItem(item, null, null);
         }
       });
 
@@ -86,7 +86,8 @@ export const CartProvider = ({ children }) => {
     selectedSize,
     selectedImage,
     selectedColor,
-    quantity = 1
+    quantity = 1,
+    productPrice = null
   ) => {
     setLoading(true);
     setError(null);
@@ -107,10 +108,12 @@ export const CartProvider = ({ children }) => {
 
         const fullBasket = await basketApi.getBasket(newBasket.id);
         const items = fullBasket.basketItems.map((item, index) => {
-          // Ge den sista tillagda item:en rätt bild
+          // Ge den sista tillagda item:en rätt bild och pris
           const imageToUse =
             index === fullBasket.basketItems.length - 1 ? selectedImage : null;
-          return convertSpreadshirtItem(item, imageToUse);
+          const priceToUse =
+            index === fullBasket.basketItems.length - 1 ? productPrice : null;
+          return convertSpreadshirtItem(item, imageToUse, priceToUse);
         });
         setCartItems(items);
       } else {
@@ -141,10 +144,11 @@ export const CartProvider = ({ children }) => {
         // Update basket and preserve images for new items
         const updatedBasket = await basketApi.updateBasket(basketId, newBasketItems);
         const items = updatedBasket.basketItems.map((item, index) => {
-          // For newly added items, use the selected image
+          // For newly added items, use the selected image and price
           const isNewlyAdded = index === updatedBasket.basketItems.length - 1 && existingItemIndex < 0;
           const imageToUse = isNewlyAdded ? selectedImage : null;
-          return convertSpreadshirtItem(item, imageToUse);
+          const priceToUse = isNewlyAdded ? productPrice : null;
+          return convertSpreadshirtItem(item, imageToUse, priceToUse);
         });
         setCartItems(items);
       }
@@ -224,7 +228,8 @@ export const CartProvider = ({ children }) => {
                       cartItem.size === item.element.properties.find(p => p.key === 'sizeLabel')?.value
         );
         const imageToUse = existingItem?.selectedImage || null;
-        return convertSpreadshirtItem(item, imageToUse);
+        const priceToUse = existingItem?.originalPrice || null;
+        return convertSpreadshirtItem(item, imageToUse, priceToUse);
       });
       setCartItems(items);
     } catch (err) {
@@ -238,7 +243,8 @@ export const CartProvider = ({ children }) => {
                       cartItem.size === item.element.properties.find(p => p.key === 'sizeLabel')?.value
         );
         const imageToUse = existingItem?.selectedImage || null;
-        return convertSpreadshirtItem(item, imageToUse);
+        const priceToUse = existingItem?.originalPrice || null;
+        return convertSpreadshirtItem(item, imageToUse, priceToUse);
       });
       setCartItems(items);
     }
