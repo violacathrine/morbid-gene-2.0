@@ -37,7 +37,7 @@ export const sendContactEmail = async (formData) => {
       from: process.env.EMAIL_USER,
       to: process.env.CONTACT_EMAIL || process.env.EMAIL_USER,
       replyTo: email, // När du svarar går det till kundens email
-      subject: `🎵 ${subject || "General Inquiry"}`,
+      subject: (subject || "General Inquiry").charAt(0).toUpperCase() + (subject || "General Inquiry").slice(1),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #dc2626;">New contact request from the website</h2>
