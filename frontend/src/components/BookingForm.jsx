@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { apiCall } from "../config/api";
 
 const FormWrapper = styled.div`
   max-width: 100%;
@@ -297,11 +298,8 @@ const BookingForm = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/forms/booking", {
+      const response = await apiCall("/api/forms/booking", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       });
 
