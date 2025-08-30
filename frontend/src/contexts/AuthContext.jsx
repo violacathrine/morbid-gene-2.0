@@ -31,7 +31,8 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
-        fetchFavorites();
+        // Fetch favorites for the logged in user
+        await fetchFavoritesForUser(userData);
       } else {
         // Token is invalid or user not logged in
         setUser(null);
@@ -46,6 +47,23 @@ export const AuthProvider = ({ children }) => {
 
   const fetchFavorites = async () => {
     if (!user) return;
+    
+    try {
+      const response = await apiCall('/auth/favorites', {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const favoritesData = await response.json();
+        setFavorites(favoritesData);
+      }
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+    }
+  };
+
+  const fetchFavoritesForUser = async (userData) => {
+    if (!userData) return;
     
     try {
       const response = await apiCall('/auth/favorites', {
@@ -76,7 +94,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         setUser(data.user);
-        fetchFavorites();
+        await fetchFavoritesForUser(data.user);
         return { success: true };
       } else {
         return { success: false, error: data.message };
