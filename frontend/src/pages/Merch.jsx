@@ -91,6 +91,16 @@ const PageInfo = styled.span`
   }
 `;
 
+const MerchGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+`;
+
 export const Merch = () => {
   const [searchInput, setSearchInput] = useState("");
   const [q, setQ] = useState("");
@@ -261,17 +271,11 @@ export const Merch = () => {
           >
             Showing {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} of {filteredItems.length} products
           </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-              gap: "1rem",
-            }}
-          >
+          <MerchGrid>
             {currentItems.map((it) => (
               <MerchCard key={it.sellableId} item={it} />
             ))}
-          </div>
+          </MerchGrid>
 
           {/* Pagination */}
           {totalPages > 1 && (
