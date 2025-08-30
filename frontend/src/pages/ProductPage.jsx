@@ -131,11 +131,13 @@ export const ProductPage = () => {
 
       {/* Product details */}
       <DetailsSection>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-          <Title style={{ margin: 0, flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <Title style={{ margin: 0, flex: 1, paddingRight: '1rem' }}>
             {translateProductType(productType?.name || product.productTypeName || product.name)}
           </Title>
-          <FavoriteButton product={product} size={24} showTooltip={true} />
+          <div style={{ flexShrink: 0, paddingTop: '0.25rem' }}>
+            <FavoriteButton product={product} size={24} showTooltip={true} />
+          </div>
         </div>
 
         {/* Visa shortDescription från productType istället */}

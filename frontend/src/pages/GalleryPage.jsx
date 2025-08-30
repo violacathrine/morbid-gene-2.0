@@ -1,6 +1,6 @@
 // src/pages/GalleryPage.jsx
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ScrollToTop from "../components/ScrollToTop";
 
@@ -26,15 +26,26 @@ const galleries = {
       })
     ),
   },
+  olearys: {
+    title: "O'learys 26.10.24",
+    credit: "Photo © Christoffer Wiklundh",
+    images: Object.values(
+      import.meta.glob("/src/assets/images/olearys/*.{jpg,JPG,png}", {
+        eager: true,
+        import: "default",
+      })
+    ),
+  },
 };
 
 const Wrapper = styled.section`
-  padding: 120px 1rem 2rem;
+  padding: 0 1rem 2rem;
   background: #000;
   color: #fff;
   min-height: 100vh;
   text-align: center;
 `;
+
 
 const Title = styled.h1`
   font-size: 2rem;

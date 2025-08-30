@@ -12,6 +12,10 @@ const fredagsmangelImages = import.meta.glob(
   "/src/assets/images/fredagsmangel/*.{jpg,png,JPG}",
   { eager: true, import: "default" }
 );
+const olearysImages = import.meta.glob(
+  "/src/assets/images/olearys/*.{jpg,png,JPG}",
+  { eager: true, import: "default" }
+);
 
 const galleries = [
   {
@@ -25,6 +29,12 @@ const galleries = [
     title: "Jakobsberg - Fredagsmangel 15.11.24",
     credit: "Photo © Per Lenner",
     images: Object.values(fredagsmangelImages),
+  },
+  {
+    id: "olearys",
+    title: "Vällingby - O'learys - 26.10.24",
+    credit: "Photo © Christoffer Wiklundh",
+    images: Object.values(olearysImages),
   },
 ];
 

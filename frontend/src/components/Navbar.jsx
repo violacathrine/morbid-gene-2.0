@@ -53,6 +53,28 @@ const PageTitle = styled.h1`
   }
 `;
 
+const BackToMediaButton = styled(Link)`
+  display: inline-block;
+  background: red;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+  font-size: 0.9rem;
+
+  &:hover {
+    background: #cc0000;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+`;
+
 const NavLinks = styled.ul`
   display: none;
 
@@ -268,8 +290,8 @@ export const Navbar = () => {
         if (location.pathname.startsWith('/product/')) {
           return 'Product Details';
         }
-        if (location.pathname.startsWith('/gallery/')) {
-          return 'Gallery';
+        if (location.pathname.startsWith('/media/')) {
+          return null; // Använder custom back button istället
         }
         return null;
     }
@@ -313,15 +335,20 @@ export const Navbar = () => {
 
 
   const pageTitle = getPageTitle();
+  const isGalleryPage = location.pathname.startsWith('/media/');
 
   return (
     <NavbarWrapper 
       $isHomepage={isHomepage} 
       $hasAnimated={hasAnimated}
-      $hasPageTitle={!!pageTitle}
+      $hasPageTitle={!!pageTitle || isGalleryPage}
     >
-      {/* Left side - Page title */}
-      {pageTitle && <PageTitle>{pageTitle}</PageTitle>}
+      {/* Left side - Page title or Back button */}
+      {isGalleryPage ? (
+        <BackToMediaButton to="/media">← Back to Media</BackToMediaButton>
+      ) : (
+        pageTitle && <PageTitle>{pageTitle}</PageTitle>
+      )}
       
       {/* Right side - Desktop navigation */}
       <NavLinks>

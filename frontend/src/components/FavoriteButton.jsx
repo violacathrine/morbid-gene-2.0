@@ -100,12 +100,17 @@ const FavoriteButton = ({ product, size = 20, showTooltip = false }) => {
       disabled={loading}
       $isAuthenticated={isAuthenticated}
       $showTooltip={showTooltip}
+      aria-label={
+        productIsFavorite 
+          ? "Remove from favorites" 
+          : "Add to favorites"
+      }
       title={
         isAuthenticated 
           ? (productIsFavorite 
             ? "Remove from favorites" 
             : "Add to favorites")
-          : undefined // Ingen title för icke-inloggade, vi använder CSS tooltip istället
+          : "Login to add favorites"
       }
       style={{ position: 'relative' }}
     >

@@ -279,6 +279,8 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
               onClick={() => {
                 handleQuantityChange(item.quantity - 1);
               }}
+              aria-label={item.quantity === 1 ? "Remove item from cart" : "Decrease quantity"}
+              title={item.quantity === 1 ? "Remove item from cart" : "Decrease quantity"}
             >
               {item.quantity === 1 ? <FaTrash /> : '-'}
             </QuantityButton>
@@ -287,6 +289,8 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
               onClick={() => {
                 handleQuantityChange(item.quantity + 1);
               }}
+              aria-label="Increase quantity"
+              title="Increase quantity"
             >
               +
             </QuantityButton>

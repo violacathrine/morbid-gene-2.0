@@ -37,7 +37,9 @@ export const sendContactEmail = async (formData) => {
       from: process.env.EMAIL_USER,
       to: process.env.CONTACT_EMAIL || process.env.EMAIL_USER,
       replyTo: email, // När du svarar går det till kundens email
-      subject: (subject || "General Inquiry").charAt(0).toUpperCase() + (subject || "General Inquiry").slice(1),
+      subject:
+        (subject || "General Inquiry").charAt(0).toUpperCase() +
+        (subject || "General Inquiry").slice(1),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #dc2626;">New contact request from the website</h2>
@@ -128,8 +130,10 @@ export const sendBookingEmail = async (formData) => {
 
           <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3>Event Information:</h3>
-            <p><strong>Event type:</strong> ${eventType}</p>
-            <p><strong>Date:</strong> ${eventDate}</p>
+            <p><strong>Event type:</strong> ${
+              eventType.charAt(0).toUpperCase() + eventType.slice(1)
+            }</p>
+            <p><strong>Requested Date:</strong> ${eventDate}</p>
             <p><strong>City:</strong> ${venue}</p>
           </div>
 
@@ -167,12 +171,16 @@ export const sendBookingEmail = async (formData) => {
 
           <p>Hi ${name},</p>
 
-          <p>We have received your booking request for a <strong>${eventType.charAt(0).toUpperCase() + eventType.slice(1)} Event</strong> on <strong>${eventDate}</strong> in <strong>${venue}</strong>.</p>
+          <p>We have received your booking request for a <strong>${
+            eventType.charAt(0).toUpperCase() + eventType.slice(1)
+          } Event</strong> the <strong>${eventDate}</strong> in <strong>${venue}</strong>.</p>
 
           <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <h3>Your Request:</h3>
-            <p><strong>Event Type:</strong> ${eventType.charAt(0).toUpperCase() + eventType.slice(1)}</p>
-            <p><strong>Date:</strong> ${eventDate}</p>
+            <p><strong>Event Type:</strong> ${
+              eventType.charAt(0).toUpperCase() + eventType.slice(1)
+            }</p>
+            <p><strong>Requested Date:</strong> ${eventDate}</p>
             <p><strong>City:</strong> ${venue}</p>
             <p><strong>Message:</strong></p>
             <p style="white-space: pre-wrap;">${message}</p>

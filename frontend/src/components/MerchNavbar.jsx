@@ -263,16 +263,23 @@ const FavoritesLink = styled(Link)`
   line-height: 1;
   color: white;
   text-decoration: none;
-  font-size: 20px;
-  padding: 12px;
+  font-size: 18px;
+  padding: 0;
   margin: 0;
-  border-radius: 50%;
   transition: all 0.2s ease;
   position: relative;
-  height: 44px;
-  width: 44px;
+  height: 24px;
+  width: 24px;
   box-sizing: border-box;
   vertical-align: middle;
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+    padding: 12px;
+    height: 44px;
+    width: 44px;
+    border-radius: 50%;
+  }
 
   &:hover {
     background: rgba(220, 38, 38, 0.1);
@@ -386,20 +393,29 @@ const CartBadge = styled.span`
 
 const FavoritesBadge = styled.span`
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: -8px;
+  right: -8px;
   background-color: #dc2626;
   color: white;
   border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 12px;
+  padding: 2px 4px;
+  font-size: 10px;
   font-weight: bold;
-  min-width: 18px;
-  height: 18px;
+  min-width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+
+  @media (min-width: 768px) {
+    top: -5px;
+    right: -5px;
+    padding: 2px 6px;
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+  }
 `;
 
 const AuthenticatedSection = styled.div`
@@ -802,9 +818,6 @@ export const MerchNavbar = () => {
       <TopUserBar>
         {isAuthenticated ? (
           <>
-            <SettingsLink to="/settings" aria-label="Settings">
-              <SettingsIcon />
-            </SettingsLink>
             <FavoritesLink to="/favorites" aria-label={`Favoriter med ${favorites?.length || 0} ${favorites?.length === 1 ? 'vara' : 'varor'}`}>
               <FaHeart />
               {favorites?.length > 0 && <FavoritesBadge>{favorites.length}</FavoritesBadge>}
@@ -813,6 +826,9 @@ export const MerchNavbar = () => {
               <FaShoppingCart />
               {totalItems > 0 && <CartBadge>{totalItems}</CartBadge>}
             </CartLink>
+            <SettingsLink to="/settings" aria-label="Settings">
+              <SettingsIcon />
+            </SettingsLink>
             <DesktopLogoutButton onClick={() => setShowLogoutConfirm(true)} aria-label="Logout">
               <FaSignOutAlt />
             </DesktopLogoutButton>
@@ -835,6 +851,12 @@ export const MerchNavbar = () => {
 
       {/* Mobile Layout */}
       <RightSection>
+        {isAuthenticated && (
+          <FavoritesLink to="/favorites" aria-label={`Favoriter med ${favorites?.length || 0} ${favorites?.length === 1 ? 'vara' : 'varor'}`}>
+            <FaHeart />
+            {favorites?.length > 0 && <FavoritesBadge>{favorites.length}</FavoritesBadge>}
+          </FavoritesLink>
+        )}
         <CartLink to="/cart" aria-label={`Varukorg med ${totalItems} ${totalItems === 1 ? 'vara' : 'varor'}`}>
           <FaShoppingCart />
           {totalItems > 0 && <CartBadge>{totalItems}</CartBadge>}

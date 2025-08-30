@@ -190,7 +190,7 @@ const Input = styled.input`
 
 const PasswordToggleButton = styled.button`
   position: absolute;
-  right: 0.75rem;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -198,13 +198,26 @@ const PasswordToggleButton = styled.button`
   cursor: pointer;
   color: ${props => props.$isShowing ? '#dc2626' : '#666666'};
   font-size: 1.1rem;
-  padding: 0;
+  padding: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
+  justify-content: center;
   transition: color 0.2s;
+  border-radius: 4px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  &:focus {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
+  }
   
   @media (min-width: 480px) {
-    right: 0.85rem;
+    right: 0.65rem;
   }
 `;
 
