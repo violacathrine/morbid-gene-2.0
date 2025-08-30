@@ -13,16 +13,17 @@ const FeedContainer = styled.section`
 
 const FeedTitle = styled.a`
   color: #fff;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   margin-bottom: 2rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   text-decoration: none;
   transition: color 0.2s;
+  flex-wrap: wrap;
   
   &:hover {
     color: #9ca3af;
@@ -30,6 +31,8 @@ const FeedTitle = styled.a`
   
   @media (min-width: 768px) {
     font-size: 1.8rem;
+    letter-spacing: 2px;
+    flex-wrap: nowrap;
   }
 `;
 
