@@ -9,8 +9,8 @@ export const theme = {
     white: '#ffffff',
     
     // Red palette
-    red: '#dc2626',
-    darkRed: '#b91c1c',
+    red: '#cc0000',
+    darkRed: '#990000',
     lightRed: '#991b1b',
     
     // Gray palette  
@@ -27,7 +27,7 @@ export const theme = {
     // Border colors
     borderLight: '#333333',
     borderDark: '#555555',
-    borderRed: '#dc2626',
+    borderRed: '#cc0000',
     
     // Background colors
     pageBg: '#000000',        // Main page background (black)
@@ -35,8 +35,8 @@ export const theme = {
     inputBg: '#222222',       // Input field backgrounds
     
     // Button states
-    buttonPrimary: '#dc2626',
-    buttonPrimaryHover: '#b91c1c',
+    buttonPrimary: '#cc0000',
+    buttonPrimaryHover: '#990000',
     buttonSecondary: '#333333',
     buttonSecondaryHover: '#555555',
     buttonDisabled: '#666666',

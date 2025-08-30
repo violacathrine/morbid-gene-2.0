@@ -55,7 +55,7 @@ const PageTitle = styled.h1`
 
 const BackToMediaButton = styled(Link)`
   display: inline-block;
-  background: red;
+  background: #cc0000;
   color: #fff;
   padding: 0.75rem 1.5rem;
   text-decoration: none;

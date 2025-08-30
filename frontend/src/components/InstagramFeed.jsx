@@ -11,19 +11,25 @@ const FeedContainer = styled.section`
   }
 `;
 
-const FeedTitle = styled.h2`
+const FeedTitle = styled.a`
   color: #fff;
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  text-decoration: none;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: #9ca3af;
+  }
   
   @media (min-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
   }
 `;
 
@@ -194,16 +200,13 @@ export const InstagramFeed = () => {
 
   return (
     <FeedContainer>
-      <FeedTitle>
-        <FaInstagram /> Follow Us
-      </FeedTitle>
-      <InstagramHandle 
+      <FeedTitle
         href="https://www.instagram.com/morbidgenebandpage/"
         target="_blank"
         rel="noopener noreferrer"
       >
-        @morbidgenebandpage
-      </InstagramHandle>
+        Follow Us <FaInstagram /> morbidgenebandpage
+      </FeedTitle>
       
       <ImageGrid>
         {instagramPosts.map(post => (
