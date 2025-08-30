@@ -75,10 +75,11 @@ const LogoImg = styled.img`
   height: 120px;
   width: auto;
   display: block;
-  margin-top: 0;
+  margin-top: 2rem;
   
   @media (min-width: 768px) {
     height: 90px;
+    margin-top: 0;
   }
   
   @media (min-width: 1024px) {
@@ -140,7 +141,23 @@ const ShopSubtitle = styled.div`
   }
 `;
 
-// Höger: login + cart (bara mobil)
+// Vänster: cart, favorites, settings (bara mobil)
+const LeftIconSection = styled.div`
+  position: absolute;
+  top: 14px;
+  left: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 1001;
+  
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+// Höger: hamburger (bara mobil)
 const RightSection = styled.div`
   position: absolute;
   top: 14px;
@@ -148,7 +165,6 @@ const RightSection = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.75rem;
   z-index: 1001;
   
   @media (min-width: 768px) {
@@ -621,6 +637,7 @@ const BurgerToggle = styled.div`
   cursor: pointer;
   z-index: 1001;
   position: relative;
+  margin-top: 2px;
 
   @media (min-width: 768px) {
     display: none;
@@ -849,20 +866,32 @@ export const MerchNavbar = () => {
         <Breadcrumbs />
       </BottomRowContainer>
 
-      {/* Mobile Layout */}
-      <RightSection>
+      {/* Mobile Layout - Left icons */}
+      <LeftIconSection>
         {isAuthenticated && (
-          <FavoritesLink to="/favorites" aria-label={`Favoriter med ${favorites?.length || 0} ${favorites?.length === 1 ? 'vara' : 'varor'}`}>
-            <FaHeart />
-            {favorites?.length > 0 && <FavoritesBadge>{favorites.length}</FavoritesBadge>}
-          </FavoritesLink>
+          <>
+            <SettingsLink to="/settings" aria-label="Settings">
+              <SettingsIcon />
+            </SettingsLink>
+            <FavoritesLink to="/favorites" aria-label={`Favoriter med ${favorites?.length || 0} ${favorites?.length === 1 ? 'vara' : 'varor'}`}>
+              <FaHeart />
+              {favorites?.length > 0 && <FavoritesBadge>{favorites.length}</FavoritesBadge>}
+            </FavoritesLink>
+          </>
         )}
         <CartLink to="/cart" aria-label={`Varukorg med ${totalItems} ${totalItems === 1 ? 'vara' : 'varor'}`}>
           <FaShoppingCart />
           {totalItems > 0 && <CartBadge>{totalItems}</CartBadge>}
         </CartLink>
-        
-        {/* Mobile hamburger button */}
+        {isAuthenticated && (
+          <DesktopLogoutButton onClick={() => setShowLogoutConfirm(true)} aria-label="Logout">
+            <FaSignOutAlt />
+          </DesktopLogoutButton>
+        )}
+      </LeftIconSection>
+
+      {/* Mobile Layout - Right hamburger */}
+      <RightSection>
         <BurgerToggle onClick={toggleMobileMenu} $isOpen={showMobileMenu}>
           <Bar $isOpen={showMobileMenu} />
           <Bar $isOpen={showMobileMenu} />
@@ -876,23 +905,18 @@ export const MerchNavbar = () => {
           <Link to="/" onClick={closeMobileMenu}>Home</Link>
         </li>
         <li>
+          <a href="/gigs" onClick={closeMobileMenu}>Gigs</a>
+        </li>
+        <li>
+          <Link to="/media" onClick={closeMobileMenu}>Media</Link>
+        </li>
+        <li>
           <Link to="/merch" onClick={closeMobileMenu}>Shop</Link>
         </li>
-        {isAuthenticated ? (
-          <>
-            <li>
-              <Link to="/favorites" onClick={closeMobileMenu}>
-                Favorites ({favorites?.length || 0})
-              </Link>
-            </li>
-            <li>
-              <Link to="/settings" onClick={closeMobileMenu}>Settings</Link>
-            </li>
-            <li>
-              <button onClick={handleMobileLogout}>Logout</button>
-            </li>
-          </>
-        ) : (
+        <li>
+          <Link to="/contact" onClick={closeMobileMenu}>Contact</Link>
+        </li>
+        {!isAuthenticated && (
           <li>
             <Link to="/login" onClick={closeMobileMenu}>Login</Link>
           </li>
