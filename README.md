@@ -71,7 +71,7 @@ Create `.env` files in both frontend and backend directories:
 **Backend `.env`:**
 ```env
 # Database
-MONGO_URL=mongodb://localhost:27017/morbid-gene
+MONGO_URL=mongodb://localhost:
 
 # Authentication
 JWT_SECRET=your-super-secure-jwt-secret-here
@@ -93,7 +93,7 @@ PORT=8080
 
 **Frontend `.env` (if needed):**
 ```env
-VITE_API_URL=http://localhost:8080
+VITE_API_URL=http://localhost:
 ```
 
 ### Installation Steps
