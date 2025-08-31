@@ -1,12 +1,10 @@
 import crypto from 'crypto';
 import Session from '../models/Session.js';
 
-// Generate a secure random session ID
 export const generateSessionId = () => {
   return crypto.randomBytes(32).toString('hex');
 };
 
-// Create a new session
 export const createSession = async (userId) => {
   const sessionId = generateSessionId();
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
@@ -21,7 +19,6 @@ export const createSession = async (userId) => {
   return sessionId;
 };
 
-// Get user ID from session
 export const getUserFromSession = async (sessionId) => {
   if (!sessionId) return null;
 
@@ -39,13 +36,11 @@ export const getUserFromSession = async (sessionId) => {
   return session.userId;
 };
 
-// Delete session (logout)
 export const deleteSession = async (sessionId) => {
   if (!sessionId) return;
   await Session.deleteOne({ sessionId });
 };
 
-// Clean up expired sessions (optional, MongoDB does this automatically)
 export const cleanupExpiredSessions = async () => {
   await Session.deleteMany({ expiresAt: { $lt: new Date() } });
 };

@@ -37,7 +37,6 @@ export const ProductSelectors = ({
 
   return (
     <SelectionContainer>
-      {/* Color dropdown */}
       <Select value={selectedColor || ""} onChange={onColorChange}>
         <option value="">Select Color</option>
         {productType.appearances
@@ -49,7 +48,6 @@ export const ProductSelectors = ({
           ))}
       </Select>
 
-      {/* Size dropdown */}
       <Select value={selectedSize || ""} onChange={onSizeChange}>
         <option value="">Select Size</option>
         {getAvailableSizes().map((size) => (

@@ -7,7 +7,6 @@ import {
   createBookingAutoReply
 } from '../utils/emailTemplates.js';
 
-// Create email transporter
 const createTransporter = () => {
   // Gmail configuration (most common)
   if (process.env.EMAIL_PROVIDER === "gmail") {
@@ -32,7 +31,6 @@ const createTransporter = () => {
   });
 };
 
-// Send contact form email
 export const sendContactEmail = async (formData) => {
   try {
     const transporter = createTransporter();
@@ -66,7 +64,6 @@ export const sendContactEmail = async (formData) => {
   }
 };
 
-// Send booking form email
 export const sendBookingEmail = async (formData) => {
   try {
     const transporter = createTransporter();

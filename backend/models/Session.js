@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Define Session schema
 const sessionSchema = new mongoose.Schema(
   {
     sessionId: {
@@ -25,6 +24,5 @@ const sessionSchema = new mongoose.Schema(
   }
 );
 
-// Create and export Session model
 const Session = mongoose.model("Session", sessionSchema);
 export default Session;

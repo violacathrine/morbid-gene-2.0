@@ -1,4 +1,3 @@
-// src/components/HeroSection.jsx
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import backgroundImage from "../assets/images/band.jpg";

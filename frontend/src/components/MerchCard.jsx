@@ -1,4 +1,3 @@
-// MerchCard.jsx
 import { Link } from "react-router-dom";
 import { formatPrice } from "../utils/formatPrice.js";
 import { translateProductType } from "../utils/translations";
@@ -25,7 +24,6 @@ const MerchCard = ({ item }) => {
         paddingBottom: "3rem" // Extra space for heart button
       }}
     >
-      {/* Link wrapping the main content */}
       <Link 
         to={`/product/${productId}`} 
         style={{
@@ -55,7 +53,6 @@ const MerchCard = ({ item }) => {
         )}
       </Link>
       
-      {/* Favorite button in bottom right */}
       <div style={{ 
         position: "absolute", 
         bottom: "0.5rem", 

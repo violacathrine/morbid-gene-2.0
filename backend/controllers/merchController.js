@@ -1,8 +1,6 @@
 import * as spreadshirtService from "../services/spreadshirtService.js";
 import { handleControllerError } from "../utils/errorHandler.js";
 
-// Controllers for merch-related endpoints
-
 // Get all products
 export const getAllProducts = async (req, res) => {
   try {
@@ -38,7 +36,6 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-// Get a product by ID
 export const getProductById = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -53,7 +50,6 @@ export const getProductById = async (req, res) => {
   }
 };
 
-// Get product type information
 export const getProductTypeInfo = async (req, res) => {
   try {
     const { productTypeId } = req.params;
@@ -81,8 +77,6 @@ export const getSellableImages = async (req, res) => {
     handleControllerError(error, res, "Error in getSellableImages");
   }
 };
-
-// Basket Controllers
 
 export const createBasket = async (req, res) => {
   try {
@@ -164,13 +158,11 @@ export const convertToBasketItem = async (req, res) => {
   }
 };
 
-// Corrected checkout function
 export const getCheckoutUrl = async (req, res) => {
   try {
     const { basketId } = req.params;
 
 
-    // Use our new getCheckoutUrl function from service
     const checkoutUrl = await spreadshirtService.getCheckoutUrl(basketId);
 
     res.json({

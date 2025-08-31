@@ -2,10 +2,8 @@ import { useState, useEffect, createContext } from "react";
 import * as basketApi from "../api/basketApi";
 import { convertSpreadshirtItem } from "../utils/basketUtils";
 
-// Create and export CartContext directly here
 export const CartContext = createContext();
 
-// Utility functions for property extraction and item operations
 const extractItemProperties = (item) => {
   const props = item.element.properties;
   return {
@@ -50,7 +48,6 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Load existing basket on start
   useEffect(() => {
     const loadBasket = async () => {
       const savedBasketId = localStorage.getItem("spreadshirt-basket-id");
@@ -77,7 +74,6 @@ export const CartProvider = ({ children }) => {
     loadBasket();
   }, []);
 
-  // Helper function: Update basket and local state
   const updateBasketState = async (newBasketItems) => {
     if (newBasketItems.length === 0) {
       await basketApi.deleteBasket(basketId);
@@ -90,7 +86,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Helper functions for addToCart
   const createNewBasket = async (basketItem, selectedImage, productPrice) => {
     const newBasket = await basketApi.createBasket([basketItem]);
     setBasketId(newBasket.id);
@@ -120,7 +115,6 @@ export const CartProvider = ({ children }) => {
     setCartItems(convertBasketToCartItems(updatedBasket.basketItems, cartItems, selectedImage, productPrice, targetIndex));
   };
 
-  // Add item to cart
   const addToCart = async (
     product,
     selectedSize,
@@ -153,7 +147,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Remove item from cart
   const removeFromCart = async (sellableId, size) => {
     if (!basketId) return;
 
@@ -176,7 +169,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Helper function for optimistic UI updates
   const optimisticallyUpdateQuantity = (sellableId, size, newQuantity) => {
     setCartItems(prevItems => 
       prevItems.map(item => {
@@ -188,7 +180,6 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  // Update item quantity
   const updateQuantity = async (sellableId, size, newQuantity) => {
     if (newQuantity <= 0) {
       return removeFromCart(sellableId, size);

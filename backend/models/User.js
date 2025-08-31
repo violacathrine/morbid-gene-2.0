@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-// Define User schema
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -77,6 +76,5 @@ userSchema.methods.toJSON = function() {
   return user;
 };
 
-// Create and export User model
 const User = mongoose.model("User", userSchema);
 export default User;
