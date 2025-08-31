@@ -19,9 +19,21 @@ export const AuthProvider = ({ children }) => {
   // Helper function for common auth API call patterns
   const makeAuthCall = async (endpoint, options = {}) => {
     try {
+      // Get token from localStorage
+      const token = localStorage.getItem('authToken');
+      const headers = {
+        ...options.headers
+      };
+      
+      // Add Authorization header if token exists
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await apiCall(endpoint, {
         credentials: 'include',
-        ...options
+        ...options,
+        headers
       });
       const data = await response.json();
       return { success: response.ok, data, response };
@@ -64,6 +76,10 @@ export const AuthProvider = ({ children }) => {
     });
 
     if (result.success) {
+      // Save JWT token to localStorage
+      if (result.data.token) {
+        localStorage.setItem('authToken', result.data.token);
+      }
       setUser(result.data.user);
       await fetchFavorites(result.data.user);
       return { success: true };
@@ -79,6 +95,10 @@ export const AuthProvider = ({ children }) => {
     });
 
     if (result.success) {
+      // Save JWT token to localStorage
+      if (result.data.token) {
+        localStorage.setItem('authToken', result.data.token);
+      }
       setUser(result.data.user);
       return { success: true };
     }
@@ -87,6 +107,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     await makeAuthCall('/auth/logout', { method: 'POST' });
+    
+    // Clear JWT token from localStorage
+    localStorage.removeItem('authToken');
     
     // Clear local state regardless of backend response
     setUser(null);

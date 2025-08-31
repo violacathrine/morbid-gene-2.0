@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import authMiddleware from "../middleware/auth.js";
 import { createSession, getUserFromSession, deleteSession } from "../utils/session.js";
 import { getCookieConfig, getClearCookieConfig } from "../utils/cookieConfig.js";
+import { generateToken } from "../utils/jwt.js";
 
 const router = express.Router();
 
@@ -30,7 +31,10 @@ router.post("/register", async (req, res) => {
     // Create session
     const sessionId = await createSession(newUser._id);
 
-    // Set httpOnly cookie
+    // Generate JWT token for cross-domain support
+    const token = generateToken(newUser._id);
+
+    // Set httpOnly cookie (fallback for same-domain)
     res.cookie('sessionId', sessionId, getCookieConfig());
 
     res.status(201).json({ 
@@ -39,7 +43,8 @@ router.post("/register", async (req, res) => {
         email: newUser.email,
         name: newUser.name,
         createdAt: newUser.createdAt
-      }
+      },
+      token // Send JWT token for localStorage
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -75,7 +80,10 @@ router.post("/login", async (req, res) => {
     // Create session
     const sessionId = await createSession(user._id);
 
-    // Set httpOnly cookie
+    // Generate JWT token for cross-domain support
+    const token = generateToken(user._id);
+
+    // Set httpOnly cookie (fallback for same-domain)
     res.cookie('sessionId', sessionId, getCookieConfig());
 
     res.json({ 
@@ -84,7 +92,8 @@ router.post("/login", async (req, res) => {
         email: user.email,
         name: user.name,
         createdAt: user.createdAt
-      }
+      },
+      token // Send JWT token for localStorage
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -104,6 +113,27 @@ router.post("/logout", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
+});
+
+// Debug endpoint - check authentication status
+router.get("/check", async (req, res) => {
+  const sessionId = req.cookies?.sessionId;
+  const authHeader = req.headers.authorization;
+  
+  res.json({
+    hasCookie: !!sessionId,
+    cookieValue: sessionId ? "exists" : "missing",
+    hasAuthHeader: !!authHeader,
+    headers: {
+      origin: req.headers.origin,
+      referer: req.headers.referer,
+      userAgent: req.headers['user-agent']
+    },
+    cors: {
+      credentials: req.credentials,
+      origin: req.headers.origin
+    }
+  });
 });
 
 // Get current user

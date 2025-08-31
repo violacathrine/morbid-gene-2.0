@@ -3,12 +3,22 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://morbid-gene-2
 export const apiCall = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   
+  // Get JWT token from localStorage
+  const token = localStorage.getItem('authToken');
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+  
+  // Add Authorization header if token exists
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
   const defaultOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    credentials: 'include', // Always include cookies for authentication
+    headers,
+    credentials: 'include', // Still include cookies as fallback
     ...options,
   };
 
