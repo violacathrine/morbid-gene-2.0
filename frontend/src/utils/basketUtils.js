@@ -7,11 +7,11 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null, product
   const sellableId = properties.find((p) => p.key === "sellable")?.value;
   const appearanceId = properties.find((p) => p.key === "appearance")?.value;
 
-  // Använd produktens pris om det finns, annars använd Spreadshirt-priset
+  // Use product price if available, otherwise use Spreadshirt price
   let priceToUse;
   
   if (productPrice && productPrice.amount) {
-    // Använd priset från produktsidan
+    // Use price from product page
     priceToUse = {
       amount: productPrice.amount,
       currencyId: productPrice.currencyId || "EUR",
@@ -20,7 +20,7 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null, product
       vatExcluded: productPrice.amount
     };
   } else {
-    // Konvertera från cent till euro för Spreadshirt-priset
+    // Convert from cents to euros for Spreadshirt price
     priceToUse = {
       ...basketItem.priceItem,
       display: basketItem.priceItem.display / 100,
@@ -33,7 +33,7 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null, product
   let imageToUse = selectedImage;
 
   if (selectedImage) {
-    // Spara ny bild till localStorage med multipla nycklar för robusthet
+    // Save new image to localStorage with multiple keys for robustness
     const primaryKey = `cart-image-${sellableId}-${sizeLabel}-${appearanceId}`;
     const fallbackKey = `cart-image-${sellableId}-${sizeLabel}`;
     
@@ -41,34 +41,34 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null, product
       localStorage.setItem(primaryKey, selectedImage);
       localStorage.setItem(fallbackKey, selectedImage); // Backup key
     } catch (error) {
-      console.error("Kunde inte spara bild till localStorage:", error);
+      console.error("Could not save image to localStorage:", error);
     }
   }
   
-  // Spara eller hämta pris från localStorage
+  // Save or retrieve price from localStorage
   const priceKey = `cart-price-${sellableId}-${sizeLabel}`;
   
   if (productPrice && productPrice.amount) {
-    // Spara nytt pris
+    // Save new price
     try {
       localStorage.setItem(priceKey, JSON.stringify(priceToUse));
     } catch (error) {
-      console.error("Kunde inte spara pris till localStorage:", error);
+      console.error("Could not save price to localStorage:", error);
     }
   } else if (!productPrice) {
-    // Försök hämta sparat pris
+    // Try to retrieve saved price
     try {
       const savedPrice = localStorage.getItem(priceKey);
       if (savedPrice) {
         priceToUse = JSON.parse(savedPrice);
       }
     } catch (error) {
-      console.error("Kunde inte läsa pris från localStorage:", error);
+      console.error("Could not read price from localStorage:", error);
     }
   }
   
   if (!selectedImage) {
-    // Försök läsa befintlig bild från localStorage med flera möjliga nycklar
+    // Try to read existing image from localStorage with multiple possible keys
     const possibleKeys = [
       `cart-image-${sellableId}-${sizeLabel}-${appearanceId}`,
       `cart-image-${sellableId}-${sizeLabel}`,

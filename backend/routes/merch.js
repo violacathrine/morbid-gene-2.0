@@ -22,7 +22,7 @@ router.put("/baskets/:basketId", updateBasket);
 router.delete("/baskets/:basketId", deleteBasket);
 router.post("/baskets/convert", convertToBasketItem);
 
-// KORRIGERAD checkout route - använd GET istället för POST
+// Corrected checkout route - use GET instead of POST
 router.get("/baskets/:basketId/checkout", getCheckoutUrl);
 
 

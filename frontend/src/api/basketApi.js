@@ -14,7 +14,7 @@ export const createBasket = async (basketItems) => {
   return response.json();
 };
 
-// Hämta befintlig basket
+// Get existing basket
 export const getBasket = async (basketId) => {
   const response = await apiCall(`/api/merch/baskets/${basketId}`);
 
@@ -79,7 +79,7 @@ export const convertToBasketItem = async (
   return response.json();
 };
 
-// Hämta checkout URL via backend
+// Get checkout URL via backend
 export const getCheckoutUrl = async (basketId) => {
   const response = await apiCall(`/api/merch/baskets/${basketId}/checkout`);
 

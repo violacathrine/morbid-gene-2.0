@@ -8,7 +8,7 @@ export const ProductSelectors = ({
   onColorChange,
   onSizeChange,
 }) => {
-  // Funktion för att kolla tillgänglighet
+  // Function to check availability
   const isAvailable = (sizeId, appearanceId) => {
     return productType?.stockStates?.some(
       (stock) =>
@@ -18,7 +18,7 @@ export const ProductSelectors = ({
     );
   };
 
-  // Filtrera storlekar baserat på vald färg
+  // Filter sizes based on selected color
   const getAvailableSizes = () => {
     if (!selectedColor || !productType) return productType?.sizes || [];
 
@@ -28,7 +28,7 @@ export const ProductSelectors = ({
     }));
   };
 
-  // Formatera färgnamn (första bokstaven stor)
+  // Format color name (first letter uppercase)
   const formatColorName = (name) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
   };

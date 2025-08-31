@@ -1,19 +1,19 @@
 export const formatPrice = (priceData) => {
-  // Hantera olika prisformat från Spreadshirt API
+  // Handle different price formats from Spreadshirt API
   let amount;
 
   if (typeof priceData === "object" && priceData !== null) {
-    // Spreadshirt prisobjekt - använd display-värdet
+    // Spreadshirt price object - use display value
     amount = priceData.display || priceData.vatIncluded || priceData.amount;
   } else {
-    // Enkelt nummer
+    // Simple number
     amount = priceData;
   }
 
   if (!amount || amount === 0) return "0,00 €";
 
-  // Om amount är över 100, är det troligen i cents
-  // Konvertera från cents till euro genom att dela med 100
+  // If amount is over 100, it's likely in cents
+  // Convert from cents to euros by dividing by 100
   const euroAmount = amount > 100 ? amount / 100 : amount;
 
   return new Intl.NumberFormat("sv-SE", {

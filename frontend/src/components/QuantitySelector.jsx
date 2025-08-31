@@ -7,7 +7,7 @@ import {
 export const QuantitySelector = ({ quantity, onChange, min = 1, max = 10 }) => {
   const handleChange = (e) => {
     const value = parseInt(e.target.value) || min;
-    // Säkerställ att värdet är inom giltiga gränser
+    // Ensure the value is within valid limits
     const clampedValue = Math.max(min, Math.min(max, value));
     onChange(clampedValue);
   };

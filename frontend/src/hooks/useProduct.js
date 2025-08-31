@@ -18,13 +18,13 @@ export const useProduct = (productId) => {
       setError(null);
 
       try {
-        // Hämta produkt
+        // Fetch product
         const productResponse = await apiCall(`/api/merch/${productId}`);
         if (!productResponse.ok) throw new Error("Failed to fetch product");
         const productData = await productResponse.json();
         setProduct(productData);
 
-        // Hämta ProductType (sizes/colors)
+        // Fetch ProductType (sizes/colors)
         if (productData.productTypeId) {
           const typeResponse = await apiCall(
             `/api/merch/productType/${productData.productTypeId}`

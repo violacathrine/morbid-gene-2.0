@@ -76,7 +76,7 @@ export const Breadcrumbs = () => {
   const { productId } = useParams();
   const { product, loading } = useProduct(productId);
 
-  // Visa bara breadcrumbs på shopping-relaterade sidor
+  // Show breadcrumbs only on shopping-related pages
   const showBreadcrumbs =
     location.pathname === "/merch" ||
     location.pathname.startsWith("/product") ||

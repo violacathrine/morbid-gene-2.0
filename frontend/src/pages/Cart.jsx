@@ -328,7 +328,7 @@ export const Cart = () => {
     setCheckoutLoading(true);
 
     try {
-      // ÄNDRAT: Använd getCheckoutUrl istället för createCheckout
+      // CHANGED: Use getCheckoutUrl instead of createCheckout
       const data = await getCheckoutUrl(basketId);
 
       if (!data.checkoutUrl) {

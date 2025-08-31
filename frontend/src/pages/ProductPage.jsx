@@ -100,7 +100,7 @@ const ProductInfo = styled.div`
   }
 `;
 
-// Funktion för att rensa HTML-taggar
+// Function to strip HTML tags
 const stripHtml = (html) => {
   if (!html) return '';
   return html.replace(/<[^>]*>/g, '').trim();
@@ -119,14 +119,14 @@ export const ProductPage = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  // Hämta bilder för vald färg (bara om produkten är laddad)
+  // Get images for selected color (only if product is loaded)
   const { images } = useProductImages(
     product?.sellableId,
     product ? selectedColor || product.defaultAppearanceId : null,
     product?.ideaId
   );
 
-  // Funktion för att kolla tillgänglighet
+  // Function to check availability
   const isAvailable = (sizeId, appearanceId) => {
     return productType?.stockStates?.some(
       (stock) =>
@@ -136,7 +136,7 @@ export const ProductPage = () => {
     );
   };
 
-  // Filtrera storlekar baserat på vald färg
+  // Filter sizes based on selected color
   const getAvailableSizes = () => {
     if (!selectedColor || !productType) return productType?.sizes || [];
 
@@ -149,7 +149,7 @@ export const ProductPage = () => {
   // Add to cart button and logic
   const handleAddToCart = async () => {
     
-    // Validering
+    // Validation
     if (!selectedColor || !selectedSize) {
       alert("Please select both color and size");
       return;
@@ -159,7 +159,7 @@ export const ProductPage = () => {
       setIsAddingToCart(true);
       
       try {
-        // Hitta färg- och storleksnamn
+        // Find color and size names
         const colorName = productType.appearances.find(
           (a) => a.id === selectedColor
         )?.name;
@@ -167,7 +167,7 @@ export const ProductPage = () => {
           (s) => s.id === selectedSize
         )?.name;
 
-        // Hämta rätt bild för vald färg
+        // Get correct image for selected color
         const selectedImage =
           images && images.length > 0 ? images[0].url : product.previewImage?.url;
 
@@ -175,7 +175,7 @@ export const ProductPage = () => {
         // Add the specified quantity directly with the correct price
         await addToCart(product, sizeName, selectedImage, colorName, quantity, product.price);
 
-        // Visa tooltip i 2 sekunder
+        // Show tooltip for 2 seconds
         setShowTooltip(true);
         setTimeout(() => setShowTooltip(false), 2000);
       } finally {
@@ -216,7 +216,7 @@ export const ProductPage = () => {
           </div>
         </div>
 
-        {/* Visa shortDescription från productType istället */}
+        {/* Show shortDescription from productType instead */}
         {productType?.shortDescription && (
           <Description>{stripHtml(productType.shortDescription)}</Description>
         )}
@@ -316,7 +316,7 @@ export const ProductPage = () => {
               }
             </div>
             
-            {/* Vikt - mer flexibel sökning */}
+            {/* Weight - more flexible search */}
             <div>
               <strong>Weight:</strong> {
                 (() => {
@@ -327,7 +327,7 @@ export const ProductPage = () => {
                       return stripHtml(weightMatch[1]).trim();
                     }
                     
-                    // Testa bara siffror följt av g
+                    // Test only numbers followed by g
                     const simpleWeight = productType.description.match(/(\d+)\s*g/i);
                     if (simpleWeight) {
                       return `${simpleWeight[1]}g/m²`;
@@ -344,7 +344,7 @@ export const ProductPage = () => {
               <strong>Fit:</strong> {productType.sizeFitHint || 'N/A'}
             </div>
             
-            {/* Clothing Brand - från API */}
+            {/* Clothing Brand - from API */}
             <div>
               <strong>Clothing Brand:</strong> {productType.brand || 'N/A'}
             </div>

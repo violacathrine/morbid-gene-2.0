@@ -229,7 +229,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Töm hela kundvagnen
+  // Clear entire cart
   const clearCart = async () => {
     if (!basketId) return;
 
@@ -249,12 +249,12 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Beräkna totalt antal varor
+  // Calculate total number of items
   const getTotalItems = () => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
-  // Beräkna totalt pris
+  // Calculate total price
   const getTotalPrice = () => {
     return cartItems.reduce((total, item) => {
       const price = parseFloat(item.price?.display || item.price?.amount || 0);

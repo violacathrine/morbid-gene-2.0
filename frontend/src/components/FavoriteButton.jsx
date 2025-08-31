@@ -28,7 +28,7 @@ const HeartButton = styled.button`
     cursor: not-allowed;
   }
   
-  /* Tooltip för icke-inloggade användare */
+  /* Tooltip for non-logged in users */
   ${props => !props.$isAuthenticated && props.$showTooltip ? `
     &:hover::after {
       content: "Login to add favorites";

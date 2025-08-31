@@ -164,13 +164,13 @@ export const convertToBasketItem = async (req, res) => {
   }
 };
 
-// HELT NY OCH KORRIGERAD CHECKOUT FUNKTION
+// Corrected checkout function
 export const getCheckoutUrl = async (req, res) => {
   try {
     const { basketId } = req.params;
 
 
-    // Använd vår nya getCheckoutUrl funktion från service
+    // Use our new getCheckoutUrl function from service
     const checkoutUrl = await spreadshirtService.getCheckoutUrl(basketId);
 
     res.json({

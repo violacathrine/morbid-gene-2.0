@@ -76,7 +76,7 @@ const ImageGrid = styled.div`
     grid-template-columns: repeat(
       3,
       1fr
-    ); /* 💻 tre kolumner på större skärmar */
+    ); /* 💻 three columns on larger screens */
   }
 
   img {

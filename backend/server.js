@@ -13,15 +13,15 @@ import cleanupRoutes from "./routes/cleanup.js";
 import contactRoutes from "./routes/contact.js";
 import User from "./models/User.js";
 
-// Setup för __dirname i ES-moduler
+// Setup for __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Ladda .env-filer (först backend/.env, sen root .env som fallback)
+// Load .env files (backend/.env first, then root .env as fallback)
 dotenv.config({ path: path.join(__dirname, ".env") });
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
-// Validera kritiska miljövariabler
+// Validate critical environment variables
 const requiredEnvVars = [
   "SPREADSHOP_ID",
   "SPREADSHOP_API_KEY",
@@ -98,7 +98,7 @@ app.use("/api/merch", merchRoutes);
 app.use("/admin/cleanup", cleanupRoutes);
 app.use("/api/forms", contactRoutes);
 
-// 404 handler för okända endpoints
+// 404 handler for unknown endpoints
 app.use("*", (req, res) => {
   res.status(404).json({
     error: "Endpoint not found",

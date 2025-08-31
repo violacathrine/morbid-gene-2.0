@@ -61,7 +61,7 @@ const ProductDetails = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  min-width: 0; /* Förhindra overflow */
+  min-width: 0; /* Prevent overflow */
   
   @media (min-width: 480px) {
     gap: 1rem;
@@ -75,7 +75,7 @@ const ProductDetails = styled.div`
 `;
 
 const ProductInfo = styled.div`
-  flex: 1; /* Tar upp mesta utrymmet till vänster */
+  flex: 1; /* Takes up most space to the left */
 `;
 
 const PriceSection = styled.div`
@@ -192,7 +192,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
   if (!item) return null;
 
   const getSavedImage = () => {
-    // Först: kolla om vi har en giltig selectedImage
+    // First: check if we have a valid selectedImage
     if (
       item.selectedImage &&
       typeof item.selectedImage === "string" &&
@@ -201,7 +201,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
       return item.selectedImage;
     }
 
-    // Sedan: sök i localStorage med flera nyckel-format
+    // Then: search in localStorage with multiple key formats
     const possibleKeys = [
       `cart-image-${item.sellableId}-${item.size}-${item.appearanceId}`,
       `cart-image-${item.sellableId}-${item.size}-default`,
@@ -248,7 +248,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
           width="120"
           height="120"
           onError={(e) => {
-            // Förhindra evighetsloop - sätt bara till grå ruta och logga inte
+            // Prevent infinite loop - just set to gray box and don't log
             e.target.src =
               "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjQ0NDIi8+Cjx0ZXh0IHg9IjQwIiB5PSI0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD4KPHN2Zz4K";
           }}
