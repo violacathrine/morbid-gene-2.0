@@ -1,26 +1,16 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { CartItem } from "../components/CartItem";
 import { formatPrice } from "../utils/formatPrice";
-import { CartContext } from "../contexts/CartContext";
+import { CartContext } from "../contexts/CartProvider";
 import { getCheckoutUrl } from "../api/basketApi"; // ÄNDRAT: Importera den nya funktionen
 import ScrollToTop from "../components/ScrollToTop";
 import { ClearCartPopup } from "../components/ClearCartPopup";
+import { Container } from "../components/shared/LayoutComponents";
+import { EmptyState, EmptyStateLink } from "../components/shared/EmptyStateComponents";
+import { theme } from "../styles/theme";
 
-const Container = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 1rem;
-  
-  @media (min-width: 480px) {
-    padding: 1.5rem;
-  }
-  
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
-`;
 
 const Header = styled.div`
   margin-bottom: 1rem;
@@ -31,7 +21,7 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: white;
+  color: ${theme.colors.primaryText};
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
   
@@ -71,7 +61,7 @@ const OrderSummarySection = styled.div`
 `;
 
 const SummaryTitle = styled.h2`
-  color: white;
+  color: ${theme.colors.primaryText};
   font-size: 1.1rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid #374151;
@@ -137,8 +127,8 @@ const SummaryValue = styled.span.withConfig({
 
 // Checkout info sektion
 const CheckoutInfoSection = styled.div`
-  background: #1a1a1a;
-  border: 1px solid #dc2626;
+  background: ${theme.colors.sectionBg};
+  border: 1px solid ${theme.colors.buttonPrimary};
   padding: 1rem;
   margin-bottom: 1.5rem;
   
@@ -152,7 +142,7 @@ const CheckoutInfoSection = styled.div`
 `;
 
 const InfoTitle = styled.h3`
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   margin: 0 0 0.5rem 0;
   font-size: 1rem;
   font-weight: 700;
@@ -166,7 +156,7 @@ const InfoTitle = styled.h3`
 `;
 
 const InfoText = styled.p`
-  color: #cccccc;
+  color: ${theme.colors.secondaryText};
   margin: 0;
   font-size: 0.85rem;
   line-height: 1.4;
@@ -178,7 +168,7 @@ const InfoText = styled.p`
 `;
 
 const InfoList = styled.ul`
-  color: #cccccc;
+  color: ${theme.colors.secondaryText};
   margin: 0.5rem 0 0 0.75rem;
   font-size: 0.85rem;
   line-height: 1.3;
@@ -215,7 +205,7 @@ const LegalText = styled.p`
 `;
 
 const LegalLink = styled(Link)`
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   text-decoration: none;
   margin: 0 0.5rem;
   transition: color 0.2s ease;
@@ -227,7 +217,7 @@ const LegalLink = styled(Link)`
   }
   
   &:hover {
-    color: #dc2626;
+    color: ${theme.colors.buttonPrimary};
     text-decoration: underline;
   }
 `;
@@ -266,14 +256,14 @@ const Button = styled.button.withConfig({
   ${(props) =>
     props.variant === "primary" &&
     `
-    background-color: #dc2626;
-    color: #ffffff;
+    background-color: ${theme.colors.buttonPrimary};
+    color: ${theme.colors.primaryText};
     font-weight: bold;
     letter-spacing: 1px;
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: #b91c1c;
+      background-color: ${theme.colors.buttonPrimaryHover};
     }
 
     &:disabled {
@@ -285,11 +275,11 @@ const Button = styled.button.withConfig({
   ${(props) =>
     props.variant === "secondary" &&
     `
-    background-color: #dc2626;
+    background-color: ${theme.colors.buttonPrimary};
     color: white;
 
     &:hover {
-      background-color: #b91c1c;
+      background-color: ${theme.colors.buttonPrimaryHover};
     }
   `}
 `;
@@ -298,7 +288,7 @@ const LoadingSpinner = styled.div`
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid #ffffff;
+  border: 2px solid ${theme.colors.primaryText};
   border-radius: 50%;
   border-top-color: transparent;
   animation: spin 1s ease-in-out infinite;
@@ -311,48 +301,7 @@ const LoadingSpinner = styled.div`
   }
 `;
 
-// Tom kundvagn
-const EmptyCart = styled.div`
-  text-align: center;
-  padding: 2rem 1rem;
-  
-  @media (min-width: 768px) {
-    padding: 3rem;
-  }
-`;
-
-const EmptyTitle = styled.h1`
-  color: white;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  
-  @media (min-width: 480px) {
-    font-size: 2rem;
-  }
-`;
-
-const EmptyLink = styled(Link)`
-  text-decoration: none;
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
-  background-color: #dc2626;
-  color: #ffffff;
-  border: none;
-  display: inline-block;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: background-color 0.2s;
-  font-size: 0.9rem;
-  
-  @media (min-width: 480px) {
-    font-size: 1rem;
-  }
-
-  &:hover {
-    background-color: #b91c1c;
-    text-decoration: none;
-  }
-`;
+// Note: EmptyState components moved to shared/EmptyStateComponents.jsx
 
 export const Cart = () => {
   const {
@@ -374,6 +323,7 @@ export const Cart = () => {
       alert("No basket found. Please try refreshing the page.");
       return;
     }
+
 
     setCheckoutLoading(true);
 
@@ -397,15 +347,16 @@ export const Cart = () => {
 
   if (cartItems.length === 0) {
     return (
-      <EmptyCart>
-        <EmptyTitle>Your cart is empty</EmptyTitle>
-        <EmptyLink to="/merch">Continue shopping</EmptyLink>
-      </EmptyCart>
+      <EmptyState
+        title="Your cart is empty"
+        titleSize="large"
+        actions={<EmptyStateLink to="/merch">Continue shopping</EmptyStateLink>}
+      />
     );
   }
 
   return (
-    <Container>
+    <Container $maxWidth="sm" $padding="md">
       <Header>
         <Title>Shopping Cart ({getTotalItems()} items)</Title>
       </Header>

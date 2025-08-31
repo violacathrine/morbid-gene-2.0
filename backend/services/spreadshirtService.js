@@ -297,3 +297,21 @@ export const convertToBasketItem = (product, sizeName, colorName, quantity = 1) 
     }
   };
 };
+
+// Get checkout URL for a basket
+export const getCheckoutUrl = async (basketId) => {
+  const { shopId } = getConfig();
+  const url = `${apiDomain}/api/v1/baskets/${basketId}/checkout?mediaType=json`;
+
+  try {
+    const response = await axios.get(url, {
+      headers: getHeaders(),
+    });
+
+    // Spreadshirt API returns checkout URL in the response
+    return response.data.checkoutUrl || response.data.href;
+  } catch (error) {
+    console.error("Could not get checkout URL:", error.response?.data || error.message);
+    throw error;
+  }
+};

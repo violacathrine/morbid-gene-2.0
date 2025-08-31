@@ -3,30 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Container } from "../components/shared/LayoutComponents";
+import { theme } from "../styles/theme";
 
-const Container = styled.div`
-  min-height: auto;
-  padding: 0.75rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  max-width: 1600px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  
-  @media (min-width: 480px) {
-    padding: 1.25rem;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
-  
-  @media (min-width: 768px) {
-    padding: 1.5rem;
-    padding-top: 0;
-    padding-bottom: 2rem;
-  }
-`;
 
 const LoginBox = styled.div`
   max-width: 600px;
@@ -35,13 +14,8 @@ const LoginBox = styled.div`
   width: 100%;
   box-sizing: border-box;
   
-  @media (min-width: 480px) {
-    padding: 2rem;
-  }
-  
   @media (min-width: 768px) {
-    padding: 3rem;
-    padding-top: 1rem;
+    padding: 2rem;
   }
 `;
 
@@ -50,7 +24,7 @@ const Header = styled.div`
   margin-bottom: 2rem;
   
   h1 {
-    color: #ffffff;
+    color: ${theme.colors.primaryText};
     font-size: 1.5rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -69,7 +43,7 @@ const Header = styled.div`
   }
   
   p {
-    color: #cccccc;
+    color: ${theme.colors.secondaryText};
     font-style: italic;
     font-size: 0.9rem;
     font-weight: 300;
@@ -89,8 +63,8 @@ const Header = styled.div`
 `;
 
 const FormSection = styled.div`
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: ${theme.colors.sectionBg};
+  border: 1px solid ${theme.colors.charcoal};
   padding: 1rem;
   margin-bottom: 1rem;
   
@@ -140,7 +114,7 @@ const InputRow = styled.div`
 `;
 
 const Label = styled.label`
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   font-weight: bold;
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -158,17 +132,17 @@ const InputField = styled.div`
 const Input = styled.input`
   padding: 0.75rem;
   padding-right: ${props => props.$hasIcon ? '3rem' : '0.75rem'};
-  background: #222222;
+  background: ${theme.colors.inputBg};
   border: 2px solid #444444;
   border-radius: 4px;
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   font-size: 1rem;
   width: 100%;
   box-sizing: border-box;
   transition: all 0.3s ease;
 
   &::placeholder {
-    color: #666666;
+    color: ${theme.colors.mediumGray};
     font-size: 0.875rem;
     
     @media (max-width: 768px) {
@@ -178,7 +152,7 @@ const Input = styled.input`
 
   &:focus {
     outline: none;
-    border-color: #dc2626;
+    border-color: ${theme.colors.buttonPrimary};
     box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
   }
   
@@ -196,7 +170,7 @@ const PasswordToggleButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  color: ${props => props.$isShowing ? '#dc2626' : '#666666'};
+  color: ${props => props.$isShowing ? theme.colors.buttonPrimary : theme.colors.mediumGray};
   font-size: 1.1rem;
   padding: 0.5rem;
   min-width: 44px;
@@ -212,7 +186,7 @@ const PasswordToggleButton = styled.button`
   }
   
   &:focus {
-    outline: 2px solid #dc2626;
+    outline: 2px solid ${theme.colors.buttonPrimary};
     outline-offset: 2px;
   }
   
@@ -222,8 +196,8 @@ const PasswordToggleButton = styled.button`
 `;
 
 const Button = styled.button`
-  background-color: #dc2626;
-  color: #ffffff;
+  background-color: ${theme.colors.buttonPrimary};
+  color: ${theme.colors.primaryText};
   border: none;
   padding: 0.75rem 1.25rem;
   font-size: 0.9rem;
@@ -236,11 +210,11 @@ const Button = styled.button`
   margin: 0;
 
   &:hover:not(:disabled) {
-    background-color: #b91c1c;
+    background-color: ${theme.colors.buttonPrimaryHover};
   }
 
   &:disabled {
-    background-color: #666666;
+    background-color: ${theme.colors.buttonDisabled};
     cursor: not-allowed;
   }
   
@@ -251,8 +225,8 @@ const Button = styled.button`
 `;
 
 const ErrorMessage = styled.div`
-  color: #ffffff;
-  background: #dc2626;
+  color: ${theme.colors.primaryText};
+  background: ${theme.colors.buttonPrimary};
   border: 1px solid #991b1b;
   padding: 0.75rem;
   border-radius: 4px;
@@ -262,13 +236,13 @@ const ErrorMessage = styled.div`
 `;
 
 const RequiredStar = styled.span`
-  color: #dc2626;
+  color: ${theme.colors.buttonPrimary};
   margin-left: 4px;
   font-weight: bold;
 `;
 
 const FieldError = styled.div`
-  color: #dc2626;
+  color: ${theme.colors.buttonPrimary};
   font-size: 0.8rem;
   margin-top: 0.25rem;
   margin-left: 0.25rem;
@@ -282,9 +256,9 @@ const ToggleSection = styled.div`
 `;
 
 const ToggleButton = styled.button`
-  background-color: ${(props) => (props.$active ? "#dc2626" : "#333333")};
-  color: ${(props) => (props.$active ? "#ffffff" : "#cccccc")};
-  border: 1px solid ${(props) => (props.$active ? "#dc2626" : "#555555")};
+  background-color: ${(props) => (props.$active ? theme.colors.buttonPrimary : theme.colors.charcoal)};
+  color: ${(props) => (props.$active ? theme.colors.primaryText : theme.colors.secondaryText)};
+  border: 1px solid ${(props) => (props.$active ? theme.colors.buttonPrimary : theme.colors.darkCharcoal)};
   padding: 0.6rem 1.2rem;
   font-size: 0.85rem;
   font-weight: bold;
@@ -302,9 +276,9 @@ const ToggleButton = styled.button`
   }
 
   &:hover {
-    background-color: ${(props) => (props.$active ? "#b91c1c" : "#444444")};
-    color: #ffffff;
-    border-color: ${(props) => (props.$active ? "#dc2626" : "#666666")};
+    background-color: ${(props) => (props.$active ? theme.colors.buttonPrimaryHover : "#444444")};
+    color: ${theme.colors.primaryText};
+    border-color: ${(props) => (props.$active ? theme.colors.buttonPrimary : theme.colors.mediumGray)};
   }
 `;
 
@@ -392,7 +366,7 @@ export const Login = () => {
   };
 
   return (
-    <Container>      
+    <Container $maxWidth="lg" $variant="form" $padding="md">      
       <LoginBox>
         <Header>
           <h1>{isLogin ? 'Login' : 'Register'}</h1>

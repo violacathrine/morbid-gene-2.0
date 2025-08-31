@@ -1,17 +1,9 @@
-import React from "react";
 import styled from "styled-components";
 import { MdLocationOn, MdAccessTime } from "react-icons/md";
 import ScrollToTop from "../components/ScrollToTop";
+import { Container } from "../components/shared/LayoutComponents";
+import { theme } from "../styles/theme";
 
-const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  
-  @media (min-width: 768px) {
-    padding: 3rem 2rem;
-  }
-`;
 
 const Header = styled.div`
   text-align: center;
@@ -19,7 +11,7 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   font-size: 2.5rem;
   margin-bottom: 1rem;
   text-transform: uppercase;
@@ -31,7 +23,7 @@ const Title = styled.h1`
 `;
 
 const Subtitle = styled.p`
-  color: #cccccc;
+  color: ${theme.colors.secondaryText};
   font-size: 1.1rem;
   max-width: 600px;
   margin: 0 auto;
@@ -44,14 +36,14 @@ const GigsList = styled.div`
 `;
 
 const GigCard = styled.div`
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: ${theme.colors.sectionBg};
+  border: 1px solid ${theme.colors.charcoal};
   padding: 2rem;
   border-radius: 8px;
   transition: border-color 0.3s ease;
   
   &:hover {
-    border-color: #dc2626;
+    border-color: ${theme.colors.buttonPrimary};
   }
 `;
 
@@ -73,7 +65,7 @@ const VenueInfo = styled.div`
 `;
 
 const VenueName = styled.h2`
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   font-size: 1.8rem;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
@@ -84,12 +76,12 @@ const VenueLocation = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #cccccc;
+  color: ${theme.colors.secondaryText};
   font-size: 1rem;
   margin: 0;
   
   svg {
-    color: #dc2626;
+    color: #ff4444;
     font-size: 1.1rem;
   }
 `;
@@ -103,7 +95,7 @@ const DateTimeInfo = styled.div`
 `;
 
 const Date = styled.div`
-  color: #dc2626;
+  color: #ff4444;
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
@@ -113,11 +105,11 @@ const Time = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   font-size: 1.1rem;
   
   svg {
-    color: #ffffff;
+    color: ${theme.colors.primaryText};
     font-size: 1.1rem;
   }
 `;
@@ -127,15 +119,15 @@ const GigDetails = styled.div`
 `;
 
 const Description = styled.p`
-  color: #cccccc;
+  color: ${theme.colors.secondaryText};
   line-height: 1.6;
   margin-bottom: 1rem;
 `;
 
 const TicketLink = styled.a`
   display: inline-block;
-  background: #dc2626;
-  color: #ffffff;
+  background: ${theme.colors.buttonPrimary};
+  color: ${theme.colors.primaryText};
   text-decoration: none;
   padding: 0.75rem 1.5rem;
   border-radius: 4px;
@@ -145,14 +137,14 @@ const TicketLink = styled.a`
   transition: background-color 0.3s ease;
   
   &:hover {
-    background: #b91c1c;
+    background: ${theme.colors.buttonPrimaryHover};
     text-decoration: none;
-    color: #ffffff;
+    color: ${theme.colors.primaryText};
   }
 `;
 
 const TBANotice = styled.span`
-  color: #888;
+  color: ${theme.colors.secondaryText};
   font-style: italic;
   font-size: 0.9rem;
 `;
@@ -184,7 +176,7 @@ export const Gigs = () => {
   ];
 
   return (
-    <Container>
+    <Container $maxWidth="md" $padding="lg">
       <Header>
         <Title>Upcoming Gigs</Title>
         <Subtitle>

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ScrollToTop from "../components/ScrollToTop";
+import { theme } from "../styles/theme";
 
 // Glob-import
 const galleries = {
@@ -40,8 +41,8 @@ const galleries = {
 
 const Wrapper = styled.section`
   padding: 0 1rem 2rem;
-  background: #000;
-  color: #fff;
+  background: ${theme.colors.pageBg};
+  color: ${theme.colors.primaryText};
   min-height: 100vh;
   text-align: center;
 `;
@@ -58,7 +59,7 @@ const Title = styled.h1`
 
 const Credit = styled.p`
   font-size: 1rem;
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   margin-bottom: 2rem;
 
   @media (min-width: 768px) {

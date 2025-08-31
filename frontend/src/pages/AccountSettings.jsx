@@ -1,27 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../config/api.js';
+import { Container } from "../components/shared/LayoutComponents";
+import { theme } from "../styles/theme";
 
-const Container = styled.div`
-  min-height: 100vh;
-  padding: 1rem;
-  max-width: 1600px;
-  margin: 0 auto;
-  
-  @media (min-width: 480px) {
-    padding: 1.5rem;
-  }
-  
-  @media (min-width: 768px) {
-    padding: 0.5rem 2rem 2rem 2rem;
-  }
-  
-  @media (min-width: 1024px) {
-    padding: 0.5rem 3rem 3rem 3rem;
-  }
-`;
 
 const SettingsContainer = styled.div`
   max-width: 800px;
@@ -46,7 +30,7 @@ const Header = styled.div`
   }
   
   h1 {
-    color: #ffffff;
+    color: ${theme.colors.primaryText};
     font-size: 1.5rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -63,7 +47,7 @@ const Header = styled.div`
   }
   
   p {
-    color: #cccccc;
+    color: ${theme.colors.secondaryText};
     font-style: italic;
     font-size: 1rem;
     font-weight: 300;
@@ -75,19 +59,19 @@ const Header = styled.div`
 `;
 
 const SettingsSection = styled.div`
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: ${theme.colors.sectionBg};
+  border: 1px solid ${theme.colors.charcoal};
   padding: 1.5rem;
   margin-bottom: 2rem;
   
   h2 {
-    color: #ffffff;
+    color: ${theme.colors.primaryText};
     font-size: 1.3rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin: 0 0 1.5rem 0;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid ${theme.colors.charcoal};
     padding-bottom: 0.5rem;
   }
   
@@ -119,7 +103,7 @@ const InfoItem = styled.div`
 `;
 
 const InfoLabel = styled.span`
-  color: #999999;
+  color: ${theme.colors.secondaryText};
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -127,7 +111,7 @@ const InfoLabel = styled.span`
 `;
 
 const InfoValue = styled.span`
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   font-size: 1rem;
   word-break: break-all;
   
@@ -144,7 +128,7 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   font-weight: bold;
   font-size: 0.95rem;
   text-transform: uppercase;
@@ -158,20 +142,20 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 0.75rem;
-  background: #222222;
+  background: ${theme.colors.inputBg};
   border: 2px solid #444444;
-  color: #ffffff;
+  color: ${theme.colors.primaryText};
   font-size: 1rem;
   transition: all 0.3s ease;
   
   &:focus {
     outline: none;
-    border-color: #dc2626;
+    border-color: ${theme.colors.buttonPrimary};
     box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
   }
   
   &::placeholder {
-    color: #666666;
+    color: ${theme.colors.mediumGray};
     font-size: 0.875rem;
     
     @media (max-width: 768px) {
@@ -196,8 +180,8 @@ const ButtonGroup = styled.div`
 `;
 
 const SaveButton = styled.button`
-  background-color: #dc2626;
-  color: #ffffff;
+  background-color: ${theme.colors.buttonPrimary};
+  color: ${theme.colors.primaryText};
   border: none;
   padding: 0.75rem 1.25rem;
   font-size: 0.9rem;
@@ -208,11 +192,11 @@ const SaveButton = styled.button`
   transition: background-color 0.2s;
   
   &:hover:not(:disabled) {
-    background-color: #b91c1c;
+    background-color: ${theme.colors.buttonPrimaryHover};
   }
   
   &:disabled {
-    background-color: #666666;
+    background-color: ${theme.colors.buttonDisabled};
     cursor: not-allowed;
   }
   
@@ -223,17 +207,17 @@ const SaveButton = styled.button`
 `;
 
 const DangerZone = styled.div`
-  border: 1px solid #dc2626;
+  border: 1px solid ${theme.colors.buttonPrimary};
   padding: 1.5rem;
   background: rgba(220, 38, 38, 0.03);
   
   h2 {
-    color: #dc2626;
-    border-bottom-color: #dc2626;
+    color: ${theme.colors.buttonPrimary};
+    border-bottom-color: ${theme.colors.buttonPrimary};
   }
   
   p {
-    color: #cccccc;
+    color: ${theme.colors.secondaryText};
     font-size: 1rem;
     margin: 0 0 1.5rem 0;
     line-height: 1.5;
@@ -245,8 +229,8 @@ const DangerZone = styled.div`
 `;
 
 const DangerButton = styled.button`
-  background-color: #dc2626;
-  color: #ffffff;
+  background-color: ${theme.colors.buttonPrimary};
+  color: ${theme.colors.primaryText};
   border: none;
   padding: 0.75rem 1.25rem;
   font-size: 0.9rem;
@@ -257,7 +241,7 @@ const DangerButton = styled.button`
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: #b91c1c;
+    background-color: ${theme.colors.buttonPrimaryHover};
   }
   
   @media (min-width: 480px) {
@@ -267,8 +251,8 @@ const DangerButton = styled.button`
 `;
 
 const ErrorMessage = styled.div`
-  color: #ffffff;
-  background: #dc2626;
+  color: ${theme.colors.primaryText};
+  background: ${theme.colors.buttonPrimary};
   border: 1px solid #991b1b;
   padding: 0.75rem;
   text-align: center;
@@ -277,8 +261,8 @@ const ErrorMessage = styled.div`
 `;
 
 const SuccessMessage = styled.div`
-  color: #ffffff;
-  background: #dc2626;
+  color: ${theme.colors.primaryText};
+  background: ${theme.colors.buttonPrimary};
   border: 1px solid #991b1b;
   padding: 0.75rem;
   text-align: center;
@@ -300,20 +284,20 @@ const ConfirmationOverlay = styled.div`
 `;
 
 const ConfirmationDialog = styled.div`
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: ${theme.colors.sectionBg};
+  border: 1px solid ${theme.colors.charcoal};
   padding: 1.5rem;
   max-width: 400px;
   text-align: center;
   
   h3 {
-    color: #fff;
+    color: ${theme.colors.primaryText};
     margin: 0 0 1rem 0;
     font-size: 1.2rem;
   }
   
   p {
-    color: #ccc;
+    color: ${theme.colors.secondaryText};
     margin: 0 0 1.5rem 0;
     font-size: 0.95rem;
   }
@@ -326,8 +310,8 @@ const ConfirmationButtons = styled.div`
 `;
 
 const ConfirmButton = styled.button`
-  background-color: #dc2626;
-  color: #ffffff;
+  background-color: ${theme.colors.buttonPrimary};
+  color: ${theme.colors.primaryText};
   border: none;
   padding: 0.6rem 1rem;
   cursor: pointer;
@@ -336,13 +320,13 @@ const ConfirmButton = styled.button`
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: #b91c1c;
+    background-color: ${theme.colors.buttonPrimaryHover};
   }
 `;
 
 const CancelButton = styled.button`
-  background-color: #333333;
-  color: #ffffff;
+  background-color: ${theme.colors.charcoal};
+  color: ${theme.colors.primaryText};
   border: none;
   padding: 0.6rem 1rem;
   cursor: pointer;
@@ -351,7 +335,7 @@ const CancelButton = styled.button`
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: #555555;
+    background-color: ${theme.colors.darkCharcoal};
   }
 `;
 
@@ -455,7 +439,7 @@ export const AccountSettings = () => {
   };
 
   return (
-    <Container>
+    <Container $maxWidth="lg" $minHeight="viewport" $padding="md">
       <SettingsContainer>
         <Header>
           <h1>Account Settings</h1>

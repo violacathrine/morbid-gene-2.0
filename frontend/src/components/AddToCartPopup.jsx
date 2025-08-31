@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   PopupOverlay,
@@ -7,7 +6,7 @@ import {
   PopupButtons,
   ContinueButton,
   CartButton,
-} from "../pages/ProductPage.styles";
+} from "./shared/PopupComponents";
 
 export const AddToCartPopup = ({ isOpen, onClose, quantity }) => {
   const navigate = useNavigate();

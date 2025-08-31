@@ -1,13 +1,9 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://morbid-gene-2-0.onrender.com';
-const API_BASE = `${API_BASE_URL}/api/merch`;
+import { apiCall } from '../config/api.js';
 
 // Skapa ny basket
 export const createBasket = async (basketItems) => {
-  const response = await fetch(`${API_BASE}/baskets`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+  const response = await apiCall('/api/merch/baskets', {
+    method: 'POST',
     body: JSON.stringify({ basketItems }),
   });
 
@@ -20,7 +16,7 @@ export const createBasket = async (basketItems) => {
 
 // Hämta befintlig basket
 export const getBasket = async (basketId) => {
-  const response = await fetch(`${API_BASE}/baskets/${basketId}`);
+  const response = await apiCall(`/api/merch/baskets/${basketId}`);
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -34,11 +30,8 @@ export const getBasket = async (basketId) => {
 
 // Uppdatera basket
 export const updateBasket = async (basketId, basketItems) => {
-  const response = await fetch(`${API_BASE}/baskets/${basketId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+  const response = await apiCall(`/api/merch/baskets/${basketId}`, {
+    method: 'PUT',
     body: JSON.stringify({ basketItems }),
   });
 
@@ -51,8 +44,8 @@ export const updateBasket = async (basketId, basketItems) => {
 
 // Ta bort hela basket
 export const deleteBasket = async (basketId) => {
-  const response = await fetch(`${API_BASE}/baskets/${basketId}`, {
-    method: "DELETE",
+  const response = await apiCall(`/api/merch/baskets/${basketId}`, {
+    method: 'DELETE',
   });
 
   if (!response.ok) {
@@ -69,11 +62,8 @@ export const convertToBasketItem = async (
   colorName,
   quantity = 1
 ) => {
-  const response = await fetch(`${API_BASE}/baskets/convert`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+  const response = await apiCall('/api/merch/baskets/convert', {
+    method: 'POST',
     body: JSON.stringify({
       productId,
       sizeName,
@@ -89,78 +79,15 @@ export const convertToBasketItem = async (
   return response.json();
 };
 
-// KORRIGERAD: Hämta checkout URL från basket links
+// Hämta checkout URL via backend
 export const getCheckoutUrl = async (basketId) => {
-
-  if (!basketId || basketId.trim() === "") {
-    throw new Error("BasketId is required for checkout");
-  }
-
-  try {
-    // Först hämta basket-data som innehåller links
-    const basket = await getBasket(basketId);
-
-    if (!basket || !basket.links) {
-      throw new Error("No checkout links found in basket");
-    }
-
-    // Hitta shopCheckout länk för din shop, annars använd defaultCheckout
-    const shopCheckoutLink = basket.links.find(
-      (link) => link.type === "shopCheckout"
-    );
-    const defaultCheckoutLink = basket.links.find(
-      (link) => link.type === "defaultCheckout"
-    );
-
-    const checkoutUrl = shopCheckoutLink?.href || defaultCheckoutLink?.href;
-
-    if (!checkoutUrl) {
-      throw new Error("No checkout URL found in basket links");
-    }
-
-    return {
-      checkoutUrl: checkoutUrl,
-      basketId: basketId,
-    };
-  } catch (error) {
-    console.error("Could not get checkout URL:", error.message);
-    throw error;
-  }
-};
-
-// NY FUNKTION: Streamlinad add-to-basket + checkout i en operation
-export const addToBasketAndCheckout = async (
-  productId,
-  sizeName,
-  colorName,
-  quantity = 1
-) => {
-
-  const response = await fetch(`${API_BASE}/checkout`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      productId,
-      sizeName,
-      colorName,
-      quantity,
-    }),
-  });
+  const response = await apiCall(`/api/merch/baskets/${basketId}/checkout`);
 
   if (!response.ok) {
-    const errorText = await response.text();
-    console.error(`Direct checkout error: ${response.status} - ${errorText}`);
-    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
 
   return response.json();
 };
 
-// LEGACY: Behåll den gamla funktionen för bakåtkompatibilitet
-// men uppdatera den att använda den nya funktionen
-export const createCheckout = async (basketId) => {
-  console.warn("createCheckout is deprecated, use getCheckoutUrl instead");
-  return getCheckoutUrl(basketId);
-};
+

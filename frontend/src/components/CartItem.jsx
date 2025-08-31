@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { formatPrice } from "../utils/formatPrice";

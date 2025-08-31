@@ -4,6 +4,7 @@ import { useMerch } from "../hooks/useMerch";
 import MerchCard from "../components/MerchCard";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import ScrollToTop from "../components/ScrollToTop";
+import { theme } from "../styles/theme";
 
 const HeaderSection = styled.div`
   display: flex;
@@ -25,17 +26,18 @@ const FilterSection = styled.div`
 `;
 
 const FilterButton = styled.button`
-  background: ${props => props.$active ? '#000000' : '#ffffff'};
-  color: ${props => props.$active ? '#ffffff' : '#000000'};
-  border: 1px solid #000000;
+  background: ${props => props.$active ? theme.colors.buttonPrimary : theme.colors.primaryText};
+  color: ${props => props.$active ? theme.colors.primaryText : theme.colors.pageBg};
+  border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-weight: ${props => props.$active ? 'bold' : 'normal'};
 
   &:hover {
-    background: ${props => props.$active ? '#000000' : '#f5f5f5'};
+    background: ${props => props.$active ? theme.colors.buttonPrimaryHover : '#f5f5f5'};
   }
 `;
 
@@ -43,15 +45,9 @@ const PaginationContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-top: 2rem;
   padding: 1rem;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: center;
-    gap: 0.5rem;
-  }
 `;
 
 const PaginationButtons = styled.div`
@@ -61,18 +57,19 @@ const PaginationButtons = styled.div`
 `;
 
 const PageButton = styled.button`
-  background: ${props => props.$active ? '#000000' : '#ffffff'};
-  color: ${props => props.$active ? '#ffffff' : '#000000'};
-  border: 1px solid #000000;
+  background: ${props => props.$active ? theme.colors.buttonPrimary : theme.colors.primaryText};
+  color: ${props => props.$active ? theme.colors.primaryText : theme.colors.pageBg};
+  border: none;
   padding: 0.5rem 0.75rem;
   border-radius: 4px;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 40px;
+  font-weight: ${props => props.$active ? 'bold' : 'normal'};
 
   &:hover:not(:disabled) {
-    background: ${props => props.$active ? '#000000' : '#f5f5f5'};
+    background: ${props => props.$active ? theme.colors.buttonPrimaryHover : '#f5f5f5'};
   }
 
   &:disabled {
@@ -83,7 +80,7 @@ const PageButton = styled.button`
 
 const PageInfo = styled.span`
   font-size: 0.875rem;
-  color: #666;
+  color: ${theme.colors.mediumGray};
   text-align: center;
 
   @media (min-width: 768px) {
@@ -99,6 +96,61 @@ const MerchGrid = styled.div`
   @media (min-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
+`;
+
+const Container = styled.div`
+  padding: 1rem;
+  max-width: 1280px;
+  margin: 0 auto;
+`;
+
+const HeaderTitleWrapper = styled.div``;
+
+const HeaderTitle = styled.h1`
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+`;
+
+const HeaderSubtitle = styled.h2`
+  font-size: 1rem;
+  font-weight: normal;
+  margin: 0.25rem 0 0 0;
+  opacity: 0.8;
+`;
+
+const SearchContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+`;
+
+const SearchInput = styled.input`
+  border: 1px solid #ccc;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  width: 100%;
+  max-width: 28rem;
+`;
+
+const SearchingIndicator = styled.span`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.875rem;
+  color: ${theme.colors.mediumGray};
+`;
+
+const ProductCount = styled.p`
+  font-size: 0.875rem;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+`;
+
+const PaginationEllipsis = styled.span`
+  margin: 0 0.5rem;
 `;
 
 export const Merch = () => {
@@ -205,12 +257,12 @@ export const Merch = () => {
   };
 
   return (
-    <div style={{ padding: "1rem", maxWidth: "1280px", margin: "0 auto" }}>
+    <Container>
       {/* Header with title and filters */}
       <HeaderSection>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", margin: "0" }}>
-          Merch
-        </h1>
+        <HeaderTitleWrapper>
+          <HeaderTitle>Merch</HeaderTitle>
+        </HeaderTitleWrapper>
         
         <FilterSection>
           {filterOptions.map(filter => (
@@ -226,32 +278,18 @@ export const Merch = () => {
       </HeaderSection>
 
       {/* Search input */}
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", position: "relative" }}>
-        <input
-          style={{
-            border: "1px solid #ccc",
-            padding: "0.5rem 0.75rem",
-            borderRadius: "0.25rem",
-            width: "100%",
-            maxWidth: "28rem",
-          }}
+      <SearchContainer>
+        <SearchInput
           placeholder="Search merch…"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
         {searchInput && loading && (
-          <span style={{ 
-            position: "absolute", 
-            right: "10px", 
-            top: "50%", 
-            transform: "translateY(-50%)",
-            fontSize: "0.875rem",
-            color: "#666"
-          }}>
+          <SearchingIndicator>
             Searching...
-          </span>
+          </SearchingIndicator>
         )}
-      </div>
+      </SearchContainer>
 
       {loading && <LoadingSpinner text="Loading products..." minHeight="400px" />}
       {error && (
@@ -262,15 +300,9 @@ export const Merch = () => {
       )}
       {!loading && !error && (
         <>
-          <p
-            style={{
-              fontSize: "0.875rem",
-              opacity: "0.7",
-              marginBottom: "0.5rem",
-            }}
-          >
+          <ProductCount>
             Showing {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} of {filteredItems.length} products
-          </p>
+          </ProductCount>
           <MerchGrid>
             {currentItems.map((it) => (
               <MerchCard key={it.sellableId} item={it} />
@@ -291,7 +323,7 @@ export const Merch = () => {
                 
                 {getPageNumbers().map((page, index) => (
                   page === '...' ? (
-                    <span key={`ellipsis-${index}`} style={{ margin: '0 0.5rem' }}>...</span>
+                    <PaginationEllipsis key={`ellipsis-${index}`}>...</PaginationEllipsis>
                   ) : (
                     <PageButton
                       key={page}
@@ -321,6 +353,6 @@ export const Merch = () => {
       )}
       
       <ScrollToTop />
-    </div>
+    </Container>
   );
 }

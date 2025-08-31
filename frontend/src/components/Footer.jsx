@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaSpotify, FaInstagram, FaYoutube, FaFacebook } from 'react-icons/fa';
@@ -151,7 +150,9 @@ export const Footer = () => {
         </CopyrightSection>
         
         <ContactSection>
-          <EmailLink href="mailto:morbidgenemusic@gmail.com">
+          <EmailLink 
+            href="mailto:morbidgenemusic@gmail.com"
+          >
             morbidgenemusic@gmail.com
           </EmailLink>
         </ContactSection>

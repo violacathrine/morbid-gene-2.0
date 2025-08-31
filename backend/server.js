@@ -8,7 +8,6 @@ import mongoose from "mongoose";
 import cron from "node-cron";
 
 import authRoutes from "./routes/auth.js";
-import profileRoutes from "./routes/profile.js";
 import merchRoutes from "./routes/merch.js";
 import cleanupRoutes from "./routes/cleanup.js";
 import contactRoutes from "./routes/contact.js";
@@ -47,7 +46,9 @@ const MONGO_URL =
 // Connect to MongoDB
 mongoose
   .connect(MONGO_URL)
-  .then(() => {})
+  .then(() => {
+    console.log("✅ MongoDB connected successfully");
+  })
   .catch((error) => {
     console.error("❌ MongoDB anslutningsfel:", error);
     process.exit(1);
@@ -75,10 +76,6 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 
-// Logga varje request (metod + url)
-app.use((req, res, next) => {
-  next();
-});
 
 // Health check endpoint
 app.get("/", (req, res) => {
@@ -97,7 +94,6 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/user", profileRoutes);
 app.use("/api/merch", merchRoutes);
 app.use("/admin/cleanup", cleanupRoutes);
 app.use("/api/forms", contactRoutes);
@@ -147,5 +143,8 @@ cron.schedule('0 2 1 * *', async () => {
 
 // Start server
 app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🧹 Scheduled cleanup: 1st of each month at 02:00 (${process.env.INACTIVE_MONTHS || 30} months inactive)`);
+  console.log(`📡 MongoDB connected to: ${MONGO_URL}`);
+  console.log(`✅ Backend ready!`);
 });

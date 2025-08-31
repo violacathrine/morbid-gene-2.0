@@ -1,9 +1,8 @@
-import React from "react";
 import {
   QuantityContainer,
   QuantityLabel,
   QuantityInput,
-} from "../pages/ProductPage.styles";
+} from "./shared/FormComponents";
 
 export const QuantitySelector = ({ quantity, onChange, min = 1, max = 10 }) => {
   const handleChange = (e) => {

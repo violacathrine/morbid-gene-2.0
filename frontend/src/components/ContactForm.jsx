@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { apiCall } from "../config/api";
 
@@ -12,20 +12,8 @@ const FormWrapper = styled.div`
   }
 
   @media (min-width: 768px) {
-    max-width: 500px;
-    padding: 2rem 1rem;
-  }
-  
-  @media (min-width: 1024px) {
-    max-width: 550px;
-  }
-  
-  @media (min-width: 1200px) {
     max-width: 600px;
-  }
-  
-  @media (min-width: 1400px) {
-    max-width: 650px;
+    padding: 2rem 1rem;
   }
 `;
 
@@ -120,7 +108,7 @@ const Input = styled.input`
   }
 
   &::placeholder {
-    color: #888;
+    color: #cccccc;
   }
 
   &:hover:not(:focus) {
@@ -203,7 +191,7 @@ const TextArea = styled.textarea`
   }
 
   &::placeholder {
-    color: #888;
+    color: #cccccc;
   }
 `;
 

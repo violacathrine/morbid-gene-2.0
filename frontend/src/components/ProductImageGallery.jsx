@@ -35,7 +35,9 @@ const ThumbnailSlider = styled.div`
   overflow: visible;
 `;
 
-const SliderArrow = styled.button`
+const SliderArrow = styled.button.withConfig({
+  shouldForwardProp: (prop) => !["$direction"].includes(prop),
+})`
   background-color: #dc2626;
   color: #ffffff;
   border: none;
@@ -60,13 +62,13 @@ const SliderArrow = styled.button`
     cursor: not-allowed;
   }
   
-  &.left {
-    left: -20px; /* Position outside the wrapper margin */
-  }
+  ${props => props.$direction === 'left' && `
+    left: -20px;
+  `}
   
-  &.right {
-    right: -20px; /* Position outside the wrapper margin */
-  }
+  ${props => props.$direction === 'right' && `
+    right: -20px;
+  `}
 `;
 
 const ThumbnailWrapper = styled.div`
@@ -184,7 +186,7 @@ export const ProductImageGallery = ({ images, productName, fallbackImage }) => {
         <ThumbnailContainer>
           {shouldShowSlider && (
             <SliderArrow 
-              className="left"
+              $direction="left"
               onClick={() => moveSlider('left')}
               disabled={isFirstPage}
               aria-label="Previous image"
@@ -209,7 +211,7 @@ export const ProductImageGallery = ({ images, productName, fallbackImage }) => {
           
           {shouldShowSlider && (
             <SliderArrow 
-              className="right"
+              $direction="right"
               onClick={() => moveSlider('right')}
               disabled={isLastPage}
               aria-label="Next image"

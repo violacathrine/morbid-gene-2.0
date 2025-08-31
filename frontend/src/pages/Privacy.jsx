@@ -1,95 +1,9 @@
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ScrollToTop from "../components/ScrollToTop";
-
-const Container = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 100vh;
-`;
-
-const BackButton = styled.button`
-  color: #ffffff;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-  transition: color 0.2s ease;
-  padding: 0;
-  
-  &:hover {
-    color: #dc2626;
-    text-decoration: underline;
-  }
-  
-  &::before {
-    content: "←";
-  }
-`;
-
-const Title = styled.h1`
-  color: white;
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  text-align: center;
-`;
-
-const LastUpdated = styled.p`
-  color: #9ca3af;
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-`;
-
-const Section = styled.section`
-  margin-bottom: 2rem;
-`;
-
-const SectionTitle = styled.h2`
-  color: white;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #374151;
-  padding-bottom: 0.5rem;
-`;
-
-const SubSection = styled.h3`
-  color: white;
-  font-size: 1.2rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
-`;
-
-const Paragraph = styled.p`
-  color: #e5e7eb;
-  line-height: 1.8;
-  margin-bottom: 1rem;
-`;
-
-const List = styled.ul`
-  color: #e5e7eb;
-  line-height: 1.8;
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-  
-  li {
-    margin-bottom: 0.5rem;
-  }
-`;
-
-const InfoBox = styled.div`
-  background: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 2rem 0;
-`;
+import { Container } from "../components/shared/LayoutComponents";
+import { Title, SectionTitle } from "../components/shared/TypographyComponents";
+import { LinkButton } from "../components/shared/ButtonComponents";
+import { LastUpdated, Section, SubSection, Paragraph, List, InfoBox } from "../components/shared/LegalPageComponents";
 
 export const Privacy = () => {
   const navigate = useNavigate();
@@ -99,21 +13,21 @@ export const Privacy = () => {
   };
   
   return (
-    <Container>
-      <BackButton onClick={handleGoBack}>Go Back</BackButton>
+    <Container $maxWidth="sm" $minHeight="viewport" $padding="lg">
+      <LinkButton onClick={handleGoBack}>← Go Back</LinkButton>
       
-      <Title>Privacy Policy</Title>
+      <Title $size="lg" $align="center" style={{ marginBottom: '1rem' }}>Privacy Policy</Title>
       <LastUpdated>Last updated: August 28, 2025</LastUpdated>
       
       <Section>
-        <SectionTitle>1. Introduction</SectionTitle>
+        <SectionTitle $border>1. Introduction</SectionTitle>
         <Paragraph>
           Morbid Gene ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and share information about you when you use our website and services.
         </Paragraph>
       </Section>
       
       <Section>
-        <SectionTitle>2. Information We Collect</SectionTitle>
+        <SectionTitle $border>2. Information We Collect</SectionTitle>
         
         <SubSection>Information You Provide</SubSection>
         <List>
@@ -132,7 +46,7 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>3. How We Use Your Information</SectionTitle>
+        <SectionTitle $border>3. How We Use Your Information</SectionTitle>
         <Paragraph>
           We use the information we collect to:
         </Paragraph>
@@ -146,7 +60,7 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>4. Information Sharing</SectionTitle>
+        <SectionTitle $border>4. Information Sharing</SectionTitle>
         <Paragraph>
           We do not sell, trade, or rent your personal information to third parties. We may share your information with:
         </Paragraph>
@@ -160,12 +74,12 @@ export const Privacy = () => {
         </Paragraph>
         <List>
           <li>
-            <a href="https://www.spreadshirt.se/allmaenna-villkoren-C10183" target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', textDecoration: 'underline' }}>
+            <a href="https://www.spreadshirt.se/allmaenna-villkoren-C10183" target="_blank" rel="noopener noreferrer">
               Spreadshirt General Terms and Conditions (Swedish)
             </a>
           </li>
           <li>
-            <a href="https://www.spreadshirt.se/allm%C3%A4nna-villkor-kunder-C2377" target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', textDecoration: 'underline' }}>
+            <a href="https://www.spreadshirt.se/allm%C3%A4nna-villkor-kunder-C2377" target="_blank" rel="noopener noreferrer">
               Spreadshirt Customer Terms and Conditions (Swedish)
             </a>
           </li>
@@ -173,7 +87,7 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>5. Cookies and Local Storage</SectionTitle>
+        <SectionTitle $border>5. Cookies and Local Storage</SectionTitle>
         <Paragraph>
           Our website uses cookies and local storage to enhance your browsing experience and provide essential functionality.
         </Paragraph>
@@ -204,7 +118,7 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>6. Data Security</SectionTitle>
+        <SectionTitle $border>6. Data Security</SectionTitle>
         <Paragraph>
           We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
         </Paragraph>
@@ -214,7 +128,7 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>7. Data Retention</SectionTitle>
+        <SectionTitle $border>7. Data Retention</SectionTitle>
         <Paragraph>
           We retain your personal information only as long as necessary to fulfill the purposes outlined in this policy.
         </Paragraph>
@@ -236,7 +150,7 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>8. Your Rights</SectionTitle>
+        <SectionTitle $border>8. Your Rights</SectionTitle>
         <Paragraph>
           Depending on your location, you may have certain rights regarding your personal information, including:
         </Paragraph>
@@ -249,14 +163,14 @@ export const Privacy = () => {
       </Section>
       
       <Section>
-        <SectionTitle>9. Children's Privacy</SectionTitle>
+        <SectionTitle $border>9. Children's Privacy</SectionTitle>
         <Paragraph>
           Our website is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.
         </Paragraph>
       </Section>
       
       <Section>
-        <SectionTitle>10. Changes to This Policy</SectionTitle>
+        <SectionTitle $border>10. Changes to This Policy</SectionTitle>
         <Paragraph>
           We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.
         </Paragraph>

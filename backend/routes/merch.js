@@ -9,8 +9,8 @@ import {
   updateBasket,
   deleteBasket,
   convertToBasketItem,
-  getCheckoutUrl, // Byt från createCheckout
-  addToBasketAndCheckout, // NY funktion
+  getCheckoutUrl,
+  
 } from "../controllers/merchController.js";
 
 const router = express.Router();
@@ -25,8 +25,6 @@ router.post("/baskets/convert", convertToBasketItem);
 // KORRIGERAD checkout route - använd GET istället för POST
 router.get("/baskets/:basketId/checkout", getCheckoutUrl);
 
-// NY ROUTE: Direkt add-to-basket + checkout i en operation
-router.post("/checkout", addToBasketAndCheckout);
 
 // Product routes
 router.get("/", getAllProducts);

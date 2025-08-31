@@ -1,4 +1,5 @@
 import * as spreadshirtService from "../services/spreadshirtService.js";
+import { handleControllerError } from "../utils/errorHandler.js";
 
 // Controllers for merch-related endpoints
 
@@ -33,10 +34,7 @@ export const getAllProducts = async (req, res) => {
       res.json(products);
     }
   } catch (error) {
-    console.error("Error in getAllProducts:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
+    handleControllerError(error, res, "Error in getAllProducts");
   }
 };
 
@@ -47,13 +45,10 @@ export const getProductById = async (req, res) => {
     const product = await spreadshirtService.getProductById(productId);
     res.json(product);
   } catch (error) {
-    console.error("Error in getProductById:", error);
     if (error.message === "Product not found") {
       res.status(404).json({ error: "Product not found" });
     } else {
-      res.status(error.response?.status || 500).json({
-        error: error.message || "Server error",
-      });
+      handleControllerError(error, res, "Error in getProductById");
     }
   }
 };
@@ -67,10 +62,7 @@ export const getProductTypeInfo = async (req, res) => {
     );
     res.json(productType);
   } catch (error) {
-    console.error("Error in getProductTypeInfo:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
+    handleControllerError(error, res, "Error in getProductTypeInfo");
   }
 };
 
@@ -86,10 +78,7 @@ export const getSellableImages = async (req, res) => {
     );
     res.json(sellableData);
   } catch (error) {
-    console.error("Error in getSellableImages:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
+    handleControllerError(error, res, "Error in getSellableImages");
   }
 };
 
@@ -106,10 +95,7 @@ export const createBasket = async (req, res) => {
     const basket = await spreadshirtService.createBasket(basketItems);
     res.status(201).json(basket);
   } catch (error) {
-    console.error("Error in createBasket:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
+    handleControllerError(error, res, "Error in createBasket");
   }
 };
 
@@ -124,10 +110,7 @@ export const getBasket = async (req, res) => {
 
     res.json(basket);
   } catch (error) {
-    console.error("Error in getBasket:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
+    handleControllerError(error, res, "Error in getBasket");
   }
 };
 
@@ -143,10 +126,7 @@ export const updateBasket = async (req, res) => {
     const basket = await spreadshirtService.updateBasket(basketId, basketItems);
     res.json(basket);
   } catch (error) {
-    console.error("Error in updateBasket:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
+    handleControllerError(error, res, "Error in updateBasket");
   }
 };
 
@@ -156,10 +136,7 @@ export const deleteBasket = async (req, res) => {
     await spreadshirtService.deleteBasket(basketId);
     res.status(204).send();
   } catch (error) {
-    console.error("Error in deleteBasket:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
+    handleControllerError(error, res, "Error in deleteBasket");
   }
 };
 
@@ -183,10 +160,7 @@ export const convertToBasketItem = async (req, res) => {
 
     res.json(basketItem);
   } catch (error) {
-    console.error("Error in convertToBasketItem:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
+    handleControllerError(error, res, "Error in convertToBasketItem");
   }
 };
 
@@ -204,39 +178,7 @@ export const getCheckoutUrl = async (req, res) => {
       basketId: basketId,
     });
   } catch (error) {
-    console.error("Error getting checkout URL:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Failed to get checkout URL",
-    });
+    handleControllerError(error, res, "Error getting checkout URL");
   }
 };
 
-// NY FUNKTION: Komplett add-to-basket och checkout i en operation
-export const addToBasketAndCheckout = async (req, res) => {
-  try {
-    const { productId, sizeName, colorName, quantity = 1 } = req.body;
-
-
-    // Hämta produktdata med productType
-    const product = await spreadshirtService.getProductById(productId);
-    const productType = await spreadshirtService.getProductTypeInfo(
-      product.productTypeId
-    );
-    const enrichedProduct = { ...product, productType };
-
-    // Använd den nya funktionen från service
-    const result = await spreadshirtService.addToBasketAndCheckout(
-      enrichedProduct,
-      sizeName,
-      colorName,
-      quantity
-    );
-
-    res.status(201).json(result);
-  } catch (error) {
-    console.error("Error in addToBasketAndCheckout:", error);
-    res.status(error.response?.status || 500).json({
-      error: error.message || "Server error",
-    });
-  }
-};

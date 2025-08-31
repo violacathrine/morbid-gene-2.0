@@ -1,7 +1,48 @@
-import { useState, useEffect } from "react";
-import { CartContext } from "./CartContext";
+import { useState, useEffect, createContext } from "react";
 import * as basketApi from "../api/basketApi";
 import { convertSpreadshirtItem } from "../utils/basketUtils";
+
+// Create and export CartContext directly here
+export const CartContext = createContext();
+
+// Utility functions for property extraction and item operations
+const extractItemProperties = (item) => {
+  const props = item.element.properties;
+  return {
+    sellableId: props.find((p) => p.key === "sellable")?.value,
+    sizeLabel: props.find((p) => p.key === "sizeLabel")?.value,
+  };
+};
+
+const findCartItem = (cartItems, sellableId, size) => {
+  return cartItems.find(
+    (item) => item.sellableId === sellableId && item.size === size
+  );
+};
+
+const findBasketItemIndex = (basketItems, sellableId, size) => {
+  return basketItems.findIndex((item) => {
+    const { sellableId: itemSellableId, sizeLabel } = extractItemProperties(item);
+    return itemSellableId === sellableId && sizeLabel === size;
+  });
+};
+
+const convertBasketToCartItems = (basketItems, cartItems, selectedImage = null, productPrice = null, targetIndex = -1) => {
+  return basketItems.map((item, index) => {
+    const { sellableId, sizeLabel } = extractItemProperties(item);
+    const existingItem = findCartItem(cartItems, sellableId, sizeLabel);
+    
+    // Use selected image/price for newly added items or preserve existing
+    const isTargetItem = targetIndex >= 0 ? index === targetIndex : false;
+    const imageToUse = isTargetItem ? selectedImage : (existingItem?.selectedImage || null);
+    const priceToUse = isTargetItem ? productPrice : (existingItem?.originalPrice || null);
+    
+    if (existingItem) {
+      return { ...existingItem, quantity: item.quantity };
+    }
+    return convertSpreadshirtItem(item, imageToUse, priceToUse);
+  });
+};
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -9,7 +50,7 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Ladda befintlig basket vid start
+  // Load existing basket on start
   useEffect(() => {
     const loadBasket = async () => {
       const savedBasketId = localStorage.getItem("spreadshirt-basket-id");
@@ -20,11 +61,7 @@ export const CartProvider = ({ children }) => {
         const basket = await basketApi.getBasket(savedBasketId);
         if (basket?.basketItems) {
           setBasketId(savedBasketId);
-          const items = basket.basketItems.map((item) =>
-            convertSpreadshirtItem(item, null, null)
-          );
-
-          setCartItems(items);
+          setCartItems(convertBasketToCartItems(basket.basketItems, []));
         } else {
           localStorage.removeItem("spreadshirt-basket-id");
         }
@@ -40,7 +77,7 @@ export const CartProvider = ({ children }) => {
     loadBasket();
   }, []);
 
-  // Hjälpfunktion: Uppdatera basket och local state
+  // Helper function: Update basket and local state
   const updateBasketState = async (newBasketItems) => {
     if (newBasketItems.length === 0) {
       await basketApi.deleteBasket(basketId);
@@ -48,39 +85,42 @@ export const CartProvider = ({ children }) => {
       setCartItems([]);
       localStorage.removeItem("spreadshirt-basket-id");
     } else {
-      const updatedBasket = await basketApi.updateBasket(
-        basketId,
-        newBasketItems
-      );
-      // Preserve existing cart item images when updating basket
-      const items = updatedBasket.basketItems.map((item) => {
-        const props = item.element.properties;
-        const sellableId = props.find((p) => p.key === "sellable")?.value;
-        const sizeLabel = props.find((p) => p.key === "sizeLabel")?.value;
-        
-        // Find existing item to preserve its image and data
-        const existingItem = cartItems.find(cartItem => 
-          cartItem.sellableId === sellableId && 
-          cartItem.size === sizeLabel
-        );
-        
-        if (existingItem) {
-          // Just update quantity, keep everything else the same
-          return {
-            ...existingItem,
-            quantity: item.quantity
-          };
-        } else {
-          // New item, convert normally
-          return convertSpreadshirtItem(item, null, null);
-        }
-      });
-
-      setCartItems(items);
+      const updatedBasket = await basketApi.updateBasket(basketId, newBasketItems);
+      setCartItems(convertBasketToCartItems(updatedBasket.basketItems, cartItems));
     }
   };
 
-  // Lägg till vara i kundvagn
+  // Helper functions for addToCart
+  const createNewBasket = async (basketItem, selectedImage, productPrice) => {
+    const newBasket = await basketApi.createBasket([basketItem]);
+    setBasketId(newBasket.id);
+    localStorage.setItem("spreadshirt-basket-id", newBasket.id);
+
+    const fullBasket = await basketApi.getBasket(newBasket.id);
+    const lastIndex = fullBasket.basketItems.length - 1;
+    setCartItems(convertBasketToCartItems(fullBasket.basketItems, [], selectedImage, productPrice, lastIndex));
+  };
+
+  const updateExistingBasket = async (product, selectedSize, selectedImage, selectedColor, quantity, productPrice, basketItem) => {
+    const currentBasket = await basketApi.getBasket(basketId);
+    const existingItemIndex = findBasketItemIndex(currentBasket.basketItems, product.sellableId, selectedSize);
+
+    let newBasketItems;
+    if (existingItemIndex >= 0) {
+      // Increase quantity by the specified amount
+      newBasketItems = [...currentBasket.basketItems];
+      newBasketItems[existingItemIndex].quantity += quantity;
+    } else {
+      // Add new item
+      newBasketItems = [...currentBasket.basketItems, basketItem];
+    }
+
+    const updatedBasket = await basketApi.updateBasket(basketId, newBasketItems);
+    const targetIndex = existingItemIndex < 0 ? updatedBasket.basketItems.length - 1 : -1;
+    setCartItems(convertBasketToCartItems(updatedBasket.basketItems, cartItems, selectedImage, productPrice, targetIndex));
+  };
+
+  // Add item to cart
   const addToCart = async (
     product,
     selectedSize,
@@ -101,56 +141,9 @@ export const CartProvider = ({ children }) => {
       );
 
       if (!basketId) {
-        // Skapa ny basket
-        const newBasket = await basketApi.createBasket([basketItem]);
-        setBasketId(newBasket.id);
-        localStorage.setItem("spreadshirt-basket-id", newBasket.id);
-
-        const fullBasket = await basketApi.getBasket(newBasket.id);
-        const items = fullBasket.basketItems.map((item, index) => {
-          // Ge den sista tillagda item:en rätt bild och pris
-          const imageToUse =
-            index === fullBasket.basketItems.length - 1 ? selectedImage : null;
-          const priceToUse =
-            index === fullBasket.basketItems.length - 1 ? productPrice : null;
-          return convertSpreadshirtItem(item, imageToUse, priceToUse);
-        });
-        setCartItems(items);
+        await createNewBasket(basketItem, selectedImage, productPrice);
       } else {
-        // Uppdatera befintlig basket
-        const currentBasket = await basketApi.getBasket(basketId);
-
-        const existingItemIndex = currentBasket.basketItems.findIndex(
-          (item) => {
-            const props = item.element.properties;
-            const sellableId = props.find((p) => p.key === "sellable")?.value;
-            const sizeLabel = props.find((p) => p.key === "sizeLabel")?.value;
-            return (
-              sellableId === product.sellableId && sizeLabel === selectedSize
-            );
-          }
-        );
-
-        let newBasketItems;
-        if (existingItemIndex >= 0) {
-          // Öka quantity med den angivna mängden
-          newBasketItems = [...currentBasket.basketItems];
-          newBasketItems[existingItemIndex].quantity += quantity;
-        } else {
-          // Lägg till ny vara
-          newBasketItems = [...currentBasket.basketItems, basketItem];
-        }
-
-        // Update basket and preserve images for new items
-        const updatedBasket = await basketApi.updateBasket(basketId, newBasketItems);
-        const items = updatedBasket.basketItems.map((item, index) => {
-          // For newly added items, use the selected image and price
-          const isNewlyAdded = index === updatedBasket.basketItems.length - 1 && existingItemIndex < 0;
-          const imageToUse = isNewlyAdded ? selectedImage : null;
-          const priceToUse = isNewlyAdded ? productPrice : null;
-          return convertSpreadshirtItem(item, imageToUse, priceToUse);
-        });
-        setCartItems(items);
+        await updateExistingBasket(product, selectedSize, selectedImage, selectedColor, quantity, productPrice, basketItem);
       }
     } catch (err) {
       console.error("Error adding to cart:", err);
@@ -160,7 +153,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Ta bort vara från kundvagn
+  // Remove item from cart
   const removeFromCart = async (sellableId, size) => {
     if (!basketId) return;
 
@@ -170,10 +163,8 @@ export const CartProvider = ({ children }) => {
     try {
       const currentBasket = await basketApi.getBasket(basketId);
       const newBasketItems = currentBasket.basketItems.filter((item) => {
-        const props = item.element.properties;
-        const itemSellableId = props.find((p) => p.key === "sellable")?.value;
-        const itemSizeLabel = props.find((p) => p.key === "sizeLabel")?.value;
-        return !(itemSellableId === sellableId && itemSizeLabel === size);
+        const { sellableId: itemSellableId, sizeLabel } = extractItemProperties(item);
+        return !(itemSellableId === sellableId && sizeLabel === size);
       });
 
       await updateBasketState(newBasketItems);
@@ -185,15 +176,8 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Uppdatera antal av vara
-  const updateQuantity = async (sellableId, size, newQuantity) => {
-    if (newQuantity <= 0) {
-      return removeFromCart(sellableId, size);
-    }
-
-    if (!basketId) return;
-
-    // Optimistisk uppdatering - uppdatera UI direkt
+  // Helper function for optimistic UI updates
+  const optimisticallyUpdateQuantity = (sellableId, size, newQuantity) => {
     setCartItems(prevItems => 
       prevItems.map(item => {
         if (item.sellableId === sellableId && item.size === size) {
@@ -202,51 +186,46 @@ export const CartProvider = ({ children }) => {
         return item;
       })
     );
+  };
 
+  // Update item quantity
+  const updateQuantity = async (sellableId, size, newQuantity) => {
+    if (newQuantity <= 0) {
+      return removeFromCart(sellableId, size);
+    }
+
+    if (!basketId) return;
+
+    // Optimistic update - update UI immediately
+    optimisticallyUpdateQuantity(sellableId, size, newQuantity);
     setError(null);
 
     try {
       const currentBasket = await basketApi.getBasket(basketId);
       const newBasketItems = currentBasket.basketItems.map((item) => {
-        const props = item.element.properties;
-        const itemSellableId = props.find((p) => p.key === "sellable")?.value;
-        const itemSizeLabel = props.find((p) => p.key === "sizeLabel")?.value;
-
-        if (itemSellableId === sellableId && itemSizeLabel === size) {
+        const { sellableId: itemSellableId, sizeLabel } = extractItemProperties(item);
+        if (itemSellableId === sellableId && sizeLabel === size) {
           return { ...item, quantity: newQuantity };
         }
         return item;
       });
 
-      // Uppdatera backend utan loading state
+      // Update backend without loading state
       const updatedBasket = await basketApi.updateBasket(basketId, newBasketItems);
       
-      // Synka med faktisk data från backend
-      const items = updatedBasket.basketItems.map((item) => {
-        const existingItem = cartItems.find(
-          cartItem => cartItem.sellableId === item.element.properties.find(p => p.key === 'sellable')?.value &&
-                      cartItem.size === item.element.properties.find(p => p.key === 'sizeLabel')?.value
-        );
-        const imageToUse = existingItem?.selectedImage || null;
-        const priceToUse = existingItem?.originalPrice || null;
-        return convertSpreadshirtItem(item, imageToUse, priceToUse);
-      });
-      setCartItems(items);
+      // Sync with actual data from backend
+      setCartItems(convertBasketToCartItems(updatedBasket.basketItems, cartItems));
     } catch (err) {
       console.error("Error updating quantity:", err);
       setError("Could not update quantity");
-      // Återställ vid fel
-      const currentBasket = await basketApi.getBasket(basketId);
-      const items = currentBasket.basketItems.map((item) => {
-        const existingItem = cartItems.find(
-          cartItem => cartItem.sellableId === item.element.properties.find(p => p.key === 'sellable')?.value &&
-                      cartItem.size === item.element.properties.find(p => p.key === 'sizeLabel')?.value
-        );
-        const imageToUse = existingItem?.selectedImage || null;
-        const priceToUse = existingItem?.originalPrice || null;
-        return convertSpreadshirtItem(item, imageToUse, priceToUse);
-      });
-      setCartItems(items);
+      
+      // Restore on error
+      try {
+        const currentBasket = await basketApi.getBasket(basketId);
+        setCartItems(convertBasketToCartItems(currentBasket.basketItems, cartItems));
+      } catch (restoreErr) {
+        console.error("Error restoring cart state:", restoreErr);
+      }
     }
   };
 

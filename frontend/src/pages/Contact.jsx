@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import BookingForm from "../components/BookingForm";
 import ContactForm from "../components/ContactForm";
+import { theme } from "../styles/theme";
 
 const ContactContainer = styled.div`
   min-height: 100vh;
@@ -46,7 +47,7 @@ const Header = styled.div`
 
 
 const SubHeading = styled.h2`
-  color: #cccccc;
+  color: ${theme.colors.secondaryText};
   font-size: 0.9rem;
   font-style: italic;
   margin: 0.5rem 0 1.5rem 0;
@@ -94,11 +95,11 @@ const ToggleSection = styled.div`
 const ToggleButton = styled.button`
   background: ${(props) => 
     props.$active 
-      ? "linear-gradient(45deg, #dc2626, #991b1b)" 
-      : "#333333"
+      ? `linear-gradient(45deg, ${theme.colors.buttonPrimary}, ${theme.colors.buttonPrimaryHover})` 
+      : theme.colors.charcoal
   };
-  color: ${(props) => (props.$active ? "#ffffff" : "#cccccc")};
-  border: 1px solid ${(props) => (props.$active ? "#dc2626" : "#555555")};
+  color: ${(props) => (props.$active ? theme.colors.primaryText : theme.colors.secondaryText)};
+  border: 1px solid ${(props) => (props.$active ? theme.colors.buttonPrimary : theme.colors.darkCharcoal)};
   padding: 0.5rem 0.9rem;
   font-size: 0.75rem;
   font-weight: bold;
@@ -137,17 +138,17 @@ const ToggleButton = styled.button`
   &:hover {
     background: ${(props) => 
       props.$active 
-        ? "linear-gradient(45deg, #991b1b, #dc2626)" 
+        ? `linear-gradient(45deg, ${theme.colors.buttonPrimaryHover}, ${theme.colors.buttonPrimary})` 
         : "#444444"
     };
-    color: #ffffff;
-    border-color: ${(props) => (props.$active ? "#dc2626" : "#666666")};
+    color: ${theme.colors.primaryText};
+    border-color: ${(props) => (props.$active ? theme.colors.buttonPrimary : theme.colors.secondaryText)};
   }
 `;
 
 const FormDescription = styled.p`
   text-align: center;
-  color: #999999;
+  color: ${theme.colors.secondaryText};
   font-size: 0.8rem;
   margin: 0 0 1rem 0;
   line-height: 1.4;

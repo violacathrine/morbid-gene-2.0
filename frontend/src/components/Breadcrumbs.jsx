@@ -1,21 +1,14 @@
-import React from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useProduct } from "../hooks/useProduct";
 
 const BreadcrumbContainer = styled.nav`
-  background-color: #000;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #333;
   position: relative;
   z-index: 100;
   display: flex;
   align-items: center;
-  justify-content: center;
-  
-  @media (min-width: 768px) {
-    justify-content: flex-start;
-  }
+  justify-content: flex-start;
   margin-top: 0; /* No extra margin needed */
   
   @media (min-width: 480px) {
@@ -48,7 +41,7 @@ const BreadcrumbItem = styled.li`
   &:not(:last-child)::after {
     content: "/";
     margin: 0 0.5rem;
-    color: #666;
+    color: #cccccc;
     font-size: 0.75rem;
     
     @media (min-width: 480px) {
@@ -59,14 +52,14 @@ const BreadcrumbItem = styled.li`
 `;
 
 const BreadcrumbLink = styled(Link)`
-  color: #999;
+  color: #cccccc;
   text-decoration: none;
   font-size: 14px;
   margin: 0;
   padding: 0;
 
   &:hover {
-    color: #ccc;
+    color: #ffffff;
   }
 `;
 
@@ -196,7 +189,7 @@ export const Breadcrumbs = () => {
             <BreadcrumbLink to="/merch">Merch</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <BreadcrumbCurrent>Login / Register</BreadcrumbCurrent>
+            <BreadcrumbCurrent>Login</BreadcrumbCurrent>
           </BreadcrumbItem>
         </>
       );

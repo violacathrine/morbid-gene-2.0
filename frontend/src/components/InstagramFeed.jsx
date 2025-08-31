@@ -219,7 +219,7 @@ export const InstagramFeed = () => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={post.alt}
-          >
+              >
             <InstagramImage 
               src={post.imageUrl} 
               alt={post.alt}

@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { CartContext } from "../contexts/CartContext";
+import { CartContext } from "../contexts/CartProvider";
 import { useAuth } from "../contexts/AuthContext";
 import { GiShoppingCart } from "react-icons/gi";
 

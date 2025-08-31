@@ -1,4 +1,3 @@
-import React from "react";
 import {
   PopupOverlay,
   PopupBox,
@@ -6,7 +5,7 @@ import {
   PopupButtons,
   ContinueButton,
   CartButton,
-} from "../pages/ProductPage.styles";
+} from "./shared/PopupComponents";
 
 export const ClearCartPopup = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;

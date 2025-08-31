@@ -1,34 +1,104 @@
 import { useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { theme } from "../styles/theme";
 import { useProduct } from "../hooks/useProduct";
 import { useProductImages } from "../hooks/useProductImages";
 import { formatPrice } from "../utils/formatPrice";
 import { translateSize, translateColor, translateProductType } from "../utils/translations";
-import { CartContext } from "../contexts/CartContext";
+import { CartContext } from "../contexts/CartProvider";
 import { ProductImageGallery } from "../components/ProductImageGallery";
 import { LoadingSpinner, InlineLoadingSpinner } from "../components/LoadingSpinner";
 import ScrollToTop from "../components/ScrollToTop";
 import FavoriteButton from "../components/FavoriteButton";
 import {
-  Container,
-  ImageSection,
-  DetailsSection,
-  Title,
-  Description,
-  Price,
   SelectionContainer,
   Select,
-  AddToCartButton,
-  LoadingMessage,
-  ErrorMessage,
-  PopupOverlay,
-  PopupBox,
-  PopupMessage,
-  PopupButtons,
-  ContinueButton,
-  CartButton,
-  ProductInfo
-} from "./ProductPage.styles";
+} from "../components/shared/FormComponents";
+import {
+  PageTitle,
+  Description,
+  Price,
+} from "../components/shared/TypographyComponents";
+import { AddToCartButton } from "../components/shared/ButtonComponents";
+import { LoadingMessage, ErrorMessage } from "../components/shared/StatusComponents";
+import { Container } from "../components/shared/LayoutComponents";
+
+// ProductPage-specific styled components
+
+const ImageSection = styled.div``;
+
+const DetailsSection = styled.div``;
+
+const BackButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: ${theme.colors.secondaryText};
+  font-size: ${theme.typography.sizes.sm};
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin-bottom: ${theme.spacing.base};
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: ${theme.colors.primaryText};
+  }
+  
+  @media (min-width: ${theme.breakpoints.mobile}) {
+    font-size: ${theme.typography.sizes.base};
+  }
+`;
+
+const Tooltip = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #333;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10000;
+  opacity: ${props => props.$show ? 1 : 0};
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+`;
+
+const ProductInfo = styled.div`
+  margin-top: ${theme.spacing['2xl']};
+  padding: ${theme.spacing.xl};
+  background-color: ${theme.colors.sectionBg};
+  font-size: ${theme.typography.sizes.sm};
+  color: ${theme.colors.secondaryText};
+  line-height: 1.5;
+  
+  @media (min-width: ${theme.breakpoints.mobile}) {
+    padding: ${theme.spacing['2xl']};
+    font-size: ${theme.typography.sizes.base};
+  }
+  
+  strong {
+    color: ${theme.colors.primaryText};
+    font-weight: ${theme.typography.weights.bold};
+  }
+  
+  > strong:first-child {
+    font-size: ${theme.typography.sizes.base};
+    color: ${theme.colors.primaryText};
+    display: block;
+    margin-bottom: ${theme.spacing.base};
+    
+    @media (min-width: ${theme.breakpoints.mobile}) {
+      font-size: ${theme.typography.sizes.lg};
+    }
+  }
+`;
 
 // Funktion för att rensa HTML-taggar
 const stripHtml = (html) => {
@@ -46,7 +116,7 @@ export const ProductPage = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   // Hämta bilder för vald färg (bara om produkten är laddad)
@@ -105,7 +175,9 @@ export const ProductPage = () => {
         // Add the specified quantity directly with the correct price
         await addToCart(product, sizeName, selectedImage, colorName, quantity, product.price);
 
-        setIsPopupOpen(true);
+        // Visa tooltip i 2 sekunder
+        setShowTooltip(true);
+        setTimeout(() => setShowTooltip(false), 2000);
       } finally {
         setIsAddingToCart(false);
       }
@@ -119,7 +191,7 @@ export const ProductPage = () => {
   const isButtonEnabled = selectedColor && selectedSize;
 
   return (
-    <Container>
+    <Container $maxWidth="md" $variant="grid" $padding="md">
       {/* Product image gallery */}
       <ImageSection>
         <ProductImageGallery
@@ -131,10 +203,14 @@ export const ProductPage = () => {
 
       {/* Product details */}
       <DetailsSection>
+        <BackButton onClick={() => navigate('/merch')}>
+          ← Back to Merch
+        </BackButton>
+        
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <Title style={{ margin: 0, flex: 1, paddingRight: '1rem' }}>
+          <PageTitle style={{ margin: 0, flex: 1, paddingRight: '1rem' }}>
             {translateProductType(productType?.name || product.productTypeName || product.name)}
-          </Title>
+          </PageTitle>
           <div style={{ flexShrink: 0, paddingTop: '0.25rem' }}>
             <FavoriteButton product={product} size={24} showTooltip={true} />
           </div>
@@ -285,22 +361,10 @@ export const ProductPage = () => {
         )}
       </DetailsSection>
 
-      {/* Success Popup */}
-      {isPopupOpen && (
-        <PopupOverlay onClick={() => setIsPopupOpen(false)}>
-          <PopupBox onClick={(e) => e.stopPropagation()}>
-            <PopupMessage>Product added to cart!</PopupMessage>
-            <PopupButtons>
-              <ContinueButton onClick={() => setIsPopupOpen(false)}>
-                Continue Shopping
-              </ContinueButton>
-              <CartButton onClick={() => navigate("/cart")}>
-                View Cart
-              </CartButton>
-            </PopupButtons>
-          </PopupBox>
-        </PopupOverlay>
-      )}
+      {/* Success Tooltip */}
+      <Tooltip $show={showTooltip}>
+        Product added
+      </Tooltip>
 
       <ScrollToTop />
     </Container>

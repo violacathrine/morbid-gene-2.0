@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import authMiddleware from "../middleware/auth.js";
 import { createSession, getUserFromSession, deleteSession } from "../utils/session.js";
+import { getCookieConfig, getClearCookieConfig } from "../utils/cookieConfig.js";
 
 const router = express.Router();
 
@@ -30,12 +31,7 @@ router.post("/register", async (req, res) => {
     const sessionId = await createSession(newUser._id);
 
     // Set httpOnly cookie
-    res.cookie('sessionId', sessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // HTTPS in production
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    });
+    res.cookie('sessionId', sessionId, getCookieConfig());
 
     res.status(201).json({ 
       user: {
@@ -81,12 +77,7 @@ router.post("/login", async (req, res) => {
     const sessionId = await createSession(user._id);
 
     // Set httpOnly cookie
-    res.cookie('sessionId', sessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // HTTPS in production
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    });
+    res.cookie('sessionId', sessionId, getCookieConfig());
 
     res.json({ 
       user: {
@@ -110,11 +101,7 @@ router.post("/logout", async (req, res) => {
       await deleteSession(sessionId);
     }
     
-    res.clearCookie('sessionId', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
-    });
+    res.clearCookie('sessionId', getClearCookieConfig());
     res.json({ message: "Logged out successfully" });
   } catch (error) {
     console.error(error);

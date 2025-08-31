@@ -1,88 +1,9 @@
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ScrollToTop from "../components/ScrollToTop";
-
-const Container = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 100vh;
-`;
-
-const BackButton = styled.button`
-  color: #ffffff;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-  transition: color 0.2s ease;
-  padding: 0;
-  
-  &:hover {
-    color: #dc2626;
-    text-decoration: underline;
-  }
-  
-  &::before {
-    content: "←";
-  }
-`;
-
-const Title = styled.h1`
-  color: white;
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  text-align: center;
-`;
-
-const LastUpdated = styled.p`
-  color: #9ca3af;
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-`;
-
-const Section = styled.section`
-  margin-bottom: 2rem;
-`;
-
-const SectionTitle = styled.h2`
-  color: white;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #374151;
-  padding-bottom: 0.5rem;
-`;
-
-const Paragraph = styled.p`
-  color: #e5e7eb;
-  line-height: 1.8;
-  margin-bottom: 1rem;
-`;
-
-const List = styled.ul`
-  color: #e5e7eb;
-  line-height: 1.8;
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-  
-  li {
-    margin-bottom: 0.5rem;
-  }
-`;
-
-const InfoBox = styled.div`
-  background: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 2rem 0;
-`;
+import { Container } from "../components/shared/LayoutComponents";
+import { Title, SectionTitle } from "../components/shared/TypographyComponents";
+import { LinkButton } from "../components/shared/ButtonComponents";
+import { LastUpdated, Section, Paragraph, List, InfoBox } from "../components/shared/LegalPageComponents";
 
 export const Terms = () => {
   const navigate = useNavigate();
@@ -92,21 +13,21 @@ export const Terms = () => {
   };
   
   return (
-    <Container>
-      <BackButton onClick={handleGoBack}>Go Back</BackButton>
+    <Container $maxWidth="sm" $minHeight="viewport" $padding="lg">
+      <LinkButton onClick={handleGoBack}>← Go Back</LinkButton>
       
-      <Title>Terms of Use</Title>
+      <Title $size="lg" $align="center" $style={{ marginBottom: '1rem' }}>Terms of Use</Title>
       <LastUpdated>Last updated: August 28, 2025</LastUpdated>
       
       <Section>
-        <SectionTitle>1. Acceptance of Terms</SectionTitle>
+        <SectionTitle $border>1. Acceptance of Terms</SectionTitle>
         <Paragraph>
           By accessing and using this website, you accept and agree to be bound by the terms and provision of this agreement.
         </Paragraph>
       </Section>
       
       <Section>
-        <SectionTitle>2. Use License</SectionTitle>
+        <SectionTitle $border>2. Use License</SectionTitle>
         <Paragraph>
           Permission is granted to temporarily download one copy of the materials on Morbid Gene's website for personal, non-commercial transitory viewing only.
         </Paragraph>
@@ -118,7 +39,7 @@ export const Terms = () => {
       </Section>
       
       <Section>
-        <SectionTitle>3. Product Purchases and Third-Party Terms</SectionTitle>
+        <SectionTitle $border>3. Product Purchases and Third-Party Terms</SectionTitle>
         <Paragraph>
           All merchandise purchases are processed through our partner Spreadshirt. When making a purchase, you will be redirected to Spreadshirt's secure checkout system.
         </Paragraph>
@@ -127,12 +48,12 @@ export const Terms = () => {
         </Paragraph>
         <List>
           <li>
-            <a href="https://www.spreadshirt.se/allmaenna-villkoren-C10183" target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', textDecoration: 'underline' }}>
+            <a href="https://www.spreadshirt.se/allmaenna-villkoren-C10183" target="_blank" rel="noopener noreferrer">
               Spreadshirt General Terms and Conditions
             </a>
           </li>
           <li>
-            <a href="https://www.spreadshirt.se/allm%C3%A4nna-villkor-kunder-C2377" target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', textDecoration: 'underline' }}>
+            <a href="https://www.spreadshirt.se/allm%C3%A4nna-villkor-kunder-C2377" target="_blank" rel="noopener noreferrer">
               Spreadshirt Customer Terms and Conditions
             </a>
           </li>
@@ -143,7 +64,7 @@ export const Terms = () => {
       </Section>
       
       <Section>
-        <SectionTitle>4. User Accounts and Data Retention</SectionTitle>
+        <SectionTitle $border>4. User Accounts and Data Retention</SectionTitle>
         <Paragraph>
           If you create an account on our website, the following terms apply:
         </Paragraph>
@@ -160,7 +81,7 @@ export const Terms = () => {
       </Section>
       
       <Section>
-        <SectionTitle>5. Privacy</SectionTitle>
+        <SectionTitle $border>5. Privacy</SectionTitle>
         <Paragraph>
           Your use of our website is also governed by our Privacy Policy. Please review our Privacy Policy, which also governs the Site and informs users of our data collection practices.
         </Paragraph>

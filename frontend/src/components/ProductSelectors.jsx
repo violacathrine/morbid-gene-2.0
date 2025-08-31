@@ -1,5 +1,4 @@
-import React from "react";
-import { SelectionContainer, Select } from "../pages/ProductPage.styles";
+import { SelectionContainer, Select } from "./shared/FormComponents";
 
 export const ProductSelectors = ({
   productType,

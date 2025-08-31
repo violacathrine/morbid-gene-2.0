@@ -2,6 +2,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import ScrollToTop from "../components/ScrollToTop";
+import { theme } from "../styles/theme";
 
 // Import glob-bilder
 const fryshusetImages = import.meta.glob(
@@ -40,8 +41,8 @@ const galleries = [
 
 const Wrapper = styled.section`
   padding: 120px 2rem 2rem;
-  background: #000;
-  color: #fff;
+  background: ${theme.colors.pageBg};
+  color: ${theme.colors.primaryText};
   min-height: 100vh;
 `;
 
@@ -113,8 +114,8 @@ const Title = styled.h2`
 `;
 
 const Button = styled.span`
-  background: #cc0000;
-  color: #fff;
+  background: ${theme.colors.red};
+  color: ${theme.colors.primaryText};
   padding: 0.5rem 1rem;
   font-weight: bold;
   text-transform: uppercase;

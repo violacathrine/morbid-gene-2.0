@@ -1,75 +1,51 @@
 // Translation mappings for product-related Swedish terms from the API
+// Using lowercase keys for case-insensitive lookup
 const translations = {
   // Size translations
-  'Liten': 'Small',
-  'Mellan': 'Medium',
-  'Stor': 'Large',
-  'Extra stor': 'Extra Large',
-  'Extra extra stor': '2X Large',
+  'liten': 'Small',
+  'mellan': 'Medium',
+  'stor': 'Large',
+  'extra stor': 'Extra Large',
+  'extra extra stor': '2X Large',
   
   // Color translations
   'svart': 'Black',
-  'Svart': 'Black',
   'vit': 'White',
-  'Vit': 'White',
   'grå': 'Gray',
-  'Grå': 'Gray',
   'röd': 'Red',
-  'Röd': 'Red',
   'blå': 'Blue',
-  'Blå': 'Blue',
   'grön': 'Green',
-  'Grön': 'Green',
   'gul': 'Yellow',
-  'Gul': 'Yellow',
   'orange': 'Orange',
-  'Orange': 'Orange',
   'rosa': 'Pink',
-  'Rosa': 'Pink',
   'lila': 'Purple',
-  'Lila': 'Purple',
   'brun': 'Brown',
-  'Brun': 'Brown',
   'marinblå': 'Navy',
-  'Marinblå': 'Navy',
   'mörkgrå': 'Dark Gray',
-  'Mörkgrå': 'Dark Gray',
   'ljusgrå': 'Light Gray',
-  'Ljusgrå': 'Light Gray',
   'heather grey': 'Heather Gray',
-  'Heather Grey': 'Heather Gray',
   'charcoal': 'Charcoal',
-  'Charcoal': 'Charcoal',
   'burgundy': 'Burgundy',
-  'Burgundy': 'Burgundy',
   'vinröd': 'Wine Red',
-  'Vinröd': 'Wine Red',
   'beige': 'Beige',
-  'Beige': 'Beige',
   'khaki': 'Khaki',
-  'Khaki': 'Khaki',
   
   // Product type translations
-  'Huvtröja': 'Hoodie',
-  'Luvtröja': 'Hoodie',
-  'Tröja': 'Sweatshirt',
-  'T-shirt': 'T-shirt',
-  'T-tröja': 'T-shirt',
-  'Linne': 'Tank Top',
-  'Keps': 'Cap',
-  'Mugg': 'Mug',
-  'Väska': 'Bag',
-  'Tygväska': 'Tote Bag',
-  'Klistermärke': 'Sticker',
-  'Poster': 'Poster',
-  'Premiumluvtröja': 'Premium Hoodie',
-  'Premium luvtröja': 'Premium Hoodie',
-  'Premium T-shirt': 'Premium T-shirt',
-  'Herr': "Men's",
-  'Dam': "Women's",
-  'Unisex': 'Unisex',
-  
-  // Common product terms
+  'huvtröja': 'Hoodie',
+  'luvtröja': 'Hoodie',
+  'tröja': 'Sweatshirt',
+  't-shirt': 'T-shirt',
+  't-tröja': 'T-shirt',
+  'linne': 'Tank Top',
+  'keps': 'Cap',
+  'mugg': 'Mug',
+  'väska': 'Bag',
+  'tygväska': 'Tote Bag',
+  'klistermärke': 'Sticker',
+  'poster': 'Poster',
+  'premiumluvtröja': 'Premium Hoodie',
+  'premium luvtröja': 'Premium Hoodie',
+  'premium t-shirt': 'Premium T-shirt',
   'herr': "Men's",
   'dam': "Women's",
   'unisex': 'Unisex',
@@ -79,22 +55,16 @@ const translations = {
   'klassisk': 'Classic',
 };
 
-// Simple translation function for product-related terms
+// Efficient case-insensitive translation function
 const translate = (text) => {
   if (!text) return '';
   
-  // Try direct translation first
-  if (translations[text]) {
-    return translations[text];
-  }
-  
-  // Try case-insensitive match
+  // Convert to lowercase for case-insensitive lookup
   const lowerText = text.toLowerCase();
-  const lowerKey = Object.keys(translations).find(
-    key => key.toLowerCase() === lowerText
-  );
-  if (lowerKey) {
-    return translations[lowerKey];
+  
+  // Try direct translation
+  if (translations[lowerText]) {
+    return translations[lowerText];
   }
   
   // Try partial matches for compound words

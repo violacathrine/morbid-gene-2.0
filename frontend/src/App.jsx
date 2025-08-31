@@ -7,10 +7,8 @@ import {
   Routes,
   Route,
   Navigate,
-  useLocation,
 } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
-import { MerchNavbar } from "./components/MerchNavbar"; // Lägg till import
 import { Breadcrumbs } from "./components/Breadcrumbs";
 import { TopBar } from "./components/TopBar";
 import { Footer } from "./components/Footer";
@@ -28,23 +26,12 @@ import { Login } from "./pages/Login";
 import { Favorites } from "./pages/Favorites";
 import { AccountSettings } from "./pages/AccountSettings";
 
-// Skapa en komponent som väljer rätt navbar
+// App content component med routing
 const AppContent = () => {
-  const location = useLocation();
-
-  // Kolla om vi är på shopping-sidor eller användarautentiserade sidor
-  const isShoppingSite =
-    location.pathname === "/merch" ||
-    location.pathname.startsWith("/product") ||
-    location.pathname === "/cart" ||
-    location.pathname === "/favorites" ||
-    location.pathname === "/settings" ||
-    location.pathname === "/login";
-
   return (
     <>
-      {/* Visa rätt navbar beroende på var vi är */}
-      {isShoppingSite ? <MerchNavbar /> : <Navbar />}
+      {/* Unified Navbar automatically switches between website and shopping modes */}
+      <Navbar />
 
       <main style={{ flex: 1 }}>
         <Routes>
