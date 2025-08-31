@@ -337,7 +337,6 @@ export const Cart = () => {
 
       window.location.href = data.checkoutUrl;
     } catch (error) {
-      console.error("Checkout-fel:", error);
       alert(`An error occurred during checkout: ${error.message}`);
       setCheckoutLoading(false);
     }

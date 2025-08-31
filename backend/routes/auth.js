@@ -42,7 +42,6 @@ router.post("/register", async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -88,7 +87,6 @@ router.post("/login", async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -104,7 +102,6 @@ router.post("/logout", async (req, res) => {
     res.clearCookie('sessionId', getClearCookieConfig());
     res.json({ message: "Logged out successfully" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -126,7 +123,6 @@ router.get("/me", authMiddleware, async (req, res) => {
       lastLogin: user.lastLogin
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -163,7 +159,6 @@ router.post("/favorites", authMiddleware, async (req, res) => {
     
     res.json({ message: "Added to favorites", favoritesCount: user.favorites.length });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -187,7 +182,6 @@ router.delete("/favorites/:sellableId", authMiddleware, async (req, res) => {
     
     res.json({ message: "Removed from favorites", favoritesCount: user.favorites.length });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -202,7 +196,6 @@ router.get("/favorites", authMiddleware, async (req, res) => {
 
     res.json(user.favorites);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -239,7 +232,6 @@ router.post("/change-password", authMiddleware, async (req, res) => {
 
     res.json({ message: "Password changed successfully" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -257,7 +249,6 @@ router.delete("/delete-account", authMiddleware, async (req, res) => {
 
     res.json({ message: "Account deleted successfully" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });

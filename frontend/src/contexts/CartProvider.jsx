@@ -63,7 +63,6 @@ export const CartProvider = ({ children }) => {
           localStorage.removeItem("spreadshirt-basket-id");
         }
       } catch (err) {
-        console.error("Error loading basket:", err);
         localStorage.removeItem("spreadshirt-basket-id");
         setError("Could not load cart");
       } finally {
@@ -140,7 +139,6 @@ export const CartProvider = ({ children }) => {
         await updateExistingBasket(product, selectedSize, selectedImage, selectedColor, quantity, productPrice, basketItem);
       }
     } catch (err) {
-      console.error("Error adding to cart:", err);
       setError("Could not add item to cart");
     } finally {
       setLoading(false);
@@ -162,7 +160,6 @@ export const CartProvider = ({ children }) => {
 
       await updateBasketState(newBasketItems);
     } catch (err) {
-      console.error("Error removing from cart:", err);
       setError("Could not remove item from cart");
     } finally {
       setLoading(false);
@@ -207,7 +204,6 @@ export const CartProvider = ({ children }) => {
       // Sync with actual data from backend
       setCartItems(convertBasketToCartItems(updatedBasket.basketItems, cartItems));
     } catch (err) {
-      console.error("Error updating quantity:", err);
       setError("Could not update quantity");
       
       // Restore on error
@@ -215,7 +211,6 @@ export const CartProvider = ({ children }) => {
         const currentBasket = await basketApi.getBasket(basketId);
         setCartItems(convertBasketToCartItems(currentBasket.basketItems, cartItems));
       } catch (restoreErr) {
-        console.error("Error restoring cart state:", restoreErr);
       }
     }
   };
@@ -233,7 +228,6 @@ export const CartProvider = ({ children }) => {
       setCartItems([]);
       localStorage.removeItem("spreadshirt-basket-id");
     } catch (err) {
-      console.error("Error clearing cart:", err);
       setError("Could not clear cart");
     } finally {
       setLoading(false);

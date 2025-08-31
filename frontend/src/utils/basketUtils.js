@@ -41,7 +41,6 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null, product
       localStorage.setItem(primaryKey, selectedImage);
       localStorage.setItem(fallbackKey, selectedImage); // Backup key
     } catch (error) {
-      console.error("Could not save image to localStorage:", error);
     }
   }
   
@@ -53,7 +52,6 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null, product
     try {
       localStorage.setItem(priceKey, JSON.stringify(priceToUse));
     } catch (error) {
-      console.error("Could not save price to localStorage:", error);
     }
   } else if (!productPrice) {
     // Try to retrieve saved price
@@ -63,7 +61,6 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null, product
         priceToUse = JSON.parse(savedPrice);
       }
     } catch (error) {
-      console.error("Could not read price from localStorage:", error);
     }
   }
   
@@ -84,7 +81,6 @@ export const convertSpreadshirtItem = (basketItem, selectedImage = null, product
           break;
         }
       } catch (error) {
-        console.error("Kunde inte läsa bild från localStorage:", error);
       }
     }
     

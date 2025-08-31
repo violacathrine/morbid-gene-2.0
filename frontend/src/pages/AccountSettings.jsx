@@ -399,7 +399,6 @@ export const AccountSettings = () => {
         setError(data.message || 'Failed to change password');
       }
     } catch (error) {
-      console.error('Change password error:', error);
       setError('Network error');
     }
     
@@ -427,7 +426,6 @@ export const AccountSettings = () => {
         setError(data.message || 'Failed to delete account');
       }
     } catch (error) {
-      console.error('Delete account error:', error);
       setError('Network error');
     }
     

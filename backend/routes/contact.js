@@ -16,15 +16,6 @@ router.post('/contact', async (req, res) => {
       });
     }
 
-    // Log the contact form submission
-    console.log('📧 Contact form submission:', {
-      name,
-      email,
-      phone,
-      subject,
-      message,
-      timestamp: new Date().toISOString()
-    });
 
     // Send email notifications
     await sendContactEmail({ name, email, phone, subject, message });
@@ -35,7 +26,6 @@ router.post('/contact', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Contact form error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Internal server error' 
@@ -56,17 +46,6 @@ router.post('/booking', async (req, res) => {
       });
     }
 
-    // Log the booking form submission
-    console.log('🎵 Booking form submission:', {
-      name,
-      email,
-      phone,
-      eventType,
-      eventDate,
-      venue,
-      message,
-      timestamp: new Date().toISOString()
-    });
 
     // Send booking email notifications
     await sendBookingEmail({ name, email, phone, eventType, eventDate, venue, message });
@@ -77,7 +56,6 @@ router.post('/booking', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Booking form error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Internal server error' 

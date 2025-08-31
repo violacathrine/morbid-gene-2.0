@@ -56,10 +56,8 @@ export const sendContactEmail = async (formData) => {
     await transporter.sendMail(mailOptionsToYou);
     await transporter.sendMail(mailOptionsToCustomer);
 
-    console.log("✅ Contact emails sent successfully");
     return { success: true };
   } catch (error) {
-    console.error("❌ Email sending failed:", error);
     throw error;
   }
 };
@@ -90,10 +88,8 @@ export const sendBookingEmail = async (formData) => {
     await transporter.sendMail(mailOptionsToYou);
     await transporter.sendMail(mailOptionsToCustomer);
 
-    console.log("✅ Booking emails sent successfully");
     return { success: true };
   } catch (error) {
-    console.error("❌ Booking email sending failed:", error);
     throw error;
   }
 };

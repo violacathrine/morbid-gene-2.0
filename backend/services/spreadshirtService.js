@@ -10,7 +10,6 @@ const getShopConfig = () => {
 
   // If variables are missing, throw an error with helpful info
   if (!shopId || !apiKey || !userAgent) {
-    console.error("Environment variables are missing! Check the .env file");
     throw new Error(
       "Environment variables missing for API call (SPREADSHOP_ID, SPREADSHOP_API_KEY, SPREAD_USER_AGENT)"
     );
@@ -60,7 +59,6 @@ export const getAllProducts = async (limit = 24, offset = 0) => {
             }
             return sellable;
           } catch (error) {
-            console.error(`Failed to get productType for ${sellable.sellableId}:`, error.message);
             return sellable; // Return original if productType fetch fails
           }
         })
@@ -71,10 +69,6 @@ export const getAllProducts = async (limit = 24, offset = 0) => {
 
     return sellablesData;
   } catch (error) {
-    console.error(
-      "Could not fetch merch:",
-      error.response?.data || error.message
-    );
     throw error;
   }
 };
@@ -98,10 +92,6 @@ export const getProductById = async (productId) => {
     }
     return product;
   } catch (error) {
-    console.error(
-      "Could not fetch product:",
-      error.response?.data || error.message
-    );
     throw error;
   }
 };
@@ -149,10 +139,6 @@ export const getProductTypeInfo = async (productTypeId) => {
       features
     };
   } catch (error) {
-    console.error(
-      "Could not fetch ProductType:",
-      error.response?.data || error.message
-    );
     throw error;
   }
 };
@@ -176,7 +162,6 @@ export const getSellableImages = async (sellableId, appearanceId, ideaId) => {
       name,
     };
   } catch (error) {
-    console.error("❌ API Error:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -199,7 +184,6 @@ export const createBasket = async (basketItems) => {
 
     return response.data;
   } catch (error) {
-    console.error("Could not create basket:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -217,7 +201,6 @@ export const getBasket = async (basketId) => {
     if (error.response?.status === 404) {
       return null;
     }
-    console.error("Could not fetch basket:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -237,7 +220,6 @@ export const updateBasket = async (basketId, basketItems) => {
 
     return response.data;
   } catch (error) {
-    console.error("Could not update basket:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -251,7 +233,6 @@ export const deleteBasket = async (basketId) => {
     });
     return true;
   } catch (error) {
-    console.error("Could not delete basket:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -311,7 +292,6 @@ export const getCheckoutUrl = async (basketId) => {
     // Spreadshirt API returns checkout URL in the response
     return response.data.checkoutUrl || response.data.href;
   } catch (error) {
-    console.error("Could not get checkout URL:", error.response?.data || error.message);
     throw error;
   }
 };

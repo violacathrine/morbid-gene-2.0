@@ -31,8 +31,6 @@ const requiredEnvVars = [
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
-  console.error(`❌ Saknade miljövariabler: ${missingVars.join(", ")}`);
-  console.error("Kontrollera din .env-fil");
   process.exit(1);
 }
 
@@ -47,10 +45,8 @@ const MONGO_URL =
 mongoose
   .connect(MONGO_URL)
   .then(() => {
-    console.log("✅ MongoDB connected successfully");
   })
   .catch((error) => {
-    console.error("❌ MongoDB anslutningsfel:", error);
     process.exit(1);
   });
 
@@ -108,7 +104,6 @@ app.use("*", (req, res) => {
 
 // Error handling
 app.use((err, req, res, next) => {
-  console.error("❌ Server error:", err.stack);
   res.status(500).json({ message: "Something went wrong!" });
 });
 
@@ -121,30 +116,22 @@ process.on("SIGTERM", () => {
 // Schedule automatic cleanup - runs on the 1st of each month at 02:00
 cron.schedule('0 2 1 * *', async () => {
   try {
-    console.log('🧹 Running scheduled account cleanup...');
     
     // Calculate the cutoff date (30 months ago)
     const monthsInactive = parseInt(process.env.INACTIVE_MONTHS) || 30;
     const cutoffDate = new Date();
     cutoffDate.setMonth(cutoffDate.getMonth() - monthsInactive);
 
-    console.log(`Cleaning up accounts inactive since: ${cutoffDate}`);
 
     // Find and delete inactive accounts
     const result = await User.deleteMany({
       lastLogin: { $lt: cutoffDate }
     });
 
-    console.log(`✅ Cleanup completed: ${result.deletedCount} inactive accounts deleted`);
   } catch (error) {
-    console.error('❌ Scheduled cleanup failed:', error);
   }
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🧹 Scheduled cleanup: 1st of each month at 02:00 (${process.env.INACTIVE_MONTHS || 30} months inactive)`);
-  console.log(`📡 MongoDB connected to: ${MONGO_URL}`);
-  console.log(`✅ Backend ready!`);
 });

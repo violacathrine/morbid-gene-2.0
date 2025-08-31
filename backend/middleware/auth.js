@@ -20,7 +20,6 @@ export default async function authMiddleware(req, res, next) {
     req.userId = user._id;
     next();
   } catch (err) {
-    console.error("Auth Error:", err.message);
     return res.status(401).json({ message: "Authentication failed" });
   }
 }

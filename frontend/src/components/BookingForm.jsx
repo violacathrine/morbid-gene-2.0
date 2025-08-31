@@ -341,7 +341,6 @@ const BookingForm = () => {
         alert("Error: " + result.error);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
       alert("Failed to send booking request. Please try again.");
     }
 

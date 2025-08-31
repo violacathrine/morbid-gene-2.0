@@ -88,7 +88,6 @@ const FavoriteButton = ({ product, size = 20, showTooltip = false }) => {
         await addToFavorites(product);
       }
     } catch (error) {
-      console.error('Favorite toggle error:', error);
     } finally {
       setLoading(false);
     }

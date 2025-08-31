@@ -24,7 +24,6 @@ export const useProductImages = (sellableId, appearanceId, ideaId) => {
         const data = await response.json();
         setImages(data.images || []);
       } catch (err) {
-        console.error("Error fetching images:", err);
         setError(err.message);
       } finally {
         setLoading(false);

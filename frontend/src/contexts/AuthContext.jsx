@@ -26,7 +26,6 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       return { success: response.ok, data, response };
     } catch (error) {
-      console.error(`API call error (${endpoint}):`, error);
       return { success: false, error: 'Network error' };
     }
   };

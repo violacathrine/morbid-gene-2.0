@@ -320,7 +320,6 @@ const ContactForm = () => {
         alert("Error: " + result.error);
       }
     } catch (error) {
-      console.error("Error submitting contact form:", error);
       alert("Failed to send message. Please try again.");
     }
 
