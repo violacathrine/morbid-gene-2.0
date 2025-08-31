@@ -257,7 +257,7 @@ The application includes several custom React hooks:
 
 ## 🎸 About Morbid Gene
 
-Morbid Gene is a Swedish metal band formed in [2021]. Known for their melodoc, crushing riffs and atmospheric soundscapes, they have performed across Sweden and are working on their way to the top. 
+Morbid Gene is a Swedish metal band formed in [2021]. Known for their melodic, crushing riffs and atmospheric soundscapes, they have performed across Sweden and are working on their way to the top. 
 
 ## 📧 Support
 
