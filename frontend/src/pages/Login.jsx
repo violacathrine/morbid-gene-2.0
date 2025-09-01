@@ -1,0 +1,546 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { useAuth } from '../contexts/AuthContext';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Container } from "../components/shared/LayoutComponents";
+import { theme } from "../styles/theme";
+
+
+const LoginBox = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+`;
+
+const Header = styled.div`
+  text-align: center;
+  margin-bottom: 2rem;
+  
+  h1 {
+    color: ${theme.colors.primaryText};
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    
+    @media (min-width: 480px) {
+      font-size: 1.75rem;
+      letter-spacing: 1.5px;
+    }
+    
+    @media (min-width: 768px) {
+      font-size: 2rem;
+      letter-spacing: 1.5px;
+    }
+  }
+  
+  p {
+    color: ${theme.colors.secondaryText};
+    font-style: italic;
+    font-size: 0.9rem;
+    font-weight: 300;
+    
+    @media (min-width: 480px) {
+      font-size: 1rem;
+    }
+    
+    @media (min-width: 768px) {
+      font-size: 1.1rem;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    margin-bottom: 3rem;
+  }
+`;
+
+const FormSection = styled.div`
+  background: ${theme.colors.sectionBg};
+  border: 1px solid ${theme.colors.charcoal};
+  padding: 1rem;
+  margin-bottom: 1rem;
+  
+  @media (min-width: 480px) {
+    padding: 1.5rem;
+  }
+  
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+`;
+
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  
+  @media (min-width: 480px) {
+    gap: 1.25rem;
+  }
+`;
+
+const InputContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+`;
+
+const InputRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 1rem;
+    
+    > div {
+      flex: 1;
+    }
+  }
+`;
+
+const Label = styled.label`
+  color: ${theme.colors.primaryText};
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  @media (min-width: 480px) {
+    font-size: 0.9rem;
+  }
+`;
+
+const InputField = styled.div`
+  position: relative;
+`;
+
+const Input = styled.input`
+  padding: 0.75rem;
+  padding-right: ${props => props.$hasIcon ? '3rem' : '0.75rem'};
+  background: ${theme.colors.inputBg};
+  border: 2px solid #444444;
+  border-radius: 4px;
+  color: ${theme.colors.primaryText};
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+
+  &::placeholder {
+    color: ${theme.colors.mediumGray};
+    font-size: 0.875rem;
+    
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${theme.colors.buttonPrimary};
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+  }
+  
+  @media (min-width: 480px) {
+    padding: 0.85rem;
+    padding-right: ${props => props.$hasIcon ? '3.2rem' : '0.85rem'};
+  }
+`;
+
+const PasswordToggleButton = styled.button`
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${props => props.$isShowing ? theme.colors.buttonPrimary : theme.colors.mediumGray};
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  border-radius: 4px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  &:focus {
+    outline: 2px solid ${theme.colors.buttonPrimary};
+    outline-offset: 2px;
+  }
+  
+  @media (min-width: 480px) {
+    right: 0.65rem;
+  }
+`;
+
+const Button = styled.button`
+  background-color: ${theme.colors.buttonPrimary};
+  color: ${theme.colors.primaryText};
+  border: none;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: auto;
+  margin: 0;
+
+  &:hover:not(:disabled) {
+    background-color: ${theme.colors.buttonPrimaryHover};
+  }
+
+  &:disabled {
+    background-color: ${theme.colors.buttonDisabled};
+    cursor: not-allowed;
+  }
+  
+  @media (min-width: 480px) {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: ${theme.colors.primaryText};
+  background: ${theme.colors.buttonPrimary};
+  border: 1px solid #991b1b;
+  padding: 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+`;
+
+const RequiredStar = styled.span`
+  color: ${theme.colors.buttonPrimary};
+  margin-left: 4px;
+  font-weight: bold;
+`;
+
+const FieldError = styled.div`
+  color: ${theme.colors.buttonPrimary};
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  margin-left: 0.25rem;
+`;
+
+const ToggleSection = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  gap: 0;
+`;
+
+const ToggleButton = styled.button`
+  background-color: ${(props) => (props.$active ? theme.colors.buttonPrimary : theme.colors.charcoal)};
+  color: ${(props) => (props.$active ? theme.colors.primaryText : theme.colors.secondaryText)};
+  border: 1px solid ${(props) => (props.$active ? theme.colors.buttonPrimary : theme.colors.darkCharcoal)};
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:first-child {
+    border-right: none;
+  }
+  
+  &:last-child {
+    border-left: none;
+  }
+
+  &:hover {
+    background-color: ${(props) => (props.$active ? theme.colors.buttonPrimaryHover : "#444444")};
+    color: ${theme.colors.primaryText};
+    border-color: ${(props) => (props.$active ? theme.colors.buttonPrimary : theme.colors.mediumGray)};
+  }
+`;
+
+export const Login = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
+  
+  const { login, register } = useAuth();
+  const navigate = useNavigate();
+
+  const validateFields = () => {
+    const errors = {};
+    
+    if (isLogin) {
+      if (!email.trim()) errors.email = 'Email is required';
+      if (!password.trim()) errors.password = 'Password is required';
+    } else {
+      if (!name.trim()) errors.name = 'Full name is required';
+      if (!email.trim()) errors.email = 'Email is required';
+      if (!password.trim()) errors.password = 'Password is required';
+      if (!confirmPassword.trim()) errors.confirmPassword = 'Please confirm your password';
+      
+      if (password && password.length < 6) {
+        errors.password = 'Password must be at least 6 characters long';
+      }
+      
+      if (password && confirmPassword && password !== confirmPassword) {
+        errors.confirmPassword = 'Passwords do not match';
+      }
+    }
+    
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setFieldErrors({});
+    
+    if (!validateFields()) {
+      return;
+    }
+
+    setLoading(true);
+    
+    if (isLogin) {
+      const result = await login(email, password);
+      if (result.success) {
+        navigate('/merch');
+      } else {
+        setError(result.error);
+      }
+    } else {
+      const result = await register(name, email, password);
+      if (result.success) {
+        navigate('/merch');
+      } else {
+        setError(result.error);
+      }
+    }
+    
+    setLoading(false);
+  };
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    setError('');
+    setFieldErrors({});
+    // Clear form fields when switching
+    setName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  };
+
+  return (
+    <Container $maxWidth="lg" $variant="form" $padding="md">      
+      <LoginBox>
+        <Header>
+          <h1>{isLogin ? 'Login' : 'Register'}</h1>
+          <p>{isLogin ? 'Welcome back to Morbid Gene' : 'Join the Morbid Gene family'}</p>
+        </Header>
+        
+        <FormSection>
+          <ToggleSection>
+            <ToggleButton 
+              type="button"
+              $active={isLogin} 
+              onClick={() => !isLogin && toggleMode()}
+            >
+              Login
+            </ToggleButton>
+            <ToggleButton 
+              type="button"
+              $active={!isLogin} 
+              onClick={() => isLogin && toggleMode()}
+            >
+              Register
+            </ToggleButton>
+          </ToggleSection>
+        </FormSection>
+        
+        <FormSection>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          
+          <Form onSubmit={handleSubmit}>
+          {!isLogin ? (
+            <>
+              <InputRow>
+                <InputContainer>
+                  <Label htmlFor="register-name">
+                    Full Name<RequiredStar>*</RequiredStar>
+                  </Label>
+                  <InputField>
+                    <Input
+                      type="text"
+                      id="register-name"
+                      placeholder="Enter your full name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </InputField>
+                  {fieldErrors.name && <FieldError>{fieldErrors.name}</FieldError>}
+                </InputContainer>
+                
+                <InputContainer>
+                  <Label htmlFor="register-email">
+                    Email Address<RequiredStar>*</RequiredStar>
+                  </Label>
+                  <InputField>
+                    <Input
+                      type="email"
+                      id="register-email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </InputField>
+                  {fieldErrors.email && <FieldError>{fieldErrors.email}</FieldError>}
+                </InputContainer>
+              </InputRow>
+              
+              <InputRow>
+                <InputContainer>
+                  <Label htmlFor="register-password">
+                    Password<RequiredStar>*</RequiredStar>
+                  </Label>
+                  <InputField>
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      id="register-password"
+                      placeholder="Create a password (min 6 characters)"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      $hasIcon={true}
+                      required
+                    />
+                    <PasswordToggleButton
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      $isShowing={showPassword}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </PasswordToggleButton>
+                  </InputField>
+                  {fieldErrors.password && <FieldError>{fieldErrors.password}</FieldError>}
+                </InputContainer>
+                
+                <InputContainer>
+                  <Label htmlFor="confirm-password">
+                    Confirm Password<RequiredStar>*</RequiredStar>
+                  </Label>
+                  <InputField>
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      id="confirm-password"
+                      placeholder="Confirm your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      $hasIcon={true}
+                      required
+                    />
+                    <PasswordToggleButton
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      $isShowing={showConfirmPassword}
+                    >
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                    </PasswordToggleButton>
+                  </InputField>
+                  {fieldErrors.confirmPassword && <FieldError>{fieldErrors.confirmPassword}</FieldError>}
+                </InputContainer>
+              </InputRow>
+            </>
+          ) : (
+            <>
+              <InputContainer>
+                <Label htmlFor="login-email">
+                  Email Address<RequiredStar>*</RequiredStar>
+                </Label>
+                <InputField>
+                  <Input
+                    type="email"
+                    id="login-email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </InputField>
+                {fieldErrors.email && <FieldError>{fieldErrors.email}</FieldError>}
+              </InputContainer>
+              
+              <InputContainer>
+                <Label htmlFor="login-password">
+                  Password<RequiredStar>*</RequiredStar>
+                </Label>
+                <InputField>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    id="login-password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    $hasIcon={true}
+                    required
+                  />
+                  <PasswordToggleButton
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    $isShowing={showPassword}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </PasswordToggleButton>
+                </InputField>
+                {fieldErrors.password && <FieldError>{fieldErrors.password}</FieldError>}
+              </InputContainer>
+            </>
+          )}
+          
+            <Button type="submit" disabled={loading}>
+              {loading ? (isLogin ? 'Logging in...' : 'Creating account...') : (isLogin ? 'Login' : 'Create Account')}
+            </Button>
+          </Form>
+        </FormSection>
+      </LoginBox>
+    </Container>
+  );
+};

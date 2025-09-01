@@ -1,7 +1,18 @@
 {
-  "name": "project-final-parent",
+  "name": "morbid-gene-2.0",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
-    "postinstall": "npm install --prefix backend"
+    "server": "nodemon backend/server.js",
+    "frontend": "npm run dev --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run frontend\"",
+    "start": "node backend/server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "react-icons": "^5.5.0"
   }
 }
